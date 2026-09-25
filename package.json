@@ -1,0 +1,20 @@
+{
+  "name": "trymate-store",
+  "version": "0.1.0",
+  "private": true,
+  "description": "tryMate: AI-powered clothing store (React + Express + MongoDB)",
+  "scripts": {
+    "install:all": "node scripts/install-all.mjs",
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "start": "npm start --prefix server",
+    "build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "lint": "npm run lint --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
