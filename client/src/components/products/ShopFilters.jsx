@@ -25,7 +25,7 @@ export default function ShopFilters({ options, values, onChange }) {
         </div>
       </FilterSection>
 
-      <FilterSection title="Color">
+      <FilterSection title="Colour">
         <div className="grid grid-cols-2 gap-1">
           {options.colors.map((color) => {
             const active = values.color?.toLowerCase() === color.name.toLowerCase();
@@ -35,12 +35,12 @@ export default function ShopFilters({ options, values, onChange }) {
                 type="button"
                 aria-pressed={active}
                 onClick={() => onChange({ color: active ? null : color.name })}
-                className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition ${
-                  active ? 'bg-brand text-white' : 'text-gray-700 hover:bg-gray-100'
+                className={`flex items-center gap-2 rounded-full px-2.5 py-1.5 text-left text-[13px] transition-colors duration-300 ${
+                  active ? 'bg-ink text-ivory' : 'text-gray-700 hover:bg-bone'
                 }`}
               >
                 <span
-                  className="h-4 w-4 shrink-0 rounded-full border border-gray-300"
+                  className="h-4 w-4 shrink-0 rounded-full ring-1 ring-black/10 ring-inset"
                   style={{ backgroundColor: color.hex }}
                 />
                 <span className="truncate">{color.name}</span>
@@ -65,7 +65,7 @@ export default function ShopFilters({ options, values, onChange }) {
         <button
           type="button"
           onClick={() => onChange({ type: null, color: null, minPrice: null, maxPrice: null })}
-          className="text-sm font-medium text-brand-accent hover:underline"
+          className="link-underline text-[11px] font-semibold tracking-[0.16em] text-brass uppercase"
         >
           Clear all filters
         </button>
@@ -77,7 +77,7 @@ export default function ShopFilters({ options, values, onChange }) {
 function FilterSection({ title, children }) {
   return (
     <section>
-      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</h3>
+      <h3 className="mb-4 text-[11px] font-semibold tracking-[0.2em] text-gray-500 uppercase">{title}</h3>
       {children}
     </section>
   );
@@ -89,8 +89,8 @@ function Pill({ active, onClick, children }) {
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-sm transition ${
-        active ? 'border-brand bg-brand text-white' : 'border-gray-300 text-gray-700 hover:border-gray-500'
+      className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-300 ${
+        active ? 'border-ink bg-ink text-ivory' : 'border-sand bg-white text-gray-700 hover:border-ink'
       }`}
     >
       {children}
@@ -116,7 +116,7 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
           defaultValue={minPrice ?? ''}
           placeholder="Min"
           aria-label="Minimum price"
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-full border border-sand bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none"
         />
         <span className="text-gray-400">–</span>
         <input
@@ -127,7 +127,7 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
           defaultValue={maxPrice ?? ''}
           placeholder="Max"
           aria-label="Maximum price"
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-full border border-sand bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none"
         />
       </div>
       {range.max > 0 && (
@@ -137,7 +137,7 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
       )}
       <button
         type="submit"
-        className="w-full rounded-md border border-gray-300 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="btn-secondary btn-sm w-full"
       >
         Apply
       </button>

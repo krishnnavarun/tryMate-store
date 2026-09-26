@@ -38,7 +38,7 @@ export async function listProducts(req, res) {
   const { category, type, color, minPrice, maxPrice, sort, page, limit, suitsMe } = req.valid.query;
   const suggestions = req.user?.fitProfile?.colorSuggestions ?? [];
   if (suitsMe && suggestions.length === 0) {
-    throw new ApiError(409, 'NO_FIT_PROFILE', 'Scan your body first to see colors that suit you.');
+    throw new ApiError(409, 'NO_FIT_PROFILE', 'Scan your body first to see colours that suit you.');
   }
 
   const match = {};

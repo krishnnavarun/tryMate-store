@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { TYPE_LABELS, formatPrice } from '../../utils/format.js';
+import ProductImage from '../products/ProductImage.jsx';
 
 // The clothes rail of the fitting room.
 //   Mouse / pen: drag a garment onto the mirror (onDragStart hands the drag to the page).
@@ -19,8 +20,8 @@ export default function GarmentTray({ products, wornId, onWear, onDragStart, loa
             type="button"
             aria-pressed={type === t}
             onClick={() => setType(t)}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-              type === t ? 'border-brand bg-brand text-white' : 'border-gray-300 text-gray-700 hover:border-gray-500'
+            className={`rounded-full border px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase transition-colors duration-300 ${
+              type === t ? 'border-ink bg-ink text-ivory' : 'border-sand bg-white text-gray-700 hover:border-ink'
             }`}
           >
             {t === 'all' ? 'All' : (TYPE_LABELS[t] ?? t)}
@@ -31,7 +32,7 @@ export default function GarmentTray({ products, wornId, onWear, onDragStart, loa
       {loading ? (
         <div className="grid grid-cols-3 gap-3">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="aspect-[3/4] animate-pulse rounded-lg bg-gray-200" />
+            <div key={i} className="skeleton aspect-[3/4] rounded-xl" />
           ))}
         </div>
       ) : (
@@ -49,17 +50,20 @@ export default function GarmentTray({ products, wornId, onWear, onDragStart, loa
                 aria-pressed={wornId === product._id}
                 title={`Wear ${product.name}`}
                 className={`group block w-full cursor-grab text-left active:cursor-grabbing ${
-                  wornId === product._id ? 'rounded-lg ring-2 ring-brand ring-offset-2' : ''
+                  wornId === product._id ? 'rounded-xl ring-1 ring-ink ring-offset-4 ring-offset-ivory' : ''
                 }`}
               >
-                <img
-                  src={product.images[0]}
-                  alt=""
-                  draggable={false}
-                  loading="lazy"
-                  className="aspect-[3/4] w-full rounded-lg object-cover transition group-hover:opacity-90"
-                />
-                <span className="mt-1 block truncate text-xs font-medium text-gray-900">{product.name}</span>
+                <span className="relative block aspect-[3/4] overflow-hidden rounded-xl bg-bone">
+                  <ProductImage
+                    src={product.images[0]}
+                    alt=""
+                    name={product.name}
+                    type={product.type}
+                    hex={product.colors[0]?.hex}
+                    className="absolute inset-0 h-full w-full transition-transform duration-700 ease-out-expo group-hover:scale-[1.06]"
+                  />
+                </span>
+                <span className="mt-2 block truncate text-xs font-semibold text-ink">{product.name}</span>
                 <span className="block text-xs text-gray-500">{formatPrice(product.discountPrice ?? product.price)}</span>
               </button>
             </li>

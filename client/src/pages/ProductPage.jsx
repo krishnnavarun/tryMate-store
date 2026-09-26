@@ -5,12 +5,14 @@ import { updateFitPreference } from '../api/fitProfile.js';
 import { fetchProduct, fetchSizeRecommendation } from '../api/products.js';
 import FitPreferenceToggle from '../components/fit/FitPreferenceToggle.jsx';
 import Price from '../components/products/Price.jsx';
+import ProductImage from '../components/products/ProductImage.jsx';
 import SizeGuide from '../components/products/SizeGuide.jsx';
 import TryOnModal from '../components/products/TryOnModal.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useCart } from '../hooks/useCart.js';
+import { TYPE_LABELS } from '../utils/format.js';
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -32,11 +34,11 @@ export default function ProductPage() {
           message={notFound ? 'It may have been removed, or the link is wrong.' : error.userMessage}
           action={
             notFound ? (
-              <Link to="/shop" className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white">
+              <Link to="/shop" className="btn-primary btn-sm">
                 Back to the shop
               </Link>
             ) : (
-              <button type="button" onClick={reload} className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white">
+              <button type="button" onClick={reload} className="btn-primary btn-sm">
                 Try again
               </button>
             )
@@ -75,7 +77,7 @@ function ProductDetails({ product }) {
   const inStock = (s) => (product.stock?.[s] ?? 0) > 0;
   const color = product.colors[colorIndex];
   // Images are stored one per color, in the same order as `colors`
-  const image = product.images[colorIndex] ?? product.images[0];
+  const imageIndex = product.images[colorIndex] ? colorIndex : 0;
   const suiting = new Set(product.suitingColors ?? []);
 
   const recommended = recommendation.data?.recommendedSize ?? null;
@@ -125,21 +127,31 @@ function ProductDetails({ product }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <nav className="mb-6 text-sm text-gray-500">
-        <Link to="/shop" className="hover:text-brand">
+      <nav className="mb-8 flex items-center gap-2 text-[11px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
+        <Link to="/shop" className="link-underline hover:text-ink">
           Shop
         </Link>
-        <span className="mx-2">/</span>
-        <Link to={`/shop?type=${product.type}`} className="hover:text-brand">
-          {product.type === 'tshirt' ? 'T-shirts' : product.type === 'polo' ? 'Polos' : 'Shirts'}
+        <span className="text-gray-300">/</span>
+        <Link to={`/shop?type=${product.type}`} className="link-underline hover:text-ink">
+          {TYPE_LABELS[product.type] ?? 'Shirts'}
         </Link>
       </nav>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:gap-14">
-        {/* ---- Images ---- */}
-        <div>
-          <div className="aspect-[3/4] overflow-hidden rounded-2xl bg-gray-100">
-            <img src={image} alt={`${product.name} in ${color.name}`} className="h-full w-full object-cover" />
+      <div className="grid gap-10 md:grid-cols-2 lg:gap-16">
+        {/* ---- Images (stays in view while the details scroll) ---- */}
+        <div className="h-fit md:sticky md:top-32">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-[28px] bg-bone">
+            {/* key: switching colour cross-fades to the new image */}
+            <ProductImage
+              key={imageIndex}
+              src={product.images[imageIndex]}
+              alt={`${product.name} in ${color.name}`}
+              name={product.name}
+              type={product.type}
+              hex={color.hex}
+              loading="eager"
+              className="absolute inset-0 h-full w-full animate-fade"
+            />
           </div>
           {product.images.length > 1 && (
             <div className="mt-4 grid grid-cols-5 gap-3">
@@ -148,12 +160,19 @@ function ProductDetails({ product }) {
                   key={src}
                   type="button"
                   onClick={() => setColorIndex(Math.min(i, product.colors.length - 1))}
-                  className={`aspect-[3/4] overflow-hidden rounded-lg border-2 ${
-                    i === colorIndex ? 'border-brand' : 'border-transparent'
+                  className={`relative aspect-[3/4] overflow-hidden rounded-xl ring-offset-2 ring-offset-ivory transition ${
+                    i === imageIndex ? 'ring-1 ring-ink' : 'opacity-70 hover:opacity-100'
                   }`}
-                  aria-label={`Show image ${i + 1}`}
+                  aria-label={`Show ${product.colors[i]?.name ?? `image ${i + 1}`}`}
                 >
-                  <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  <ProductImage
+                    src={src}
+                    alt=""
+                    name={product.name}
+                    type={product.type}
+                    hex={product.colors[i]?.hex}
+                    className="absolute inset-0 h-full w-full"
+                  />
                 </button>
               ))}
             </div>
@@ -161,18 +180,19 @@ function ProductDetails({ product }) {
         </div>
 
         {/* ---- Details ---- */}
-        <div className="space-y-8">
-          <div className="space-y-3">
-            <p className="text-sm font-medium uppercase tracking-wide text-gray-500">{product.brand}</p>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{product.name}</h1>
+        <div className="animate-rise space-y-10" style={{ animationDelay: '120ms' }}>
+          <div className="space-y-4">
+            <p className="eyebrow">{product.brand}</p>
+            <h1 className="heading-display text-5xl leading-[1.05] sm:text-6xl">{product.name}</h1>
             <Price price={product.price} discountPrice={product.discountPrice} size="lg" />
+            {product.description && <p className="max-w-prose leading-relaxed text-gray-600">{product.description}</p>}
           </div>
 
           {/* Color picker */}
           <div>
-            <p className="mb-3 text-sm font-medium text-gray-900">
-              Color: <span className="font-normal text-gray-600">{color.name}</span>
-              {suiting.has(color.name) && <SuitsYouBadge className="ml-2" />}
+            <p className="mb-4 text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">
+              Colour <span className="ml-1 tracking-normal text-ink normal-case">{color.name}</span>
+              {suiting.has(color.name) && <SuitsYouBadge className="ml-3" />}
             </p>
             <div className="flex flex-wrap gap-3">
               {product.colors.map((c, i) => (
@@ -183,43 +203,43 @@ function ProductDetails({ product }) {
                   aria-label={suiting.has(c.name) ? `${c.name}, suits you` : c.name}
                   aria-pressed={i === colorIndex}
                   onClick={() => setColorIndex(i)}
-                  className={`relative h-9 w-9 rounded-full border border-gray-300 ring-offset-2 transition ${
-                    i === colorIndex ? 'ring-2 ring-brand' : 'hover:ring-2 hover:ring-gray-300'
+                  className={`relative h-10 w-10 rounded-full ring-offset-[3px] ring-offset-ivory transition duration-300 ${
+                    i === colorIndex ? 'ring-1 ring-ink' : 'hover:scale-110'
                   }`}
-                  style={{ backgroundColor: c.hex }}
                 >
+                  <span className="absolute inset-0 rounded-full ring-1 ring-black/10 ring-inset" style={{ backgroundColor: c.hex }} />
                   {suiting.has(c.name) && (
-                    <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />
+                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-ivory bg-emerald-600" />
                   )}
                 </button>
               ))}
             </div>
             {suiting.size > 0 && (
-              <p className="mt-2 text-xs text-gray-500">
-                <span className="mr-1 inline-block h-2.5 w-2.5 rounded-full bg-emerald-500 align-middle" />
-                Colors that suit your skin tone
+              <p className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                <span className="inline-block h-2 w-2 rounded-full bg-emerald-600" />
+                Colours that suit your skin tone
               </p>
             )}
           </div>
 
           {/* Size selector + recommendation */}
           <div>
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm font-medium text-gray-900">
-                Size: <span className="font-normal text-gray-600">{size ?? 'Choose a size'}</span>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">
+                Size <span className="ml-1 tracking-normal text-ink normal-case">{size ?? 'Choose a size'}</span>
               </p>
               {recommendation.data && (
                 <FitPreferenceToggle value={user.fitPreference} onChange={handleFitPreference} disabled={savingFit} />
               )}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {sizes.map((s) => {
                 const soldOut = !inStock(s);
                 const isRecommended = s === recommended;
                 return (
-                  <div key={s} className="relative pt-2.5">
+                  <div key={s} className="relative pt-3">
                     {isRecommended && (
-                      <span className="absolute -top-0.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold whitespace-nowrap text-white uppercase">
+                      <span className="absolute top-0 left-1/2 z-10 -translate-x-1/2 animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold tracking-[0.14em] whitespace-nowrap text-ivory uppercase">
                         Best fit
                       </span>
                     )}
@@ -229,14 +249,14 @@ function ProductDetails({ product }) {
                       aria-pressed={size === s}
                       onClick={() => setChosenSize(s)}
                       title={soldOut ? 'Sold out' : recommendation.data?.perSize?.[s]?.note}
-                      className={`min-w-14 rounded-md border px-4 py-2.5 text-sm font-medium transition ${
+                      className={`h-12 min-w-16 rounded-xl border px-4 text-sm font-semibold transition duration-300 ${
                         size === s
-                          ? 'border-brand bg-brand text-white'
+                          ? 'border-ink bg-ink text-ivory'
                           : soldOut
-                            ? 'cursor-not-allowed border-gray-200 text-gray-300 line-through'
+                            ? 'cursor-not-allowed border-sand text-gray-300 line-through'
                             : isRecommended
-                              ? 'border-emerald-600 text-gray-900 hover:border-gray-900'
-                              : 'border-gray-300 text-gray-900 hover:border-gray-900'
+                              ? 'border-emerald-600 bg-white text-ink hover:border-ink'
+                              : 'border-sand bg-white text-ink hover:border-ink'
                       }`}
                     >
                       {s}
@@ -257,37 +277,32 @@ function ProductDetails({ product }) {
             />
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={adding}
-              className="flex-1 rounded-lg bg-brand py-3.5 text-base font-semibold text-white transition hover:bg-brand-light disabled:cursor-wait disabled:opacity-70"
-            >
-              {adding ? 'Adding…' : 'Add to cart'}
-            </button>
-            <button
-              type="button"
-              onClick={() => (user ? setTryOnOpen(true) : requireLogin('Log in to try this on.'))}
-              className="flex-1 rounded-lg border-2 border-brand py-3 text-base font-semibold text-brand transition hover:bg-brand hover:text-white"
-            >
-              Try it on
-            </button>
-          </div>
-
-          <Link
-            to={`/fitting-room?product=${product.slug}&color=${encodeURIComponent(color.name)}`}
-            className="-mt-4 flex items-center justify-center gap-2 rounded-lg bg-cream py-2.5 text-sm font-semibold text-brand hover:bg-brand hover:text-white"
-          >
-            <span aria-hidden="true">📷</span> Try it live in the fitting room
-          </Link>
-
-          {product.description && (
-            <div>
-              <h2 className="mb-2 text-sm font-semibold text-gray-900">Description</h2>
-              <p className="text-sm leading-relaxed text-gray-600">{product.description}</p>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button type="button" onClick={handleAddToCart} disabled={adding} className="btn-primary flex-1 py-4">
+                {adding ? 'Adding…' : 'Add to cart'}
+              </button>
+              <button
+                type="button"
+                onClick={() => (user ? setTryOnOpen(true) : requireLogin('Log in to try this on.'))}
+                className="btn-secondary flex-1 py-4"
+              >
+                Try it on
+              </button>
             </div>
-          )}
+            <Link
+              to={`/fitting-room?product=${product.slug}&color=${encodeURIComponent(color.name)}`}
+              className="group flex items-center justify-center gap-2.5 rounded-full bg-bone py-3.5 text-[12px] font-semibold tracking-[0.14em] text-ink uppercase transition-colors hover:bg-sand"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.5-2.5v9L15 14M4 7h11v10H4z" />
+              </svg>
+              Try it live in the fitting room
+              <span aria-hidden="true" className="transition-transform duration-500 ease-out-expo group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </div>
 
           <SizeGuide sizeChart={product.sizeChart} />
         </div>
@@ -300,41 +315,44 @@ function ProductDetails({ product }) {
 
 function SuitsYouBadge({ className = '' }) {
   return (
-    <span className={`rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ${className}`}>
-      Suits you
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold tracking-[0.12em] text-emerald-800 normal-case ${className}`}
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Suits you
     </span>
   );
 }
 
 // The line under the size buttons: the fit note, a prompt to scan, or a loading/error state
 function FitNote({ user, recommendation, size, sizeFit, recommended, recommendedInStock, onLogin }) {
-  const box = 'mt-4 rounded-xl p-4 text-sm';
+  const box = 'mt-5 rounded-2xl p-5 text-sm animate-rise';
 
   if (!user || !user.fitProfile?.measurements) {
     return (
-      <div className={`${box} flex flex-wrap items-center justify-between gap-3 bg-cream`}>
-        <p className="text-gray-700">
-          <span className="font-semibold text-gray-900">Not sure about your size?</span> Scan once and we'll recommend
-          the right size on every product.
+      <div className={`${box} flex flex-wrap items-center justify-between gap-4 bg-bone`}>
+        <p className="max-w-xs text-gray-700">
+          <span className="font-display text-lg text-ink">Not sure about your size?</span>
+          <br />
+          Scan once and we&rsquo;ll recommend the right size on every piece.
         </p>
         {user ? (
-          <Link to="/fit-profile" className="rounded-md bg-brand px-3 py-1.5 font-semibold text-white">
+          <Link to="/fit-profile" className="btn-primary btn-sm">
             Find my size
           </Link>
         ) : (
-          <button type="button" onClick={onLogin} className="rounded-md bg-brand px-3 py-1.5 font-semibold text-white">
+          <button type="button" onClick={onLogin} className="btn-primary btn-sm">
             Find my size
           </button>
         )}
       </div>
     );
   }
-  if (recommendation.loading) return <p className={`${box} animate-pulse bg-gray-50 text-gray-500`}>Finding your size…</p>;
+  if (recommendation.loading) return <p className={`${box} skeleton text-gray-500`}>Finding your size…</p>;
   if (recommendation.error) {
     return (
-      <p className={`${box} bg-gray-50 text-gray-600`}>
+      <p className={`${box} bg-bone text-gray-600`}>
         {recommendation.error.userMessage}{' '}
-        <button type="button" onClick={recommendation.reload} className="font-semibold text-brand underline">
+        <button type="button" onClick={recommendation.reload} className="font-semibold text-ink underline">
           Try again
         </button>
       </p>
@@ -344,14 +362,14 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
 
   const bestScore = recommendation.data.perSize?.[recommended]?.score ?? 0;
   return (
-    <div className={`${box} bg-emerald-50 text-emerald-900`}>
+    <div className={`${box} border border-emerald-200 bg-emerald-50/70 text-emerald-900`}>
       <p>
-        <span className="font-semibold">We recommend {recommended}</span> for your measurements
+        <span className="font-display text-lg text-emerald-900">We recommend {recommended}</span> for your measurements
         {!recommendedInStock && <span className="text-emerald-800"> (sold out right now)</span>}.
       </p>
       {size && sizeFit && (
         <p className="mt-1">
-          Size {size}: <span className="font-medium">{matchLabel(sizeFit.score)}</span>
+          Size {size}: <span className="font-semibold">{matchLabel(sizeFit.score)}</span>
           {sizeFit.note !== 'Good fit' && ` · ${sizeFit.note}`}
         </p>
       )}
@@ -381,13 +399,13 @@ function matchLabel(score) {
 
 function ProductPageSkeleton() {
   return (
-    <div className="mx-auto grid max-w-7xl animate-pulse gap-8 px-4 py-14 sm:px-6 md:grid-cols-2 lg:gap-14">
-      <div className="aspect-[3/4] rounded-2xl bg-gray-200" />
-      <div className="space-y-4">
-        <div className="h-4 w-1/4 rounded bg-gray-200" />
-        <div className="h-8 w-2/3 rounded bg-gray-200" />
-        <div className="h-6 w-1/3 rounded bg-gray-200" />
-        <div className="h-12 w-full rounded bg-gray-200" />
+    <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 lg:gap-16">
+      <div className="skeleton aspect-[3/4] rounded-[28px]" />
+      <div className="space-y-5 pt-6">
+        <div className="skeleton h-3 w-1/5 rounded-full" />
+        <div className="skeleton h-12 w-3/4 rounded-full" />
+        <div className="skeleton h-6 w-1/4 rounded-full" />
+        <div className="skeleton h-24 w-full rounded-2xl" />
       </div>
     </div>
   );

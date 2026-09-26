@@ -19,6 +19,7 @@
 // It's a 2D overlay: great for colour, style and proportions; it can't show how fabric
 // drapes or wrinkles. The AI try-on ("Make it realistic") is for a photo-real image.
 
+import { hexToRgb, shade } from '../color.js';
 import { P } from './landmarks.js';
 
 const MIN_VISIBILITY = 0.5;
@@ -40,17 +41,6 @@ const midpoint = (a, b) => mul(add(a, b), 0.5);
 const perp = (a) => ({ x: -a.y, y: a.x });
 
 // ---- colours ------------------------------------------------------------------------------
-function hexToRgb(hex) {
-  const n = parseInt(hex.replace('#', ''), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
-
-// amount < 0 darkens, > 0 lightens (−1 … 1)
-function shade(hex, amount) {
-  const [r, g, b] = hexToRgb(hex).map((c) => (amount < 0 ? c * (1 + amount) : c + (255 - c) * amount));
-  return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
-}
-
 // Very light garments need a visible outline; very dark ones a lighter one
 function outlineFor(hex) {
   const [r, g, b] = hexToRgb(hex);

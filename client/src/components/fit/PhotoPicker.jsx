@@ -2,13 +2,15 @@ import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useObjectUrl } from '../../hooks/useObjectUrl.js';
 import CameraCapture from './CameraCapture.jsx';
+import ScanOverlay from './ScanOverlay.jsx';
 
 const MAX_MB = 10;
 const TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 // Choose a photo by upload or camera, with a preview. The photo stays in the browser's
 // memory until the parent sends it; nothing is uploaded here.
-export default function PhotoPicker({ photo, onChange, disabled = false }) {
+// scanning: show the scan animation (with `scanMessage`) over the preview.
+export default function PhotoPicker({ photo, onChange, disabled = false, scanning = false, scanMessage }) {
   const [cameraOpen, setCameraOpen] = useState(false);
   const inputRef = useRef(null);
   const previewUrl = useObjectUrl(photo);
@@ -33,32 +35,32 @@ export default function PhotoPicker({ photo, onChange, disabled = false }) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {previewUrl ? (
-        <div className="relative mx-auto w-fit">
-          <img src={previewUrl} alt="Your photo" className="max-h-80 rounded-xl object-contain" />
+        <div className="relative mx-auto w-fit animate-pop overflow-hidden rounded-2xl">
+          <img src={previewUrl} alt="Your photo" className="block max-h-96 object-contain" />
+          {scanning && <ScanOverlay message={scanMessage} />}
         </div>
       ) : (
-        <div className="flex h-48 items-center justify-center rounded-xl border-2 border-dashed border-gray-300 text-sm text-gray-500">
-          No photo chosen yet
-        </div>
-      )}
-
-      <div className="flex flex-wrap justify-center gap-2">
         <button
           type="button"
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
-          className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-50"
+          className="group flex h-56 w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-ivory text-sm text-gray-500 transition-colors hover:border-ink hover:text-ink"
         >
+          <svg className="h-9 w-9 text-brass transition-transform duration-500 ease-out-expo group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.1} aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" />
+          </svg>
+          <span className="font-display text-xl text-ink">Add a full-body photo</span>
+          <span className="text-xs">JPEG, PNG or WEBP, up to {MAX_MB} MB</span>
+        </button>
+      )}
+
+      <div className="flex flex-wrap justify-center gap-2">
+        <button type="button" disabled={disabled} onClick={() => inputRef.current?.click()} className="btn-secondary btn-sm">
           {photo ? 'Choose another photo' : 'Upload a photo'}
         </button>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => setCameraOpen(true)}
-          className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-50"
-        >
+        <button type="button" disabled={disabled} onClick={() => setCameraOpen(true)} className="btn-secondary btn-sm">
           Take a photo
         </button>
       </div>

@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router';
 import { deleteProduct } from '../../api/admin.js';
 import { fetchProducts } from '../../api/products.js';
 import Pagination from '../../components/ui/Pagination.jsx';
+import ProductImage from '../../components/products/ProductImage.jsx';
 import Spinner from '../../components/ui/Spinner.jsx';
 import StatusMessage from '../../components/ui/StatusMessage.jsx';
 import { useApi } from '../../hooks/useApi.js';
@@ -37,10 +38,11 @@ export default function AdminProductsPage() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Products</h1>
+          <p className="eyebrow">Admin</p>
+          <h1 className="heading-display mt-2 text-5xl">Products</h1>
           {data && <p className="mt-1 text-sm text-gray-500">{data.total} products</p>}
         </div>
-        <Link to="/admin/products/new" className="rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white">
+        <Link to="/admin/products/new" className="btn-primary btn-sm">
           + New product
         </Link>
       </div>
@@ -53,14 +55,14 @@ export default function AdminProductsPage() {
         ) : data.items.length === 0 ? (
           <StatusMessage title="No products yet" message="Create your first product, or run npm run seed." />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-gray-200">
+          <div className="overflow-x-auto rounded-2xl border border-sand bg-white">
             <table className="w-full min-w-[640px] text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+              <thead className="bg-bone text-[11px] tracking-[0.14em] text-gray-600 uppercase">
                 <tr>
                   <th className="px-4 py-3 font-medium">Product</th>
                   <th className="px-4 py-3 font-medium">Type</th>
                   <th className="px-4 py-3 font-medium">Price</th>
-                  <th className="px-4 py-3 font-medium">Colors</th>
+                  <th className="px-4 py-3 font-medium">Colours</th>
                   <th className="px-4 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
@@ -69,7 +71,9 @@ export default function AdminProductsPage() {
                   <tr key={p._id} className="align-middle">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <img src={p.images[0]} alt="" className="h-12 w-9 rounded object-cover" />
+                        <span className="relative block h-12 w-9 shrink-0 overflow-hidden rounded-md bg-bone">
+                          <ProductImage src={p.images[0]} alt="" name={p.name} type={p.type} hex={p.colors[0]?.hex} className="absolute inset-0 h-full w-full" />
+                        </span>
                         <div>
                           <p className="font-medium text-gray-900">{p.name}</p>
                           <p className="text-xs text-gray-500">{p.brand}</p>

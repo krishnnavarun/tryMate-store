@@ -24,14 +24,18 @@ export default function WornPanel({
   const sizeFit = size ? recommendation.data?.perSize?.[size] : null;
 
   return (
-    <section className="space-y-5 rounded-2xl border border-gray-200 p-5" aria-label="Garment you're wearing">
+    <section className="animate-rise space-y-6 rounded-[28px] border border-sand bg-white p-6" aria-label="Garment you're wearing">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{product.brand}</p>
-          <h2 className="text-lg font-semibold text-gray-900">{product.name}</h2>
+          <p className="eyebrow">{product.brand}</p>
+          <h2 className="heading-display mt-1 mb-1 text-3xl leading-tight">{product.name}</h2>
           <Price price={product.price} discountPrice={product.discountPrice} />
         </div>
-        <button type="button" onClick={onTakeOff} className="text-sm font-medium text-gray-500 hover:text-red-600">
+        <button
+          type="button"
+          onClick={onTakeOff}
+          className="link-underline shrink-0 text-[11px] font-semibold tracking-[0.14em] text-gray-500 uppercase hover:text-red-600"
+        >
           Take off
         </button>
       </div>
@@ -52,11 +56,11 @@ export default function WornPanel({
               aria-label={c.name}
               aria-pressed={i === colorIndex}
               onClick={() => onColor(i)}
-              className={`relative h-8 w-8 rounded-full border border-gray-300 ring-offset-2 ${i === colorIndex ? 'ring-2 ring-brand' : ''}`}
+              className={`relative h-9 w-9 rounded-full ring-offset-[3px] ring-offset-white transition duration-300 ${i === colorIndex ? 'ring-1 ring-ink' : 'hover:scale-110'}`}
               style={{ backgroundColor: c.hex }}
             >
               {suiting.has(c.name) && (
-                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
+                <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-600" />
               )}
             </button>
           ))}
@@ -71,7 +75,7 @@ export default function WornPanel({
           {sizes.map((s) => (
             <div key={s} className="relative pt-2.5">
               {s === recommended && (
-                <span className="absolute -top-0.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold whitespace-nowrap text-white uppercase">
+                <span className="absolute -top-0.5 left-1/2 z-10 -translate-x-1/2 animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold tracking-[0.14em] whitespace-nowrap text-ivory uppercase">
                   Best fit
                 </span>
               )}
@@ -80,12 +84,12 @@ export default function WornPanel({
                 disabled={!inStock(s)}
                 aria-pressed={size === s}
                 onClick={() => onSize(s)}
-                className={`min-w-12 rounded-md border px-3 py-2 text-sm font-medium ${
+                className={`h-11 min-w-14 rounded-xl border px-3 text-sm font-semibold transition duration-300 ${
                   size === s
-                    ? 'border-brand bg-brand text-white'
+                    ? 'border-ink bg-ink text-ivory'
                     : !inStock(s)
-                      ? 'cursor-not-allowed border-gray-200 text-gray-300 line-through'
-                      : 'border-gray-300 hover:border-gray-900'
+                      ? 'cursor-not-allowed border-sand text-gray-300 line-through'
+                      : 'border-sand bg-white hover:border-ink'
                 }`}
               >
                 {s}
@@ -94,17 +98,17 @@ export default function WornPanel({
           ))}
         </div>
 
-        <div className="mt-3 rounded-xl bg-gray-50 p-3 text-sm">
+        <div className="mt-4 rounded-2xl bg-ivory p-4 text-sm ring-1 ring-sand/70">
           {!hasProfile ? (
             <p className="text-gray-600">
               The mirror shows your own proportions.{' '}
-              <Link to={loggedIn ? '/fit-profile' : '/login?redirect=%2Ffit-profile'} className="font-semibold text-brand underline">
+              <Link to={loggedIn ? '/fit-profile' : '/login?redirect=%2Ffit-profile'} className="font-semibold text-ink underline">
                 Scan your body
               </Link>{' '}
               to see how each size really fits you.
             </p>
           ) : recommendation.loading ? (
-            <p className="animate-pulse text-gray-500">Checking the fit…</p>
+            <p className="animate-breathe text-gray-500">Checking the fit…</p>
           ) : (
             <>
               {size && sizeFit && (
@@ -134,13 +138,13 @@ export default function WornPanel({
           type="button"
           onClick={onAddToCart}
           disabled={adding}
-          className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white hover:bg-brand-light disabled:opacity-60"
+          className="btn-primary flex-1"
         >
           {adding ? 'Adding…' : 'Add to cart'}
         </button>
         <Link
           to={`/products/${product.slug}`}
-          className="flex-1 rounded-lg border border-gray-300 py-2.5 text-center text-sm font-medium hover:bg-gray-50"
+          className="btn-secondary flex-1"
         >
           Product details
         </Link>

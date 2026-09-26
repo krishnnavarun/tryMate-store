@@ -47,7 +47,7 @@ export const AI_MESSAGES = {
   NO_PERSON_DETECTED: "We couldn't find a person in the photo. Try a clear, full-body photo.",
   MULTIPLE_PEOPLE: 'Please use a photo with only you in it.',
   PARTIAL_BODY: 'We need your full body, head to feet, in the photo.',
-  FACE_NOT_FOUND: "We couldn't see your face clearly, so color suggestions may be missing.",
+  FACE_NOT_FOUND: "We couldn't see your face clearly, so colour suggestions may be missing.",
   TRYON_FAILED: 'Try-on is busy right now. Please try again in a minute.',
   TRYON_TIMEOUT: 'Try-on is busy right now. Please try again in a minute.',
 };

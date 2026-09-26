@@ -257,6 +257,19 @@ A live camera "mirror" at `/fitting-room`: drag a garment onto yourself (mouse),
 - Honest limit: it's a 2D overlay — great for colour, style and proportions, but it doesn't
   simulate cloth, and it can't show how fabric drapes. Fit comes from the measurements.
 
+## Design and motion
+
+A warm, quiet look in the spirit of a tailor's shop.
+
+| Part | How |
+|---|---|
+| **Palette** | ivory `#FAF8F4` page, bone `#F1ECE4` surfaces, ink `#1C1A17` text and buttons, brass `#8B6D3F` accent; sage (success, "suits you"), oxblood (errors, sale) and ochre (notes). All tokens live in `client/src/index.css` (`@theme`). The default `gray` / `emerald` / `red` / `amber` scales are replaced by warm versions, so every existing class follows the palette. Text colours pass 4.5:1 contrast on ivory. |
+| **Type** | Instrument Serif for display text (its italic for emphasis), Manrope for the interface. Self-hosted with `@fontsource` (bundled; no Google Fonts request). |
+| **Motion** | CSS keyframes in `index.css` (`animate-rise`, `-word`, `-draw`, `-scan`, `-float`, `-marquee`…) with one easing curve. `components/ui/Motion.jsx`: `Reveal` (rises in when scrolled into view, via `IntersectionObserver`), `RevealText` (headline words slide up one by one), `CountUp`. Each page rises in on navigation; the cart badge bumps; buttons get a light sweep. |
+| **Motion graphics** | Home hero: a shirt drawn like a tailor's technical sheet, with measurement lines that draw themselves, a scan line and floating cards (`components/home/HeroGraphic.jsx`). A scan animation over your photo while it's analysed and during try-on (`ScanOverlay`); a hanger drawn on the 404 page; a check mark drawn when an order is placed. |
+| **Reduce motion** | With "reduce motion" on in the OS, every animation lands in its final state immediately. |
+| **Product illustrations** | Until real photos are added, the seed's placehold.co images are drawn as flat-lay garments in the right colour, with the right collar, sleeves and fabric (stripes, checks, denim, linen, knit, piqué, oxford, print): `GarmentArt.jsx`, chosen by `lib/garmentStyle.js` from the product name. `ProductImage` shows real photos as they are and falls back to the illustration if a photo fails to load. |
+
 ## How the AI features work (store side)
 
 - **Photos are never stored.** `multer.memoryStorage()` keeps an upload in RAM; it's forwarded
@@ -350,8 +363,9 @@ tryMate-store/
 │       │   ├── layout/            # Layout, Header, Footer
 │       │   ├── orders/            # OrderStatusBadge
 │       │   ├── products/          # ProductCard, ProductGrid, ShopFilters, Price, ColorDots, SizeGuide, TryOnModal
-│       │   └── ui/                # FormField, Modal, Pagination, Spinner, StatusMessage
-│       ├── lib/                   # camera.js; fitting/ (poseTracker, drawGarment, fit, landmarks + unit tests)
+│       │   ├── home/              # HeroGraphic (the home page motion graphic)
+│       │   └── ui/                # FormField, Modal, Pagination, Spinner, StatusMessage, Motion (Reveal, RevealText, CountUp)
+│       ├── lib/                   # camera.js, color.js, garmentStyle.js; fitting/ (poseTracker, drawGarment, fit, landmarks); unit tests
 │       ├── pages/                 # Home, Shop, Product, FitProfile, FittingRoom, Login, Register, Cart, Checkout, Orders, OrderDetail, NotFound
 │       │   └── admin/             # AdminProducts, AdminProductForm
 │       └── utils/                 # format (INR, dates), redirect (safe ?redirect=), productForm
@@ -404,11 +418,11 @@ tryMate-store/
 
 ## Tests
 
-**Unit tests** for the live fitting room run in plain Node in about a second (no browser, camera
-or server):
+**Unit tests** for the live fitting room and the product illustrations run in plain Node in about
+a second (no browser, camera or server):
 
 ```bash
-npm test               # → "pass 51"
+npm test               # → "pass 59"
 ```
 
 - `client/src/lib/fitting/drawGarment.test.js`: the garment drawing on a real detected pose
@@ -419,6 +433,8 @@ npm test               # → "pass 51"
   sizes drawn wider, drawing order and the product cut-out image.
 - `client/src/lib/fitting/fit.test.js`: size chart + measurements → drawing scale, the limits,
   missing data, and the "Snug / Roomy" labels.
+- `client/src/lib/garmentStyle.test.js`: product name → illustration style (collar, sleeves,
+  fabric) for the whole catalogue, reading the seed's placeholder URLs, and the colour helpers.
 - Node's built-in test runner (`node --test`) finds every `*.test.js` file; there are no extra packages.
 
 **End-to-end tests** call the API of a **running** server, the way the React app does:
@@ -458,20 +474,27 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   scan (upload and the camera with a fake video device), recommendations, try-on, cart,
   checkout, order confirmation and admin, with no console errors.
 - Fitting room: the real MediaPipe model in headless Chrome on a person in a fake camera
-  feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 51 unit
+  feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 59 unit
   tests. They were also checked the other way round: with the old sleeve maths put back they fail.
-- Docker: the compose file was parsed and cross-checked (every variable documented, every
-  setting the server requires is set), but the images have **not** been built on the
-  development machine, which has no Docker. The CI `docker` job is their first real run.
+- Design and motion: a headless Chrome tour of the redesign (desktop 1440 px + 390 px mobile).
+  It covered home, the shop (including the card hover), product, login, register, the scan
+  animation (the scan request held for 3 s to see it), results, recommendation, add to cart,
+  cart, the fitting room and 404. There were no console errors. All 31 product/colour
+  illustrations were also rendered side by side and checked.
+- Docker: the CI `docker` job passed on its first run: both images built, the stack came up
+  healthy, the nginx smoke tests passed and all e2e checks passed against the containers.
+  (The development machine has no Docker, so CI is where the images are built.)
 
 ## What still needs you
 
-1. **Real product photos:** the seed uses placeholder images. For try-on, each product's
+1. **Real product photos:** the seed uses placeholder images, which the store shows as drawn
+   illustrations (see [Design and motion](#design-and-motion)). For try-on, each product's
    `garmentImageUrl` must be a real flat-lay photo (garment alone, plain background). Edit them
    in `/admin/products` or in `server/seed/products.data.js`.
 2. **Real size charts:** `server/seed/sizeCharts.js` holds realistic approximations; check them
    against real brand charts.
-3. **Calibrate** the AI measurements against a tape measure (see tryMate-Ai's README).
+3. **Calibrate** the AI measurements against a tape measure: tryMate-Ai's `scripts/calibrate.py`
+   turns a few photos + tape values into the constants to set (see tryMate-Ai's README).
 4. **Deploy** (above) and run the demo flow on your phone.
 
 ## Tip: OneDrive

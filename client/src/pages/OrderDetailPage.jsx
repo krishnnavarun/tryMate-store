@@ -1,6 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router';
 import { fetchOrder } from '../api/orders.js';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
+import ProductImage from '../components/products/ProductImage.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
@@ -20,7 +21,7 @@ export default function OrderDetailPage() {
           title="Order not found"
           message={error.userMessage}
           action={
-            <Link to="/orders" className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white">
+            <Link to="/orders" className="btn-primary btn-sm">
               Your orders
             </Link>
           }
@@ -34,25 +35,34 @@ export default function OrderDetailPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       {justPlaced && (
-        <div className="mb-8 rounded-2xl bg-green-50 p-6 text-green-800">
-          <h2 className="text-lg font-semibold">Thank you! Your order is placed.</h2>
-          <p className="mt-1 text-sm">This is a demo, so nothing was charged and nothing will ship.</p>
+        <div className="mb-10 flex animate-rise items-center gap-5 rounded-[28px] bg-emerald-50 p-7 text-emerald-900">
+          {/* A check mark that draws itself */}
+          <svg className="h-12 w-12 shrink-0 text-emerald-700" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <circle cx="24" cy="24" r="22" strokeDasharray="139" className="animate-draw" style={{ '--dash': 139 }} />
+            <path d="M15 24.5l6 6 12-13" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="30" className="animate-draw" style={{ '--dash': 30, animationDelay: '700ms' }} />
+          </svg>
+          <div>
+            <h2 className="heading-display text-3xl text-emerald-900">Thank you, your order is placed.</h2>
+            <p className="mt-1 text-sm">This is a demo, so nothing was charged and nothing will ship.</p>
+          </div>
         </div>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Order #{shortId(order._id)}</h1>
+          <h1 className="heading-display text-5xl">Order #{shortId(order._id)}</h1>
           <p className="text-sm text-gray-500">Placed {formatDate(order.createdAt)}</p>
         </div>
         <OrderStatusBadge status={order.status} />
       </div>
 
       <div className="mt-8 grid gap-10 md:grid-cols-[1fr_260px]">
-        <ul className="divide-y divide-gray-200 border-y border-gray-200">
+        <ul className="divide-y divide-sand border-y border-sand">
           {order.items.map((item, i) => (
             <li key={i} className="flex gap-4 py-4">
-              <img src={item.image} alt={item.name} className="h-24 w-18 rounded-lg object-cover" />
+              <span className="relative block h-24 w-18 shrink-0 overflow-hidden rounded-xl bg-bone">
+                <ProductImage src={item.image} alt={item.name} name={item.name} className="absolute inset-0 h-full w-full" />
+              </span>
               <div className="flex flex-1 justify-between gap-4">
                 <div>
                   {item.slug ? (
@@ -97,7 +107,7 @@ export default function OrderDetailPage() {
             <span>Total</span>
             <span>{formatPrice(order.total)}</span>
           </div>
-          <Link to="/orders" className="block font-medium text-brand hover:underline">
+          <Link to="/orders" className="link-underline inline-block text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
             ← All orders
           </Link>
         </aside>

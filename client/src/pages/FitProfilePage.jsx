@@ -53,10 +53,11 @@ export default function FitProfilePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Your fit profile</h1>
-        <p className="mt-2 max-w-2xl text-gray-600">
-          One full-body photo and your height give us your measurements and the colors that suit you. Then every
+      <div className="mb-10 animate-rise">
+        <p className="eyebrow">Your fit</p>
+        <h1 className="heading-display mt-3 text-5xl sm:text-6xl">Your fit profile</h1>
+        <p className="mt-4 max-w-2xl leading-relaxed text-gray-600">
+          One full-body photo and your height give us your measurements and the colours that suit you. Then every
           product shows the size that fits you.
         </p>
       </div>
@@ -69,12 +70,12 @@ export default function FitProfilePage() {
           onCancel={fitProfile ? () => setScanning(false) : undefined}
         />
       ) : (
-        <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <FitResults fitProfile={fitProfile} warnings={warnings} />
 
-          <aside className="h-fit space-y-5 rounded-2xl bg-cream p-5">
+          <aside className="h-fit animate-rise space-y-6 rounded-[28px] bg-bone p-7 lg:sticky lg:top-32" style={{ animationDelay: '200ms' }}>
             <div>
-              <h2 className="font-semibold text-gray-900">How do you like your clothes to fit?</h2>
+              <h2 className="heading-display text-2xl leading-tight">How do you like your clothes to fit?</h2>
               <p className="mt-1 text-sm text-gray-600">Size recommendations follow this.</p>
               <div className="mt-3">
                 <FitPreferenceToggle value={user.fitPreference} onChange={handlePreference} disabled={busy} />
@@ -83,28 +84,28 @@ export default function FitProfilePage() {
 
             <Link
               to="/shop"
-              className="block rounded-lg bg-brand py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-light"
+              className="btn-primary w-full"
             >
               See your size on every product
             </Link>
             <button
               type="button"
               onClick={() => setScanning(true)}
-              className="block w-full rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium hover:bg-gray-50"
+              className="btn-secondary w-full"
             >
               Re-scan
             </button>
 
-            <div className="border-t border-gray-300 pt-4">
+            <div className="border-t border-sand pt-5">
               {confirmDelete ? (
                 <div className="space-y-2 text-sm">
-                  <p className="text-gray-700">Delete your measurements and colors? You can scan again any time.</p>
+                  <p className="text-gray-700">Delete your measurements and colours? You can scan again any time.</p>
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={handleDelete}
                       disabled={busy}
-                      className="rounded-md bg-red-600 px-3 py-1.5 font-medium text-white disabled:opacity-60"
+                      className="rounded-full bg-red-600 px-4 py-1.5 font-semibold text-ivory transition-colors hover:bg-red-700 disabled:opacity-60"
                     >
                       Yes, delete
                     </button>
@@ -117,7 +118,7 @@ export default function FitProfilePage() {
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(true)}
-                  className="text-sm font-medium text-gray-500 hover:text-red-600"
+                  className="link-underline text-[11px] font-semibold tracking-[0.14em] text-gray-500 uppercase hover:text-red-600"
                 >
                   Delete my fit profile
                 </button>

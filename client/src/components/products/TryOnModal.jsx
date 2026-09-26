@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { tryOnProduct } from '../../api/products.js';
+import { messageAt, useElapsedSeconds } from '../../hooks/useElapsedSeconds.js';
 import { useObjectUrl } from '../../hooks/useObjectUrl.js';
 import PhotoPicker from '../fit/PhotoPicker.jsx';
 import PrivacyNotice from '../fit/PrivacyNotice.jsx';
+import ScanOverlay from '../fit/ScanOverlay.jsx';
 import Modal from '../ui/Modal.jsx';
 
 // Friendly messages while the try-on runs (it can take up to a minute)
@@ -17,20 +19,6 @@ const PROGRESS_MESSAGES = [
   [75, 'This one is taking a little longer than usual…'],
 ];
 const EXPECTED_SECONDS = 45; // for the progress bar; the real time varies
-
-function useElapsedSeconds(running) {
-  const [elapsed, setElapsed] = useState(0);
-  useEffect(() => {
-    if (!running) return;
-    const started = Date.now();
-    const id = setInterval(() => setElapsed(Math.floor((Date.now() - started) / 1000)), 500);
-    return () => {
-      clearInterval(id);
-      setElapsed(0);
-    };
-  }, [running]);
-  return elapsed;
-}
 
 // initialPhoto: optional File to start with (e.g. a snapshot from the live fitting room)
 export default function TryOnModal({ product, color, onClose, initialPhoto = null }) {
@@ -61,30 +49,37 @@ export default function TryOnModal({ product, color, onClose, initialPhoto = nul
     }
   }
 
-  const message = [...PROGRESS_MESSAGES].reverse().find(([at]) => elapsed >= at)?.[1];
+  const message = messageAt(PROGRESS_MESSAGES, elapsed);
   const progress = Math.min(95, Math.round((elapsed / EXPECTED_SECONDS) * 100));
 
   return (
     <Modal title={`Try on: ${product.name}${color ? ` (${color.name})` : ''}`} onClose={onClose} size="max-w-3xl">
       {status === 'done' && result ? (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <figure>
-              <img src={photoUrl} alt="Your photo" className="aspect-[3/4] w-full rounded-xl bg-gray-100 object-cover" />
-              <figcaption className="mt-1 text-center text-xs text-gray-500">Your photo</figcaption>
+        <div className="space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <figure className="animate-rise">
+              <img src={photoUrl} alt="Your photo" className="aspect-[3/4] w-full rounded-2xl bg-bone object-cover" />
+              <figcaption className="mt-2 text-center text-[11px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
+                Your photo
+              </figcaption>
             </figure>
-            <figure>
-              <img src={result.resultImage} alt={`You wearing ${product.name}`} className="aspect-[3/4] w-full rounded-xl bg-gray-100 object-cover" />
-              <figcaption className="mt-1 text-center text-xs text-gray-500">With {product.name}</figcaption>
+            <figure className="animate-rise" style={{ animationDelay: '180ms' }}>
+              <img
+                src={result.resultImage}
+                alt={`You wearing ${product.name}`}
+                className="aspect-[3/4] w-full rounded-2xl bg-bone object-cover"
+              />
+              <figcaption className="mt-2 text-center text-[11px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
+                With {product.name}
+              </figcaption>
             </figure>
           </div>
-          <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
-            <strong>This shows the look, not the exact fit.</strong> Check the size recommendation for fit.
+          <p className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">
+            <strong className="font-semibold">This shows the look, not the exact fit.</strong> Check the size recommendation
+            for fit.
           </p>
           {result.provider === 'mock' && (
-            <p className="text-xs text-gray-500">
-              Demo mode: the try-on service is simulated, so the result is just your photo.
-            </p>
+            <p className="text-xs text-gray-500">Demo mode: the try-on service is simulated, so the result is just your photo.</p>
           )}
           <div className="flex justify-end gap-2">
             <button
@@ -93,44 +88,46 @@ export default function TryOnModal({ product, color, onClose, initialPhoto = nul
                 setResult(null);
                 setStatus('idle');
               }}
-              className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium"
+              className="btn-secondary btn-sm"
             >
               Try another photo
             </button>
-            <button type="button" onClick={onClose} className="rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white">
+            <button type="button" onClick={onClose} className="btn-primary btn-sm">
               Done
             </button>
           </div>
         </div>
       ) : status === 'running' ? (
-        <div className="space-y-5 py-6 text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-brand" />
-          <p className="font-medium text-gray-900" aria-live="polite">
+        <div className="space-y-6 py-2 text-center">
+          <div className="relative mx-auto w-fit overflow-hidden rounded-2xl">
+            <img src={photoUrl} alt="Your photo" className="block max-h-80 object-contain" />
+            <ScanOverlay message={message} />
+          </div>
+          <p className="sr-only" aria-live="polite">
             {message}
           </p>
-          <div className="mx-auto h-2 max-w-sm overflow-hidden rounded-full bg-gray-200">
-            <div className="h-full rounded-full bg-brand transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div className="mx-auto h-px max-w-sm overflow-hidden bg-sand">
+            <div className="h-full bg-brass transition-[width] duration-700 ease-out-expo" style={{ width: `${progress}%` }} />
           </div>
           <p className="text-xs text-gray-500">This usually takes 10–60 seconds. You can close this window to cancel.</p>
         </div>
       ) : (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+        <div className="space-y-5">
+          <p className="text-sm leading-relaxed text-gray-600">
             Use a clear photo of yourself from the front, standing straight, ideally with your upper body fully visible.
           </p>
           <PhotoPicker photo={photo} onChange={setPhoto} />
           <PrivacyNotice variant="tryon" />
-          {error && <p className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700">{error}</p>}
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-gray-600">
-              Cancel
-            </button>
+          {error && <p className="animate-rise rounded-2xl bg-red-50 p-4 text-sm font-medium text-red-700">{error}</p>}
+          <div className="flex items-center justify-end gap-3">
             <button
               type="button"
-              disabled={!photo}
-              onClick={start}
-              className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+              onClick={onClose}
+              className="link-underline px-2 text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase"
             >
+              Cancel
+            </button>
+            <button type="button" disabled={!photo} onClick={start} className="btn-primary">
               {status === 'error' ? 'Try again' : 'Create try-on'}
             </button>
           </div>

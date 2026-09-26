@@ -76,7 +76,7 @@ export default function CameraCapture({ onCapture, onCancel }) {
     return (
       <div className="space-y-4 text-center">
         <p className="rounded-lg bg-amber-50 p-4 text-sm text-amber-800">{error}</p>
-        <button type="button" onClick={onCancel} className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium">
+        <button type="button" onClick={onCancel} className="btn-secondary btn-sm">
           Back
         </button>
       </div>
@@ -114,7 +114,7 @@ export default function CameraCapture({ onCapture, onCancel }) {
               type="button"
               disabled={!ready}
               onClick={() => setCountdown(SELF_TIMER_SECONDS)}
-              className="rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+              className="btn-primary btn-sm"
             >
               Start {SELF_TIMER_SECONDS}s timer
             </button>
@@ -122,7 +122,7 @@ export default function CameraCapture({ onCapture, onCancel }) {
               type="button"
               disabled={!ready}
               onClick={capture}
-              className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium disabled:opacity-50"
+              className="btn-secondary btn-sm"
             >
               Take now
             </button>
@@ -132,7 +132,7 @@ export default function CameraCapture({ onCapture, onCancel }) {
                 setReady(false);
                 setFacing((f) => (f === 'user' ? 'environment' : 'user'));
               }}
-              className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium"
+              className="btn-secondary btn-sm"
             >
               Switch camera
             </button>
@@ -141,7 +141,7 @@ export default function CameraCapture({ onCapture, onCancel }) {
           <button
             type="button"
             onClick={() => setCountdown(null)}
-            className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium"
+            className="btn-secondary btn-sm"
           >
             Cancel timer
           </button>

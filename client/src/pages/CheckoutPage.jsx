@@ -48,11 +48,12 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">Checkout</h1>
+      <p className="eyebrow">Almost yours</p>
+      <h1 className="heading-display mt-3 text-5xl sm:text-6xl">Checkout</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
         <section>
-          <h2 className="text-lg font-semibold text-gray-900">Shipping address</h2>
+          <h2 className="heading-display text-3xl">Shipping address</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <FormField label="Full name" name="fullName" required maxLength={80} defaultValue={user?.name} autoComplete="name" />
             <FormField label="Phone" name="phone" type="tel" required minLength={7} maxLength={20} autoComplete="tel" />
@@ -70,15 +71,15 @@ export default function CheckoutPage() {
             <FormField label="Country" name="country" required maxLength={60} defaultValue="India" autoComplete="country-name" />
           </div>
 
-          <h2 className="mt-10 text-lg font-semibold text-gray-900">Payment</h2>
+          <h2 className="heading-display mt-12 text-3xl">Payment</h2>
           <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
             This is a demo store: no payment is taken and nothing will be shipped. Placing the order just records it
             in your order history.
           </p>
         </section>
 
-        <aside className="h-fit rounded-2xl bg-cream p-6">
-          <h2 className="text-lg font-semibold text-gray-900">Your order</h2>
+        <aside className="h-fit rounded-[28px] bg-bone p-7 lg:sticky lg:top-32">
+          <h2 className="heading-display text-3xl">Your order</h2>
           <ul className="mt-4 space-y-3">
             {cart.items.map((item) => (
               <li key={item._id} className="flex justify-between gap-3 text-sm">
@@ -92,14 +93,14 @@ export default function CheckoutPage() {
               </li>
             ))}
           </ul>
-          <div className="mt-4 flex justify-between border-t border-gray-300 pt-4 text-base font-semibold">
+          <div className="mt-5 flex justify-between border-t border-sand pt-5 font-display text-2xl">
             <span>Total</span>
             <span>{formatPrice(cart.subtotal)}</span>
           </div>
           <SubmitButton loading={placing} loadingText="Placing order…" className="mt-6">
             Place order
           </SubmitButton>
-          <Link to="/cart" className="mt-3 block text-center text-sm font-medium text-brand hover:underline">
+          <Link to="/cart" className="mt-4 block text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase hover:text-brass">
             Back to cart
           </Link>
         </aside>

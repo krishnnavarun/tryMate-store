@@ -60,7 +60,23 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-      <Toaster position="top-center" toastOptions={{ duration: 3500 }} />
+      <Toaster
+        position="top-center"
+        containerStyle={{ top: 112 }} // just below the header
+        toastOptions={{
+          duration: 3500,
+          style: {
+            background: '#1c1a17',
+            color: '#faf8f4',
+            borderRadius: '999px',
+            padding: '10px 18px',
+            fontSize: '14px',
+            boxShadow: '0 18px 40px -18px rgb(28 26 23 / 0.6)',
+          },
+          success: { iconTheme: { primary: '#c8ad7f', secondary: '#1c1a17' } },
+          error: { iconTheme: { primary: '#cf9186', secondary: '#1c1a17' } },
+        }}
+      />
     </>
   );
 }

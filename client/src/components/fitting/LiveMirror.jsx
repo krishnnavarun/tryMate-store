@@ -178,8 +178,8 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
     <div className="space-y-3">
       <div
         ref={zoneRef}
-        className={`relative aspect-[3/4] overflow-hidden rounded-2xl bg-gray-900 transition sm:aspect-[4/3] ${
-          highlight ? 'ring-4 ring-emerald-400 ring-offset-2' : ''
+        className={`relative aspect-[3/4] overflow-hidden rounded-[28px] bg-[radial-gradient(ellipse_at_50%_40%,#3b3731,#1c1a17_75%)] transition duration-500 sm:aspect-[4/3] ${
+          highlight ? 'ring-2 ring-brass-light ring-offset-4 ring-offset-ivory' : ''
         }`}
       >
         {/* Video and drawing share one box, so the garment lines up with the body */}
@@ -188,17 +188,28 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
           <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
         </div>
 
+        {/* Viewfinder corners (breathing until the camera is on) */}
+        {['top-5 left-5 border-t border-l', 'top-5 right-5 border-t border-r', 'bottom-5 left-5 border-b border-l', 'bottom-5 right-5 border-b border-r'].map(
+          (corner) => (
+            <span
+              key={corner}
+              className={`pointer-events-none absolute h-8 w-8 border-brass-light/70 ${camera === 'on' ? '' : 'animate-breathe'} ${corner}`}
+            />
+          ),
+        )}
+
         {camera !== 'on' && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center text-white">
             {camera === 'starting' ? (
               <>
-                <span className="h-10 w-10 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+                <span className="h-10 w-10 animate-spin rounded-full border border-ivory/25 border-t-brass-light" />
                 <p className="text-sm">Starting the camera and body tracking…</p>
               </>
             ) : (
               <>
-                <p className="max-w-sm text-lg font-semibold">Your live fitting room</p>
-                <p className="max-w-sm text-sm text-white/75">
+                <p className="eyebrow text-brass-light">Live</p>
+                <p className="max-w-sm font-display text-4xl">Your live fitting room</p>
+                <p className="max-w-sm text-sm leading-relaxed text-ivory/70">
                   Stand 1.5–2 m from the camera, then drag a garment onto yourself. Everything runs on your
                   device; the video is never uploaded.
                 </p>
@@ -206,7 +217,7 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
                 <button
                   type="button"
                   onClick={start}
-                  className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-brand hover:bg-cream"
+                  className="btn-light mt-2"
                 >
                   {camera === 'error' ? 'Try again' : 'Start camera'}
                 </button>
@@ -217,15 +228,17 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
 
         {camera === 'on' && (hint || !garment) && (
           <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
-            <span className="rounded-full bg-black/60 px-4 py-2 text-sm font-medium text-white" aria-live="polite">
+            <span key={hint ?? 'drag'} className="animate-rise rounded-full bg-ink/75 px-4 py-2 text-xs font-medium tracking-wide text-ivory backdrop-blur" aria-live="polite">
               {hint ? HINTS[hint] : 'Drag a garment here, or tap one to wear it'}
             </span>
           </div>
         )}
 
         {highlight && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-emerald-500/15">
-            <span className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">Drop to try it on</span>
+          <div className="pointer-events-none absolute inset-0 flex animate-fade items-center justify-center bg-brass-light/15">
+            <span className="animate-pop rounded-full bg-ivory px-5 py-2.5 text-[11px] font-semibold tracking-[0.18em] text-ink uppercase shadow-lg">
+              Drop to try it on
+            </span>
           </div>
         )}
       </div>
@@ -235,7 +248,7 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
           <button
             type="button"
             onClick={switchCamera}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
+            className="btn-secondary btn-sm"
           >
             Switch camera
           </button>

@@ -1,15 +1,16 @@
 export default function Pagination({ page, pages, onPageChange }) {
   if (pages <= 1) return null;
 
-  const button = 'rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40';
+  const button =
+    'rounded-full border border-sand px-5 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase transition-colors hover:border-ink disabled:pointer-events-none disabled:opacity-35';
 
   return (
-    <nav className="flex items-center justify-center gap-3" aria-label="Pagination">
+    <nav className="flex items-center justify-center gap-4" aria-label="Pagination">
       <button type="button" className={button} disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
         Previous
       </button>
-      <span className="text-sm text-gray-600">
-        Page {page} of {pages}
+      <span className="font-display text-lg text-gray-600 tabular-nums">
+        {page} <span className="text-gray-400">/</span> {pages}
       </span>
       <button type="button" className={button} disabled={page >= pages} onClick={() => onPageChange(page + 1)}>
         Next

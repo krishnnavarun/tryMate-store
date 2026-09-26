@@ -18,18 +18,21 @@ export default function SizeGuide({ sizeChart }) {
   const fields = FIELDS.filter((f) => sizes.some(([, ranges]) => ranges[f.key]));
 
   return (
-    <details className="group rounded-lg border border-gray-200">
-      <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-gray-900">
+    <details className="group border-y border-sand">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-5 text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
         Size guide (cm)
-        <span className="text-gray-400 transition group-open:rotate-180">▾</span>
+        <span className="relative h-3 w-3" aria-hidden="true">
+          <span className="absolute top-1/2 left-0 h-px w-3 bg-ink" />
+          <span className="absolute top-0 left-1/2 h-3 w-px bg-ink transition-transform duration-300 group-open:rotate-90" />
+        </span>
       </summary>
-      <div className="overflow-x-auto px-4 pb-4">
-        <table className="w-full text-left text-sm">
+      <div className="animate-fade overflow-x-auto pb-5">
+        <table className="w-full text-left text-sm tabular-nums">
           <thead>
-            <tr className="border-b border-gray-200 text-gray-500">
-              <th className="py-2 pr-4 font-medium">Size</th>
+            <tr className="border-b border-sand text-[11px] tracking-[0.12em] text-gray-500 uppercase">
+              <th className="py-2.5 pr-4 font-semibold">Size</th>
               {fields.map((f) => (
-                <th key={f.key} className="py-2 pr-4 font-medium">
+                <th key={f.key} className="py-2.5 pr-4 font-semibold">
                   {f.label}
                 </th>
               ))}
@@ -37,10 +40,10 @@ export default function SizeGuide({ sizeChart }) {
           </thead>
           <tbody>
             {sizes.map(([size, ranges]) => (
-              <tr key={size} className="border-b border-gray-100 last:border-0">
-                <td className="py-2 pr-4 font-medium text-gray-900">{size}</td>
+              <tr key={size} className="border-b border-sand/60 last:border-0">
+                <td className="py-2.5 pr-4 font-semibold text-ink">{size}</td>
                 {fields.map((f) => (
-                  <td key={f.key} className="py-2 pr-4 text-gray-600">
+                  <td key={f.key} className="py-2.5 pr-4 text-gray-600">
                     {formatRange(ranges[f.key])}
                   </td>
                 ))}
@@ -49,7 +52,7 @@ export default function SizeGuide({ sizeChart }) {
           </tbody>
         </table>
         <p className="mt-3 text-xs text-gray-500">
-          Chest, waist and shoulder are body measurements. Length is the garment's back length.
+          Chest, waist and shoulder are body measurements. Length is the garment&rsquo;s back length.
         </p>
       </div>
     </details>

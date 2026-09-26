@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { fetchOrders } from '../api/orders.js';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
+import ProductImage from '../components/products/ProductImage.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
@@ -11,7 +12,8 @@ export default function OrdersPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">Your orders</h1>
+      <p className="eyebrow">Account</p>
+      <h1 className="heading-display mt-3 text-5xl sm:text-6xl">Your orders</h1>
 
       <div className="mt-8">
         {loading ? (
@@ -21,7 +23,7 @@ export default function OrdersPage() {
             title="Couldn't load your orders"
             message={error.userMessage}
             action={
-              <button type="button" onClick={reload} className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white">
+              <button type="button" onClick={reload} className="btn-primary btn-sm">
                 Try again
               </button>
             }
@@ -31,22 +33,22 @@ export default function OrdersPage() {
             title="No orders yet"
             message="When you place an order, it will show up here."
             action={
-              <Link to="/shop" className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white">
+              <Link to="/shop" className="btn-primary btn-sm">
                 Start shopping
               </Link>
             }
           />
         ) : (
           <ul className="space-y-4">
-            {orders.map((order) => (
-              <li key={order._id}>
+            {orders.map((order, i) => (
+              <li key={order._id} className="animate-rise" style={{ animationDelay: `${i * 60}ms` }}>
                 <Link
                   to={`/orders/${order._id}`}
-                  className="block rounded-xl border border-gray-200 p-5 transition hover:border-gray-400"
+                  className="block rounded-2xl border border-sand bg-white p-6 transition duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-ink/40 hover:shadow-[0_20px_40px_-24px_rgb(28_26_23/0.3)]"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-gray-900">Order #{shortId(order._id)}</p>
+                      <p className="font-display text-2xl text-ink">Order #{shortId(order._id)}</p>
                       <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
                     </div>
                     <OrderStatusBadge status={order.status} />
@@ -54,12 +56,9 @@ export default function OrdersPage() {
                   <div className="mt-4 flex items-center justify-between gap-4">
                     <div className="flex -space-x-3">
                       {order.items.slice(0, 4).map((item, i) => (
-                        <img
-                          key={i}
-                          src={item.image}
-                          alt={item.name}
-                          className="h-14 w-11 rounded-md border-2 border-white object-cover"
-                        />
+                        <span key={i} className="relative block h-16 w-12 overflow-hidden rounded-lg border-2 border-white bg-bone">
+                          <ProductImage src={item.image} alt={item.name} name={item.name} className="absolute inset-0 h-full w-full" />
+                        </span>
                       ))}
                     </div>
                     <p className="text-sm text-gray-600">

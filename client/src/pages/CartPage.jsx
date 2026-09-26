@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
+import ProductImage from '../components/products/ProductImage.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import { useCart } from '../hooks/useCart.js';
 import { formatPrice } from '../utils/format.js';
@@ -25,7 +26,7 @@ export default function CartPage() {
           title="Your cart is empty"
           message="Find something you like, and we'll keep it here for you."
           action={
-            <Link to="/shop" className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white">
+            <Link to="/shop" className="btn-primary btn-sm">
               Start shopping
             </Link>
           }
@@ -36,17 +37,18 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">Your cart</h1>
+      <p className="eyebrow">Your selection</p>
+      <h1 className="heading-display mt-3 text-5xl sm:text-6xl">Your cart</h1>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
-        <ul className="divide-y divide-gray-200 border-y border-gray-200">
+      <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_340px]">
+        <ul className="divide-y divide-sand border-y border-sand">
           {cart.items.map((item) => (
             <CartLine key={item._id} item={item} />
           ))}
         </ul>
 
-        <aside className="h-fit rounded-2xl bg-cream p-6">
-          <h2 className="text-lg font-semibold text-gray-900">Order summary</h2>
+        <aside className="h-fit animate-rise rounded-[28px] bg-bone p-7 lg:sticky lg:top-32" style={{ animationDelay: '150ms' }}>
+          <h2 className="heading-display text-3xl">Order summary</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-gray-600">Items ({cart.itemCount})</dt>
@@ -67,18 +69,18 @@ export default function CartPage() {
             </p>
           )}
           {cart.hasStockIssues ? (
-            <span className="mt-6 block w-full cursor-not-allowed rounded-lg bg-gray-300 py-3 text-center text-sm font-semibold text-white">
+            <span className="mt-7 block w-full cursor-not-allowed rounded-full bg-gray-300 py-3.5 text-center text-sm font-semibold text-ivory">
               Checkout
             </span>
           ) : (
             <Link
               to="/checkout"
-              className="mt-6 block w-full rounded-lg bg-brand py-3 text-center text-sm font-semibold text-white hover:bg-brand-light"
+              className="btn-primary mt-7 w-full py-3.5"
             >
               Checkout
             </Link>
           )}
-          <Link to="/shop" className="mt-3 block text-center text-sm font-medium text-brand hover:underline">
+          <Link to="/shop" className="mt-4 block text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase hover:text-brass">
             Continue shopping
           </Link>
         </aside>
@@ -106,15 +108,18 @@ function CartLine({ item }) {
   }
 
   return (
-    <li className={`flex gap-4 py-6 ${busy ? 'opacity-60' : ''}`}>
-      <Link to={`/products/${item.product.slug}`} className="w-24 shrink-0 sm:w-28">
-        <img src={item.product.image} alt={item.product.name} className="aspect-[3/4] w-full rounded-lg object-cover" />
+    <li className={`flex animate-rise gap-5 py-7 transition-opacity ${busy ? 'opacity-60' : ''}`}>
+      <Link
+        to={`/products/${item.product.slug}`}
+        className="relative block aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-xl bg-bone sm:w-28"
+      >
+        <ProductImage src={item.product.image} alt={item.product.name} name={item.product.name} className="absolute inset-0 h-full w-full" />
       </Link>
 
       <div className="flex flex-1 flex-col">
         <div className="flex justify-between gap-4">
           <div>
-            <Link to={`/products/${item.product.slug}`} className="font-medium text-gray-900 hover:text-brand-accent">
+            <Link to={`/products/${item.product.slug}`} className="font-display text-2xl leading-tight text-ink transition-colors hover:text-brass">
               {item.product.name}
             </Link>
             <p className="mt-1 text-sm text-gray-500">
@@ -138,7 +143,7 @@ function CartLine({ item }) {
               value={item.qty}
               disabled={busy}
               onChange={(e) => run(() => updateQty(item._id, Number(e.target.value)))}
-              className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900"
+              className="rounded-full border border-sand bg-white px-3 py-1 text-sm text-ink focus:border-ink focus:outline-none"
             >
               {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>

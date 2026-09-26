@@ -4,26 +4,23 @@ export default function FormField({ label, hint, className = '', ...inputProps }
   const id = inputProps.id ?? `field-${inputProps.name}`;
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="mb-2 block text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">
         {label}
       </label>
       <input
         id={id}
-        className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none"
+        className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-[border-color,box-shadow] duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
         {...inputProps}
       />
-      {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs text-gray-500">{hint}</p>}
     </div>
   );
 }
 
 export function SubmitButton({ loading, children, loadingText = 'Please wait…', className = '' }) {
   return (
-    <button
-      type="submit"
-      disabled={loading}
-      className={`w-full rounded-lg bg-brand py-3 text-sm font-semibold text-white transition hover:bg-brand-light disabled:cursor-wait disabled:opacity-70 ${className}`}
-    >
+    <button type="submit" disabled={loading} className={`btn-primary w-full py-3.5 disabled:cursor-wait ${className}`}>
+      {loading && <span className="h-3.5 w-3.5 animate-spin rounded-full border border-ivory/40 border-t-ivory" aria-hidden="true" />}
       {loading ? loadingText : children}
     </button>
   );

@@ -33,7 +33,7 @@ export default function AdminProductFormPage() {
 function Section({ title, children }) {
   return (
     <section className="rounded-2xl border border-gray-200 p-5">
-      <h2 className="mb-4 font-semibold text-gray-900">{title}</h2>
+      <h2 className="heading-display mb-5 text-2xl">{title}</h2>
       {children}
     </section>
   );
@@ -87,7 +87,7 @@ function ProductForm({ product }) {
       <Link to="/admin/products" className="text-sm font-medium text-brand hover:underline">
         ← All products
       </Link>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 className="heading-display mt-2 text-5xl">
         {product ? `Edit: ${product.name}` : 'New product'}
       </h1>
 
@@ -143,7 +143,7 @@ function ProductForm({ product }) {
           </div>
         </Section>
 
-        <Section title="Colors">
+        <Section title="Colours">
           <div className="space-y-2">
             {form.colors.map((c, i) => (
               <div key={i} className="flex items-center gap-2">

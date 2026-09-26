@@ -14,7 +14,8 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      {/* key: each new page (not a filter change on the same page) rises in gently */}
+      <main key={pathname} className="flex-1 animate-page">
         <Outlet />
       </main>
       <Footer />

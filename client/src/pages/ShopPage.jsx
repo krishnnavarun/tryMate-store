@@ -56,45 +56,46 @@ export default function ShopPage() {
   }
 
   const suitsMeOn = hasColors && params.suitsMe === 'true';
-  const title = suitsMeOn ? 'Colors that suit you' : params.type ? (TYPE_LABELS[params.type] ?? 'Shop') : 'Shop all';
+  const title = suitsMeOn ? 'Colours that suit you' : params.type ? (TYPE_LABELS[params.type] ?? 'Shop') : 'Shop all';
   const filterPanel = (
     <ShopFilters options={data?.filters ?? EMPTY_OPTIONS} values={params} onChange={updateParams} />
   );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-gray-200 pb-6">
+      <div className="flex flex-wrap items-end justify-between gap-6 border-b border-sand pb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
-          {data && <p className="mt-1 text-sm text-gray-500">{data.total} products</p>}
+          <p className="eyebrow">The collection</p>
+          <h1 className="heading-display mt-3 text-5xl sm:text-6xl">{title}</h1>
+          {data && <p className="mt-2 text-sm text-gray-500">{data.total} pieces</p>}
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {hasColors && (
-            <label className="flex cursor-pointer items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800">
+            <label className="flex cursor-pointer items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-[11px] font-semibold tracking-[0.12em] text-emerald-800 uppercase transition-colors hover:border-emerald-400">
               <input
                 type="checkbox"
                 checked={suitsMeOn}
                 onChange={(e) => updateParams({ suitsMe: e.target.checked ? 'true' : null })}
                 className="h-4 w-4 accent-emerald-600"
               />
-              Colors that suit you
+              Colours that suit you
             </label>
           )}
           <button
             type="button"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium lg:hidden"
+            className="rounded-full border border-sand px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase lg:hidden"
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen((open) => !open)}
           >
             {filtersOpen ? 'Hide filters' : 'Filters'}
           </button>
-          <label className="flex items-center gap-2 text-sm text-gray-600">
-            <span className="hidden sm:inline">Sort by</span>
+          <label className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.12em] text-gray-600 uppercase">
+            <span className="hidden sm:inline">Sort</span>
             <select
               value={params.sort ?? 'newest'}
               onChange={(e) => updateParams({ sort: e.target.value === 'newest' ? null : e.target.value })}
-              className="rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900"
+              className="rounded-full border border-sand bg-white px-3 py-2 text-sm font-medium tracking-normal text-ink normal-case focus:border-ink focus:outline-none"
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -106,9 +107,9 @@ export default function ShopPage() {
         </div>
       </div>
 
-      <div className="mt-8 lg:grid lg:grid-cols-[220px_1fr] lg:gap-10">
+      <div className="mt-10 lg:grid lg:grid-cols-[220px_1fr] lg:gap-12">
         {/* Filters: always visible on desktop, toggled on mobile */}
-        <aside className={`${filtersOpen ? 'mb-8 block' : 'hidden'} lg:block`}>{filterPanel}</aside>
+        <aside className={`${filtersOpen ? 'mb-8 block animate-rise' : 'hidden'} h-fit lg:sticky lg:top-32 lg:block`}>{filterPanel}</aside>
 
         <section>
           {error ? (
@@ -119,7 +120,7 @@ export default function ShopPage() {
                 <button
                   type="button"
                   onClick={reload}
-                  className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white"
+                  className="btn-primary btn-sm"
                 >
                   Try again
                 </button>
@@ -130,14 +131,14 @@ export default function ShopPage() {
               title="No products match these filters"
               message={
                 suitsMeOn
-                  ? 'None of these products come in your suggested colors. Try removing other filters.'
+                  ? 'None of these products come in your suggested colours. Try removing other filters.'
                   : 'Try removing a filter or widening the price range.'
               }
               action={
                 <button
                   type="button"
                   onClick={() => setSearchParams({})}
-                  className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white"
+                  className="btn-primary btn-sm"
                 >
                   Clear filters
                 </button>

@@ -9,6 +9,7 @@ import TryOnModal from '../components/products/TryOnModal.jsx';
 import { useApi } from '../hooks/useApi.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useCart } from '../hooks/useCart.js';
+import ProductImage from '../components/products/ProductImage.jsx';
 import { fitScales } from '../lib/fitting/fit.js';
 
 const DRAG_THRESHOLD_PX = 6;
@@ -159,9 +160,10 @@ export default function FittingRoomPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Live fitting room</h1>
-        <p className="mt-2 max-w-3xl text-gray-600">
+      <div className="mb-10 animate-rise">
+        <p className="eyebrow">Live</p>
+        <h1 className="heading-display mt-3 text-5xl sm:text-6xl">The fitting room</h1>
+        <p className="mt-4 max-w-3xl leading-relaxed text-gray-600">
           Drag clothes onto yourself in the live camera, switch colours and sizes, and see how they fit your
           measurements. The camera runs only on your device; nothing is recorded or uploaded.
         </p>
@@ -175,15 +177,15 @@ export default function FittingRoomPage() {
                 <button
                   type="button"
                   onClick={handleMakeRealistic}
-                  className="rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-brand-light"
+                  className="btn-primary btn-sm"
                   title="Takes a snapshot and creates a photo-realistic try-on with AI"
                 >
-                  ✨ Make it realistic
+                  Make it realistic
                 </button>
                 <button
                   type="button"
                   onClick={() => setWorn(null)}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
+                  className="btn-secondary btn-sm"
                 >
                   Take off
                 </button>
@@ -213,8 +215,9 @@ export default function FittingRoomPage() {
               onTakeOff={() => setWorn(null)}
             />
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-300 p-5 text-sm text-gray-600">
-              Nothing on yet. Drag a garment from below onto the mirror.
+            <div className="rounded-[28px] border border-dashed border-gray-300 p-6 text-sm leading-relaxed text-gray-600">
+              <span className="block font-display text-2xl text-ink">Nothing on yet.</span>
+              Drag a garment from below onto the mirror.
               {!hasProfile && (
                 <>
                   {' '}
@@ -240,12 +243,23 @@ export default function FittingRoomPage() {
       {/* The garment following the pointer while dragging */}
       {drag && (
         <div
-          className="pointer-events-none fixed z-50 w-24 -translate-x-1/2 -translate-y-1/2 rotate-3 opacity-90 shadow-2xl"
+          className="pointer-events-none fixed z-50 w-24 -translate-x-1/2 -translate-y-1/2 rotate-3 drop-shadow-2xl"
           style={{ left: drag.x, top: drag.y }}
         >
-          <img src={drag.product.images[0]} alt="" className="aspect-[3/4] w-full rounded-lg object-cover" />
+          <span className="relative block aspect-[3/4] overflow-hidden rounded-xl bg-bone">
+            <ProductImage
+              src={drag.product.images[0]}
+              alt=""
+              name={drag.product.name}
+              type={drag.product.type}
+              hex={drag.product.colors[0]?.hex}
+              className="absolute inset-0 h-full w-full"
+            />
+          </span>
           {drag.over && (
-            <span className="absolute inset-x-0 -bottom-6 text-center text-xs font-semibold text-emerald-700">Release to wear</span>
+            <span className="absolute inset-x-0 -bottom-7 text-center text-[10px] font-semibold tracking-[0.16em] text-ink uppercase">
+              Release to wear
+            </span>
           )}
         </div>
       )}

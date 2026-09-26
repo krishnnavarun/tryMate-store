@@ -4,16 +4,16 @@ export default function ColorDots({ colors, max = 4 }) {
   const extra = colors.length - shown.length;
 
   return (
-    <div className="flex items-center gap-1.5" aria-label={`${colors.length} colors`}>
+    <div className="flex items-center gap-1" aria-label={`${colors.length} colors`}>
       {shown.map((color) => (
         <span
           key={color.name}
           title={color.name}
-          className="h-3.5 w-3.5 rounded-full border border-gray-300"
+          className="h-3 w-3 rounded-full ring-1 ring-black/10 ring-inset"
           style={{ backgroundColor: color.hex }}
         />
       ))}
-      {extra > 0 && <span className="text-xs text-gray-500">+{extra}</span>}
+      {extra > 0 && <span className="ml-0.5 text-[11px] text-gray-500">+{extra}</span>}
     </div>
   );
 }

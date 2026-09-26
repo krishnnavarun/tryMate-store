@@ -1,16 +1,328 @@
 @import 'tailwindcss';
 
-/* Brand tokens. Tailwind v4 turns these into utilities: bg-brand, text-brand-accent, etc. */
+/*
+ * tryMate design tokens
+ * =====================
+ * A warm, quiet palette in the spirit of a tailor's shop: ivory paper, ink, warm stone
+ * greys and a muted brass accent. Tailwind turns every --color-* into utilities
+ * (bg-ink, text-brass, border-sand, ...).
+ *
+ * The default gray / emerald / green / red / amber scales are REPLACED with warm
+ * equivalents, so every gray-*, emerald-* ... class in the app follows the palette:
+ *   gray           warm stone   text, borders, surfaces
+ *   emerald, green sage         "suits you", best fit, success
+ *   red            oxblood      errors, destructive actions, sold out
+ *   amber          ochre        warnings and notes
+ * Text colours were checked for contrast on ivory: gray-500 and brass pass 4.5:1.
+ */
 @theme {
-  --color-brand: #1f2a44;
-  --color-brand-light: #2e3d61;
-  --color-brand-accent: #c8553d;
-  --color-cream: #f7f3ec;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-ink: #1c1a17;
+  --color-ink-soft: #3b3731;
+  --color-ivory: #faf8f4;
+  --color-bone: #f1ece4;
+  --color-sand: #e3dcd0;
+  --color-brass: #8b6d3f;
+  --color-brass-light: #c8ad7f;
+
+  /* Earlier names, kept so existing classes follow the new palette */
+  --color-brand: var(--color-ink);
+  --color-brand-light: var(--color-ink-soft);
+  --color-brand-accent: var(--color-brass);
+  --color-cream: var(--color-bone);
+
+  --color-gray-50: #f7f5f1;
+  --color-gray-100: #efebe5;
+  --color-gray-200: #e3ddd4;
+  --color-gray-300: #cfc7bb;
+  --color-gray-400: #a8a094;
+  --color-gray-500: #756e63;
+  --color-gray-600: #5f594f;
+  --color-gray-700: #4a453e;
+  --color-gray-800: #312e29;
+  --color-gray-900: #1f1d1a;
+  --color-gray-950: #141311;
+
+  --color-emerald-50: #f1f4ef;
+  --color-emerald-100: #e1e8dd;
+  --color-emerald-200: #c6d3c0;
+  --color-emerald-300: #a3b79b;
+  --color-emerald-400: #7f9a76;
+  --color-emerald-500: #62805a;
+  --color-emerald-600: #4d6847;
+  --color-emerald-700: #3e5439;
+  --color-emerald-800: #33452f;
+  --color-emerald-900: #2a3827;
+  --color-green-50: var(--color-emerald-50);
+  --color-green-100: var(--color-emerald-100);
+  --color-green-500: var(--color-emerald-500);
+  --color-green-700: var(--color-emerald-700);
+  --color-green-800: var(--color-emerald-800);
+
+  --color-red-50: #f8efed;
+  --color-red-100: #f0dcd8;
+  --color-red-200: #e2bab2;
+  --color-red-300: #cf9186;
+  --color-red-400: #b86a5d;
+  --color-red-500: #a04d40;
+  --color-red-600: #8a3b30;
+  --color-red-700: #722f27;
+  --color-red-800: #5c2721;
+  --color-red-900: #4a211c;
+
+  --color-amber-50: #f9f4ea;
+  --color-amber-100: #f2e7d2;
+  --color-amber-200: #e5d0a8;
+  --color-amber-300: #d4b47a;
+  --color-amber-400: #c29a55;
+  --color-amber-500: #a9803d;
+  --color-amber-600: #8c6830;
+  --color-amber-700: #6f5227;
+  --color-amber-800: #5a4322;
+  --color-amber-900: #4a381e;
+
+  /* Self-hosted (see main.jsx): an editorial serif for display, a clean sans for the UI */
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+
+  /* ---- Motion ----------------------------------------------------------------------- */
+  /* One easing for almost everything: fast start, long gentle landing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+  --animate-fade: fade 0.7s ease-out both;
+  --animate-page: page 0.6s var(--ease-out-expo) both;
+  --animate-pop: pop 0.55s var(--ease-out-expo) both;
+  --animate-word: word 1s var(--ease-out-expo) both;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-scan: scan 3.2s var(--ease-soft) infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-marquee: marquee 48s linear infinite;
+  --animate-draw: draw 1.6s var(--ease-out-expo) both;
+  --animate-grow: grow 1.2s var(--ease-out-expo) both;
+  --animate-bump: bump 0.45s var(--ease-out-expo);
+  --animate-spin-slow: spin 28s linear infinite;
+  --animate-breathe: breathe 2.4s ease-in-out infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes page {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* Headline words slide up from behind a mask (see RevealText) */
+  @keyframes word {
+    from {
+      transform: translateY(105%);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  /* A full-height layer whose bottom edge is the scan line: it slides from above to below */
+  @keyframes scan {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  /* SVG line drawing: set stroke-dasharray + --dash to the path length */
+  @keyframes draw {
+    from {
+      stroke-dashoffset: var(--dash, 400);
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes bump {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.35);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+/* Used directly by .btn-primary below (keyframes inside @theme are only kept when an
+   animate-* utility uses them) */
+@keyframes sheen {
+  from {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  to {
+    transform: translateX(360%) skewX(-20deg);
+  }
 }
 
 @layer base {
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply bg-ivory text-ink antialiased;
+    font-feature-settings: 'kern', 'liga';
+  }
+  ::selection {
+    background: var(--color-brass-light);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Small uppercase label above a heading */
+  .eyebrow {
+    @apply text-[11px] font-semibold tracking-[0.24em] text-brass uppercase;
+  }
+
+  /* Page and section headings in the display serif (it has one weight: never bold it) */
+  .heading-display {
+    @apply font-display font-normal tracking-[-0.01em] text-ink;
+  }
+
+  /* Buttons. Primary: ink with a soft light sweep on hover. */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-ink px-6 py-3 text-sm font-semibold tracking-wide text-ivory transition-[background-color,transform] duration-300 hover:bg-ink-soft active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 35%;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.16), transparent);
+    transform: translateX(-160%) skewX(-20deg);
+    pointer-events: none;
+  }
+  .btn-primary:hover::after {
+    animation: sheen 1.2s var(--ease-out-expo);
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/80 px-6 py-3 text-sm font-semibold tracking-wide text-ink transition-[background-color,color,transform] duration-300 hover:bg-ink hover:text-ivory active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
+  }
+  .btn-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ivory px-6 py-3 text-sm font-semibold tracking-wide text-ink transition-[background-color,transform] duration-300 hover:bg-bone active:scale-[0.98];
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-[13px];
+  }
+
+  /* A line that draws itself under the text on hover */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size 0.6s var(--ease-out-expo);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Loading placeholder with a slow light sweep */
+  .skeleton {
+    background: linear-gradient(100deg, var(--color-bone) 30%, #f8f4ee 50%, var(--color-bone) 70%);
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+}
+
+/* Respect "reduce motion": everything lands in its final state immediately */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
