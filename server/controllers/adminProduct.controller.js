@@ -34,6 +34,7 @@ export async function updateProduct(req, res) {
   await assertSlugFree(doc.slug, product._id);
   product.set(doc);
   if (req.valid.body.discountPrice == null) product.discountPrice = undefined; // allow removing a discount
+  if (!req.valid.body.overlayImageUrl) product.overlayImageUrl = undefined;
   await product.save(); // runs the schema validators too
   res.json(product);
 }

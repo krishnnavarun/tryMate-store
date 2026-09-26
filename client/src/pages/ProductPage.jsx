@@ -275,6 +275,13 @@ function ProductDetails({ product }) {
             </button>
           </div>
 
+          <Link
+            to={`/fitting-room?product=${product.slug}&color=${encodeURIComponent(color.name)}`}
+            className="-mt-4 flex items-center justify-center gap-2 rounded-lg bg-cream py-2.5 text-sm font-semibold text-brand hover:bg-brand hover:text-white"
+          >
+            <span aria-hidden="true">📷</span> Try it live in the fitting room
+          </Link>
+
           {product.description && (
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-900">Description</h2>

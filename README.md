@@ -1,5 +1,7 @@
 # tryMate Store
 
+[![CI](https://github.com/krishnnavarun/tryMate-store/actions/workflows/ci.yml/badge.svg)](https://github.com/krishnnavarun/tryMate-store/actions/workflows/ci.yml)
+
 AI-powered clothing store: React (Vite) + Express + MongoDB, plain JavaScript.
 Shoppers scan their body once and get a **size recommendation on every product**, **colors
 that suit their skin tone**, and a **virtual try-on**. The AI comes from the separate
@@ -103,7 +105,8 @@ clear message if something is missing.
 7. **Virtual try-on** ("Try it on" on a product): upload or take a photo, a progress state for up
    to a minute, the result side by side with the original, and the note *"This shows the look,
    not the exact fit."* Limited to 10 per hour per user.
-8. **Admin** (`/admin/products`, admins only): product list, create/edit with a colour editor,
+8. **Live fitting room** (`/fitting-room`, or "Try it live" on a product page): see below.
+9. **Admin** (`/admin/products`, admins only): product list, create/edit with a colour editor,
    image URLs, garment (try-on) image URL and a **size chart + stock editor**; delete.
 
 **Testing every AI error message with the mock:** give the photo a file name containing
@@ -194,6 +197,29 @@ curl -b jar.txt -X POST http://localhost:5000/api/orders -H "Content-Type: appli
 ```
 
 ---
+
+## Live fitting room
+
+A live camera "mirror" at `/fitting-room`: drag a garment onto yourself (mouse), or tap it
+(phone), then switch colours and sizes while you move.
+
+| Part | How |
+|---|---|
+| **Body tracking** | MediaPipe PoseLandmarker (lite) runs **in the browser** (WebAssembly, GPU if available), 20–30 times a second. The video never leaves the device. |
+| **Drawing** | Canvas 2D over the video. A "torso frame" from the shoulder and hip landmarks lets the shirt body be drawn in simple garment coordinates that rotate and scale with you; sleeves follow shoulder → elbow (→ wrist). Details per type: crew neck, polo collar + buttons, shirt collar + button line + cuffs. |
+| **Fit** | For the chosen size, width = middle of the size's chest range ÷ your scanned chest (length the same way), so S looks snug and XXL roomy. Next to it: the AI fit note ("Tight at chest") and the recommended size. Labelled as an approximation. |
+| **Realistic look** | "Make it realistic" takes one snapshot and runs the AI try-on on it (same flow as on the product page). |
+| **Real cut-outs** | Admins can set an optional **fitting-room cut-out** (transparent PNG) per product; it's drawn instead of the drawn shape. |
+
+- Files: `client/src/pages/FittingRoomPage.jsx`, `client/src/components/fitting/*`,
+  `client/src/lib/fitting/*` (`poseTracker.js`, `drawGarment.js`, `fit.js`).
+- The page is **lazy-loaded**, so MediaPipe (~50 kB gzipped JS + one ~12 MB wasm file + a ~5.5 MB model, cached by the browser after the first visit) only
+  downloads when someone opens it. The wasm files are copied from `node_modules` into
+  `client/public/mediapipe/` by `client/scripts/copy-mediapipe-wasm.mjs` before `dev` and
+  `build` (gitignored); the model comes from Google's MediaPipe model storage.
+- Needs HTTPS (or localhost) for the camera. Start-up gives up after 45 s with a "Try again".
+- Honest limit: it's a 2D overlay — great for colour, style and proportions, but it doesn't
+  simulate cloth, and it can't show how fabric drapes. Fit comes from the measurements.
 
 ## How the AI features work (store side)
 
@@ -352,6 +378,11 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   skipped), and `E2E_TRYON=1` to include one try-on (costs money unless the AI service has
   `TRYON_MOCK=true`).
 - Other target: `E2E_API_URL=http://localhost:5000/api` (default).
+
+**CI** (`.github/workflows/ci.yml`) runs on every push to `main` and every pull request:
+- `client`: `npm ci`, ESLint, production build.
+- `e2e`: MongoDB in a container, `npm run seed` into a `trymate_ci` database, the server with the
+  built-in mock AI, then `npm run test:e2e`. No secrets needed: CI uses throwaway values.
 
 ## What was tested
 

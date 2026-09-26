@@ -5,7 +5,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'public/mediapipe']), // public/mediapipe: copied third-party wasm glue
   {
     files: ['**/*.{js,jsx}'],
     extends: [js.configs.recommended, reactHooks.configs.flat.recommended, reactRefresh.configs.vite],

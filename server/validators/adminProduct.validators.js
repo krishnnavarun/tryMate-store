@@ -39,6 +39,7 @@ export const productBody = z
       .max(12),
     images: z.array(httpUrl).min(1, 'add at least one image').max(12),
     garmentImageUrl: httpUrl,
+    overlayImageUrl: httpUrl.optional().or(z.literal('').transform(() => undefined)),
     sizeChart: z.record(sizeLabel, sizeRanges).refine((chart) => Object.keys(chart).length > 0, 'add at least one size'),
     stock: z.record(sizeLabel, z.number().int().min(0).max(100000)).default({}),
   })

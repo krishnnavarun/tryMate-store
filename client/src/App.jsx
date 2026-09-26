@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Route, Routes } from 'react-router';
 import AdminRoute from './components/auth/AdminRoute.jsx';
@@ -16,6 +17,10 @@ import OrdersPage from './pages/OrdersPage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import ShopPage from './pages/ShopPage.jsx';
+import Spinner from './components/ui/Spinner.jsx';
+
+// Loaded only when someone opens the fitting room: it pulls in MediaPipe (~0.2 MB gzipped)
+const FittingRoomPage = lazy(() => import('./pages/FittingRoomPage.jsx'));
 
 export default function App() {
   return (
@@ -27,6 +32,14 @@ export default function App() {
           <Route path="products/:slug" element={<ProductPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route
+            path="fitting-room"
+            element={
+              <Suspense fallback={<Spinner className="py-24" />}>
+                <FittingRoomPage />
+              </Suspense>
+            }
+          />
 
           {/* Logged-in users only */}
           <Route element={<ProtectedRoute />}>

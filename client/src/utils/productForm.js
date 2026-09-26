@@ -27,6 +27,7 @@ export const EMPTY_FORM = {
   colors: [{ name: '', hex: '#1F2A44' }],
   images: [''],
   garmentImageUrl: '',
+  overlayImageUrl: '',
   sizes: [emptySizeRow('S'), emptySizeRow('M'), emptySizeRow('L')],
 };
 
@@ -46,6 +47,7 @@ export function toFormState(product) {
     colors: product.colors.map((c) => ({ ...c })),
     images: [...product.images],
     garmentImageUrl: product.garmentImageUrl,
+    overlayImageUrl: product.overlayImageUrl ?? '',
     sizes: Object.entries(product.sizeChart ?? {}).map(([size, ranges]) => ({
       size,
       ...Object.fromEntries(SIZE_FIELDS.map(([f]) => [f, ranges[f] ? ranges[f].map(str) : EMPTY_RANGE])),
@@ -111,6 +113,7 @@ export function toProductBody(form) {
       colors: form.colors.map((c) => ({ name: c.name.trim(), hex: c.hex.toUpperCase() })),
       images: form.images.map((u) => u.trim()).filter(Boolean),
       garmentImageUrl: form.garmentImageUrl.trim(),
+      overlayImageUrl: form.overlayImageUrl.trim() || undefined,
       sizeChart,
       stock,
     },

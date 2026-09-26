@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { cameraErrorMessage } from '../../lib/camera.js';
 
 const SELF_TIMER_SECONDS = 10;
 
@@ -7,16 +8,6 @@ const SELF_TIMER_SECONDS = 10;
 // self-timer is essential; <input capture> opens the phone's camera app, where we can't
 // add one. PhotoPicker still offers a normal file upload (which on phones also lets
 // people pick "Camera"), so this is an extra, not the only way.
-
-function cameraErrorMessage(err) {
-  if (!navigator.mediaDevices?.getUserMedia) {
-    return 'Your browser can’t open the camera here (it needs HTTPS). Upload a photo instead.';
-  }
-  if (err?.name === 'NotAllowedError') return 'Camera access was blocked. Allow it in your browser settings, or upload a photo instead.';
-  if (err?.name === 'NotFoundError' || err?.name === 'OverconstrainedError') return 'No camera found. Upload a photo instead.';
-  if (err?.name === 'NotReadableError') return 'The camera is being used by another app. Close it and try again.';
-  return 'Could not start the camera. Upload a photo instead.';
-}
 
 // Live camera preview with a 10-second self-timer. Calls onCapture(file) with a JPEG File.
 export default function CameraCapture({ onCapture, onCancel }) {

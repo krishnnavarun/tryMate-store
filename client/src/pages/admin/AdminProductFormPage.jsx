@@ -238,6 +238,15 @@ function ProductForm({ product }) {
               {...field('garmentImageUrl')}
             />
           </div>
+
+          <FormField
+            label="Fitting room cut-out (optional)"
+            type="url"
+            className="mt-4"
+            placeholder="https://…/garment.png"
+            hint="A transparent PNG of the garment from the front, sleeves included. The live fitting room draws it on the shopper; without it, a drawn shape in the product colour is used."
+            {...field('overlayImageUrl')}
+          />
         </Section>
 
         <Section title="Size chart and stock">

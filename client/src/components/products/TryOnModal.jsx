@@ -32,8 +32,9 @@ function useElapsedSeconds(running) {
   return elapsed;
 }
 
-export default function TryOnModal({ product, color, onClose }) {
-  const [photo, setPhoto] = useState(null);
+// initialPhoto: optional File to start with (e.g. a snapshot from the live fitting room)
+export default function TryOnModal({ product, color, onClose, initialPhoto = null }) {
+  const [photo, setPhoto] = useState(initialPhoto);
   const [status, setStatus] = useState('idle'); // idle | running | done | error
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);

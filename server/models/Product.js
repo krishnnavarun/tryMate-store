@@ -69,6 +69,9 @@ const productSchema = new mongoose.Schema(
     },
     // Clean flat-lay photo on a plain background, sent to the AI try-on
     garmentImageUrl: { type: String, required: true, match: [HTTP_URL, 'must be an http(s) URL'] },
+    // Optional transparent PNG of the garment (front view, sleeves included) for the live
+    // fitting room. Without it, the fitting room draws the garment shape in its colour.
+    overlayImageUrl: { type: String, match: [HTTP_URL, 'must be an http(s) URL'] },
 
     // { S: {...ranges}, M: {...}, ... }. A Map keeps the sizes in the order they were added.
     sizeChart: {

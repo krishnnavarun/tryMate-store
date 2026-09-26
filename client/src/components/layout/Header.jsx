@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { to: '/shop?type=shirt', label: 'Shirts' },
   { to: '/shop?type=tshirt', label: 'T-shirts' },
   { to: '/shop?type=polo', label: 'Polos' },
+  { to: '/fitting-room', label: 'Fitting room' },
   { to: '/fit-profile', label: 'My fit' },
 ];
 
