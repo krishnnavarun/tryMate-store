@@ -1,0 +1,52 @@
+# nginx in the web app container: serves the built React app and forwards /api to the
+# Express server. ${API_UPSTREAM} (e.g. http://server:5000, no trailing slash) is filled in
+# when the container starts; nginx's own $variables are left as they are.
+
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    # Above the server's own 10 MB photo limit, so shoppers get its friendly error message
+    client_max_body_size 20m;
+
+    gzip on;
+    gzip_types text/css text/javascript application/javascript application/json image/svg+xml application/wasm;
+
+    # The API, on the same origin as the app: the login cookie stays first-party
+    location /api/ {
+        proxy_pass ${API_UPSTREAM};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # A try-on can take up to ~2 minutes (the server waits 130 s for the AI)
+        proxy_read_timeout 150s;
+        proxy_send_timeout 150s;
+    }
+
+    # Vite puts a content hash in these file names, so they can be cached "forever"
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    # MediaPipe's runtime for the live fitting room (~12 MB). Browsers only compile
+    # WebAssembly while downloading when it's served as application/wasm.
+    location /mediapipe/ {
+        types {
+            application/wasm       wasm;
+            text/javascript        js;
+        }
+        expires 7d;
+        try_files $uri =404;
+    }
+
+    # Single-page app: paths like /products/knit-polo or /fitting-room get index.html,
+    # and React Router shows the right page. "no-cache" = the browser re-checks index.html on
+    # every visit, so a new deploy (new hashed file names) is picked up straight away.
+    location / {
+        add_header Cache-Control "no-cache";
+        try_files $uri /index.html;
+    }
+}

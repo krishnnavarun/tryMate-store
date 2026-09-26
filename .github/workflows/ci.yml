@@ -2,6 +2,8 @@
 #   client – clean install, ESLint, unit tests (fitting room maths), production build of the React app
 #   e2e    – MongoDB in a container, seeded catalogue, the API server with the built-in
 #            mock AI, then the end-to-end tests (npm run test:e2e)
+#   docker – builds the images and starts the whole stack with docker compose, then checks
+#            it through nginx and runs the same end-to-end tests against the containers
 name: CI
 
 on:
@@ -87,3 +89,58 @@ jobs:
       - name: Server log
         if: always()
         run: cat server.log || true
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Read by docker-compose.yml (instead of a .env file) and by the e2e runner. Not secret.
+    env:
+      JWT_SECRET: ci-only-jwt-secret-not-used-anywhere-else
+      AI_SERVICE_KEY: ci-key
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build and start the stack (mock AI)
+        # --wait: return once MongoDB and the server report healthy and nginx is running
+        run: docker compose up --build -d --wait --wait-timeout 180
+
+      - name: Seed the catalogue
+        run: docker compose exec -T server npm run seed -- --force
+
+      - name: Smoke tests through nginx
+        run: |
+          set -e
+          # The API through the proxy, with the database connected
+          curl -fsS http://localhost:8080/api/health | tee /dev/stderr | grep -q '"db":{"status":"connected"}'
+          echo
+          # Deep links get the React app (single-page app fallback)
+          curl -fsS http://localhost:8080/fitting-room | grep -q '<div id="root">'
+          # MediaPipe's runtime is in the image and served as WebAssembly
+          curl -fsSI http://localhost:8080/mediapipe/wasm/vision_wasm_internal.wasm | tee /dev/stderr | grep -qi '^content-type: application/wasm'
+          # The server itself is not published: only nginx is reachable from outside
+          if curl -s --max-time 3 http://localhost:5000/api/health; then
+            echo "The API server should not be reachable on port 5000"; exit 1
+          fi
+          echo "Smoke tests passed"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: End-to-end tests against the containers
+        working-directory: server
+        env:
+          E2E_API_URL: http://localhost:8080/api
+          # The runner reaches the containers' MongoDB on its published port (cleanup only)
+          MONGO_URI: mongodb://localhost:27018/trymate
+          CLIENT_URL: http://localhost:8080
+          AI_SERVICE_URL: http://localhost:8000
+        run: |
+          npm ci
+          npm run test:e2e
+
+      - name: Container logs
+        if: always()
+        run: docker compose logs --no-color

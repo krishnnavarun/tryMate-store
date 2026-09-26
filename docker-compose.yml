@@ -1,0 +1,71 @@
+# The whole store in containers: MongoDB + API server + web app (nginx), and optionally the
+# real AI service. Full explanation: README → "Docker".
+#
+#   cp .env.example .env                                  # once, then set the two secrets
+#   docker compose up --build -d                          # → http://localhost:8080
+#   docker compose exec server npm run seed -- --force    # load the product catalogue
+#   docker compose logs -f server                         # follow the API's log
+#   docker compose down                                   # stop (the database stays in a volume)
+#
+# With the real AI service instead of the built-in mock (builds ../tryMate-Ai):
+#   set AI_MODE=real in .env, then  docker compose --profile ai up --build -d
+
+name: trymate
+
+services:
+  mongo:
+    image: mongo:8
+    volumes:
+      - mongo-data:/data/db
+    # Only reachable from this computer, on 27018 so it doesn't clash with a local MongoDB
+    # on 27017. (For MongoDB Compass, and for the end-to-end tests.)
+    ports:
+      - "127.0.0.1:27018:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      # "mongo" = the service above: containers find each other by service name
+      MONGO_URI: mongodb://mongo:27017/trymate
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (copy .env.example)}
+      CLIENT_URL: http://localhost:${WEB_PORT:-8080}
+      AI_MODE: ${AI_MODE:-mock}
+      AI_SERVICE_URL: http://ai:8000
+      AI_SERVICE_KEY: ${AI_SERVICE_KEY:?Set AI_SERVICE_KEY in .env (copy .env.example)}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+    # No "ports": only nginx (the client service) talks to it
+
+  client:
+    build: ./client
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # The real AI service (Python + MediaPipe), built from the tryMate-Ai repo next to this one.
+  # Only started with --profile ai. Needs about 1 GB of free memory.
+  ai:
+    profiles: [ai]
+    build: ${AI_SERVICE_DIR:-../tryMate-Ai}
+    environment:
+      SERVICE_API_KEY: ${AI_SERVICE_KEY:?Set AI_SERVICE_KEY in .env (copy .env.example)}
+      # true = placeholder try-on images, no Replicate costs
+      TRYON_MOCK: ${TRYON_MOCK:-true}
+      REPLICATE_API_TOKEN: ${REPLICATE_API_TOKEN:-}
+    restart: unless-stopped
+
+volumes:
+  mongo-data:

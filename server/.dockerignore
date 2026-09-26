@@ -1,0 +1,10 @@
+# Not sent to Docker when building the server image
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+# The end-to-end tests run from outside, against the running containers
+tests/
+Dockerfile
+.dockerignore

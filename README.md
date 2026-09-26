@@ -51,6 +51,40 @@ npm run make-admin -- you@example.com
    `AI_SERVICE_KEY` equal to the AI service's `SERVICE_API_KEY`.
 3. Restart `npm run dev`. `GET /api/health` shows `"ai": { "status": "ok", "mode": "real" }`.
 
+## Docker (the whole stack in containers)
+
+No Node or MongoDB needed on your computer, only [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+```bash
+cp .env.example .env                    # PowerShell: copy .env.example .env
+#   set JWT_SECRET and AI_SERVICE_KEY in .env to long random strings
+docker compose up --build -d            # → http://localhost:8080
+docker compose exec server npm run seed -- --force
+docker compose exec server npm run make-admin -- you@example.com   # after registering
+docker compose logs -f server           # follow the API's log
+docker compose down                     # stop (add -v to also delete the database)
+```
+
+| Service | What it is | Reachable at |
+|---|---|---|
+| `client` | nginx serving the React build and forwarding `/api` to the server | http://localhost:8080 (`WEB_PORT`) |
+| `server` | the Express API (`NODE_ENV=production`) | only through nginx |
+| `mongo` | MongoDB 8, data in the `mongo-data` volume | `mongodb://localhost:27018` (this computer only) |
+| `ai` | the real **tryMate-Ai** service, built from `../tryMate-Ai` | only with `--profile ai` |
+
+- **Real AI:** set `AI_MODE=real` in `.env`, then `docker compose --profile ai up --build -d`
+  (first build ~5 min, needs about 1 GB of free memory; `TRYON_MOCK=true` by default).
+- **One origin:** the browser only talks to nginx, so the login cookie is first-party and
+  there's no CORS. It's the same setup as the `/api` rewrite in [Deployment](#deployment).
+- `--force` on the seed: the containers run in production mode, where the seed script refuses
+  by default.
+- Production mode makes the login cookie `Secure`. Chrome and Edge accept that on
+  `http://localhost`; Safari doesn't, so use Chrome or Edge for the local Docker stack.
+- End-to-end tests against the containers:
+  `E2E_API_URL=http://localhost:8080/api MONGO_URI=mongodb://localhost:27018/trymate npm run test:e2e`
+- Files: `docker-compose.yml`, `.env.example` (Compose only), `server/Dockerfile`,
+  `client/Dockerfile` (Node build → nginx), `client/nginx.conf.template`.
+
 ## Scripts (from the repo root)
 
 | Script | What it does |
@@ -301,6 +335,8 @@ Fine for a demo; a real store needs a commercially licensed try-on model.
 ```
 tryMate-store/
 ├── client/                        # React 19 + Vite 8 + Tailwind CSS 4 + React Router
+│   ├── Dockerfile, nginx.conf.template  # Docker: Node build → nginx (static files + /api proxy)
+│   ├── scripts/                   # copy-mediapipe-wasm.mjs (before dev/build)
 │   └── src/
 │       ├── main.jsx, App.jsx      # providers + routes
 │       ├── api/                   # axios instance (errors → friendly messages) + endpoint calls
@@ -310,14 +346,17 @@ tryMate-store/
 │       │   ├── admin/             # SizeChartEditor
 │       │   ├── auth/              # ProtectedRoute, AdminRoute, AuthCard
 │       │   ├── fit/               # ScanForm, FitResults, PhotoPicker, CameraCapture, PrivacyNotice, FitPreferenceToggle
+│       │   ├── fitting/           # LiveMirror, GarmentTray, WornPanel (live fitting room)
 │       │   ├── layout/            # Layout, Header, Footer
 │       │   ├── orders/            # OrderStatusBadge
 │       │   ├── products/          # ProductCard, ProductGrid, ShopFilters, Price, ColorDots, SizeGuide, TryOnModal
 │       │   └── ui/                # FormField, Modal, Pagination, Spinner, StatusMessage
-│       ├── pages/                 # Home, Shop, Product, FitProfile, Login, Register, Cart, Checkout, Orders, OrderDetail, NotFound
+│       ├── lib/                   # camera.js; fitting/ (poseTracker, drawGarment, fit, landmarks + unit tests)
+│       ├── pages/                 # Home, Shop, Product, FitProfile, FittingRoom, Login, Register, Cart, Checkout, Orders, OrderDetail, NotFound
 │       │   └── admin/             # AdminProducts, AdminProductForm
 │       └── utils/                 # format (INR, dates), redirect (safe ?redirect=), productForm
 ├── server/                        # Express 5 + Mongoose 9, ES modules
+│   ├── Dockerfile                 # Docker: node:24-slim, production deps, non-root, healthcheck
 │   ├── index.js, app.js
 │   ├── config/                    # env.js (validated .env), db.js
 │   ├── models/                    # Product, User (+ fitProfile), Cart, Order
@@ -330,6 +369,8 @@ tryMate-store/
 │   ├── scripts/makeAdmin.js
 │   ├── seed/                      # seed.js, products.data.js, sizeCharts.js
 │   └── tests/e2e/                 # npm run test:e2e (run.mjs + shop/ai/admin suites)
+├── docker-compose.yml             # mongo + server + client (nginx) [+ ai with --profile ai]
+├── .env.example                   # Docker Compose settings (copy to .env)
 ├── scripts/install-all.mjs
 ├── package.json                   # root scripts (concurrently)
 └── PROJECT_SPEC.md
@@ -402,6 +443,9 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
 - `client`: `npm ci`, ESLint, unit tests, production build.
 - `e2e`: MongoDB in a container, `npm run seed` into a `trymate_ci` database, the server with the
   built-in mock AI, then `npm run test:e2e`. No secrets needed: CI uses throwaway values.
+- `docker`: `docker compose up --build` (both images), seed, smoke tests through nginx (API,
+  single-page-app fallback, the wasm's content type, server port not exposed), then the same
+  `npm run test:e2e` against the containers.
 
 ## What was tested
 
@@ -416,6 +460,9 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
 - Fitting room: the real MediaPipe model in headless Chrome on a person in a fake camera
   feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 51 unit
   tests. They were also checked the other way round: with the old sleeve maths put back they fail.
+- Docker: the compose file was parsed and cross-checked (every variable documented, every
+  setting the server requires is set), but the images have **not** been built on the
+  development machine, which has no Docker. The CI `docker` job is their first real run.
 
 ## What still needs you
 

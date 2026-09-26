@@ -1,0 +1,11 @@
+# Not sent to Docker when building the web app image
+node_modules/
+dist/
+# Recreated inside the image by scripts/copy-mediapipe-wasm.mjs
+public/mediapipe/
+.env
+.env.*
+!.env.example
+*.log
+Dockerfile
+.dockerignore
