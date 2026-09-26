@@ -62,6 +62,7 @@ npm run make-admin -- you@example.com
 | `npm run build` | Production build of the client into `client/dist` |
 | `npm start` | Start the server without watch mode |
 | `npm run lint` | ESLint on the client |
+| `npm test` | Unit tests for the fitting room maths (no server needed, see [Tests](#tests)) |
 | `npm run test:e2e` | End-to-end API tests against the running server (see [Tests](#tests)) |
 
 In `server/`: `npm run mock:ai` runs the mock AI on its own on port 8000 (like the real service).
@@ -212,7 +213,8 @@ A live camera "mirror" at `/fitting-room`: drag a garment onto yourself (mouse),
 | **Real cut-outs** | Admins can set an optional **fitting-room cut-out** (transparent PNG) per product; it's drawn instead of the drawn shape. |
 
 - Files: `client/src/pages/FittingRoomPage.jsx`, `client/src/components/fitting/*`,
-  `client/src/lib/fitting/*` (`poseTracker.js`, `drawGarment.js`, `fit.js`).
+  `client/src/lib/fitting/*` (`poseTracker.js`, `drawGarment.js`, `fit.js`, `landmarks.js`;
+  unit tests next to them, see [Tests](#tests)).
 - The page is **lazy-loaded**, so MediaPipe (~50 kB gzipped JS + one ~12 MB wasm file + a ~5.5 MB model, cached by the browser after the first visit) only
   downloads when someone opens it. The wasm files are copied from `node_modules` into
   `client/public/mediapipe/` by `client/scripts/copy-mediapipe-wasm.mjs` before `dev` and
@@ -361,7 +363,24 @@ tryMate-store/
 
 ## Tests
 
-End-to-end tests call the API of a **running** server, the way the React app does:
+**Unit tests** for the live fitting room run in plain Node in about a second (no browser, camera
+or server):
+
+```bash
+npm test               # → "pass 51"
+```
+
+- `client/src/lib/fitting/drawGarment.test.js`: the garment drawing on a real detected pose
+  (saved as 33 numbers in `__fixtures__/standing-pose.json`, no photo). A fake canvas records
+  every shape in screen pixels, then the tests check them: the hints when the body isn't visible,
+  sleeve outlines that never cross themselves (5 poses × 3 garment types × short/long sleeves ×
+  4 sizes), short sleeves reaching below the armpit, long sleeves ending at the wrists, bigger
+  sizes drawn wider, drawing order and the product cut-out image.
+- `client/src/lib/fitting/fit.test.js`: size chart + measurements → drawing scale, the limits,
+  missing data, and the "Snug / Roomy" labels.
+- Node's built-in test runner (`node --test`) finds every `*.test.js` file; there are no extra packages.
+
+**End-to-end tests** call the API of a **running** server, the way the React app does:
 
 ```bash
 npm run dev            # terminal 1 (AI_MODE=mock is fine)
@@ -380,7 +399,7 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
 - Other target: `E2E_API_URL=http://localhost:5000/api` (default).
 
 **CI** (`.github/workflows/ci.yml`) runs on every push to `main` and every pull request:
-- `client`: `npm ci`, ESLint, production build.
+- `client`: `npm ci`, ESLint, unit tests, production build.
 - `e2e`: MongoDB in a container, `npm run seed` into a `trymate_ci` database, the server with the
   built-in mock AI, then `npm run test:e2e`. No secrets needed: CI uses throwaway values.
 
@@ -394,6 +413,9 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
 - UI: a headless Chrome tour (desktop + 390 px mobile) through home, shop, product, register,
   scan (upload and the camera with a fake video device), recommendations, try-on, cart,
   checkout, order confirmation and admin, with no console errors.
+- Fitting room: the real MediaPipe model in headless Chrome on a person in a fake camera
+  feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 51 unit
+  tests. They were also checked the other way round: with the old sleeve maths put back they fail.
 
 ## What still needs you
 

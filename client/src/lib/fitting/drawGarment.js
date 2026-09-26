@@ -19,7 +19,7 @@
 // It's a 2D overlay: great for colour, style and proportions; it can't show how fabric
 // drapes or wrinkles. The AI try-on ("Make it realistic") is for a photo-real image.
 
-import { P } from './poseTracker.js';
+import { P } from './landmarks.js';
 
 const MIN_VISIBILITY = 0.5;
 
@@ -99,7 +99,7 @@ function garmentGeometry(frame, type, scales) {
     hs,
     hw: Math.max(frame.hipW * 0.9, sw * 0.5) * scales.width, // half width at the hem
     hemV: frame.torsoLen * (1 + (HEM_EXTRA[type] ?? 0.15)) * scales.length,
-    armV: frame.torsoLen * 0.3, // armpit height
+    armV: frame.torsoLen * 0.22, // armpit height (how far below the shoulder line the armhole ends)
     neckW: sw * 0.16,
     neckH: sw * 0.07,
     neckDepth: sw * (type === 'tshirt' ? 0.12 : 0.2),
@@ -120,10 +120,14 @@ function drawSleeve(ctx, pts, frame, g, side, longSleeves, color) {
   const upperLen = elbowSeen ? len(sub(elbow, joint)) : frame.torsoLen * 0.6;
 
   const topWidth = len(sub(seam, armpit));
+  // "Away from the body" = the direction from the torso's centre towards this shoulder.
+  // (Not seam → armpit: that runs almost along the arm, so its sign flips unpredictably and
+  // the sleeve outline crossed itself into a bow-tie.)
+  const outward = sub(joint, frame.origin);
   const outer = (point, halfWidth, dir) => {
-    // the side of the sleeve that faces away from the body
+    // [point on the outer side of the sleeve, point on the inner side]
     const n = unit(perp(dir));
-    const away = Math.sign((seam.x - armpit.x) * n.x + (seam.y - armpit.y) * n.y) || 1;
+    const away = Math.sign(outward.x * n.x + outward.y * n.y) || 1;
     return [add(point, mul(n, halfWidth * away)), sub(point, mul(n, halfWidth * away))];
   };
 
@@ -146,9 +150,11 @@ function drawSleeve(ctx, pts, frame, g, side, longSleeves, color) {
     return;
   }
   // Short sleeve: a tube around the upper arm. It starts at the garment's armhole
-  // (shoulder seam → armpit) and ends half-way down the arm, centred on the arm itself, so it
+  // (shoulder seam → armpit) and ends ~60 % down the arm, centred on the arm itself, so it
   // covers the top of the arm the way a real sleeve does. Width follows the garment size.
-  const sleeveEnd = add(joint, mul(upperDir, upperLen * 0.5));
+  // It must end clearly below the armpit, otherwise its outline folds back on itself
+  const sleeveLen = Math.max(upperLen * 0.6, g.armV * 1.4);
+  const sleeveEnd = add(joint, mul(upperDir, sleeveLen));
   const [endOut, endIn] = outer(sleeveEnd, g.hs * 0.24, upperDir);
   polygon.push(seam, endOut, endIn, armpit);
   ctx.fillStyle = shade(color.hex, -0.06);

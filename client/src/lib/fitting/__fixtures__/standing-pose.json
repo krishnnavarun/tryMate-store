@@ -1,0 +1,172 @@
+{
+ "source": "MediaPipe pose_landmarker_lite on a public-domain photo of a standing man (Wikimedia Commons, Clothed_human_male_front.jpg), placed in a 1280x720 frame. Normalised coordinates.",
+ "width": 1280,
+ "height": 720,
+ "landmarks": [
+  {
+   "x": 0.4958,
+   "y": 0.1275,
+   "visibility": 1
+  },
+  {
+   "x": 0.5008,
+   "y": 0.1135,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.5035,
+   "y": 0.1134,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.506,
+   "y": 0.1135,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.4909,
+   "y": 0.1142,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.4876,
+   "y": 0.1145,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.4846,
+   "y": 0.1151,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.51,
+   "y": 0.1211,
+   "visibility": 0.9998
+  },
+  {
+   "x": 0.4811,
+   "y": 0.1226,
+   "visibility": 0.9998
+  },
+  {
+   "x": 0.5023,
+   "y": 0.1445,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.49,
+   "y": 0.145,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.5393,
+   "y": 0.2117,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.4569,
+   "y": 0.2145,
+   "visibility": 0.9999
+  },
+  {
+   "x": 0.5518,
+   "y": 0.3213,
+   "visibility": 0.9825
+  },
+  {
+   "x": 0.4487,
+   "y": 0.3262,
+   "visibility": 0.9708
+  },
+  {
+   "x": 0.5707,
+   "y": 0.4137,
+   "visibility": 0.9731
+  },
+  {
+   "x": 0.4315,
+   "y": 0.4124,
+   "visibility": 0.9709
+  },
+  {
+   "x": 0.577,
+   "y": 0.4416,
+   "visibility": 0.9544
+  },
+  {
+   "x": 0.4221,
+   "y": 0.4393,
+   "visibility": 0.9546
+  },
+  {
+   "x": 0.5735,
+   "y": 0.4425,
+   "visibility": 0.9595
+  },
+  {
+   "x": 0.424,
+   "y": 0.4399,
+   "visibility": 0.9595
+  },
+  {
+   "x": 0.5701,
+   "y": 0.4328,
+   "visibility": 0.9551
+  },
+  {
+   "x": 0.4279,
+   "y": 0.4297,
+   "visibility": 0.9521
+  },
+  {
+   "x": 0.5219,
+   "y": 0.4185,
+   "visibility": 0.9998
+  },
+  {
+   "x": 0.476,
+   "y": 0.4183,
+   "visibility": 0.9998
+  },
+  {
+   "x": 0.5215,
+   "y": 0.5988,
+   "visibility": 0.9914
+  },
+  {
+   "x": 0.4651,
+   "y": 0.5936,
+   "visibility": 0.992
+  },
+  {
+   "x": 0.5164,
+   "y": 0.7678,
+   "visibility": 0.9869
+  },
+  {
+   "x": 0.4663,
+   "y": 0.7632,
+   "visibility": 0.9921
+  },
+  {
+   "x": 0.5104,
+   "y": 0.7877,
+   "visibility": 0.8506
+  },
+  {
+   "x": 0.4775,
+   "y": 0.7897,
+   "visibility": 0.8753
+  },
+  {
+   "x": 0.5259,
+   "y": 0.8146,
+   "visibility": 0.9803
+  },
+  {
+   "x": 0.4423,
+   "y": 0.8088,
+   "visibility": 0.9859
+  }
+ ]
+}

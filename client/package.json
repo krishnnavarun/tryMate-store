@@ -6,10 +6,11 @@
   "scripts": {
     "predev": "node scripts/copy-mediapipe-wasm.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/copy-mediapipe-wasm.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "prebuild": "node scripts/copy-mediapipe-wasm.mjs"
+    "test": "node --test"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^1.0.1",

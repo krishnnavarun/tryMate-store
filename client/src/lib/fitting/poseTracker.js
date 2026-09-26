@@ -48,16 +48,3 @@ export function loadPoseLandmarker() {
     });
   return loading;
 }
-
-// Landmark indices we use (same numbering as the Python service)
-export const P = {
-  NOSE: 0,
-  L_SHOULDER: 11,
-  R_SHOULDER: 12,
-  L_ELBOW: 13,
-  R_ELBOW: 14,
-  L_WRIST: 15,
-  R_WRIST: 16,
-  L_HIP: 23,
-  R_HIP: 24,
-};

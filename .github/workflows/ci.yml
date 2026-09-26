@@ -1,5 +1,5 @@
 # Runs on every push to main and on every pull request:
-#   client – clean install, ESLint, production build of the React app
+#   client – clean install, ESLint, unit tests (fitting room maths), production build of the React app
 #   e2e    – MongoDB in a container, seeded catalogue, the API server with the built-in
 #            mock AI, then the end-to-end tests (npm run test:e2e)
 name: CI
@@ -29,6 +29,7 @@ jobs:
           cache-dependency-path: client/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npm test
       - run: npm run build
         env:
           VITE_API_URL: /api
