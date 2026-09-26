@@ -18,6 +18,14 @@ export async function requireAuth(req, res, next) {
   next();
 }
 
+// Like requireAuth, but lets logged-out visitors through (req.user stays undefined).
+// Used where being logged in only adds something, e.g. "Suits you" tags on the shop page.
+export async function optionalAuth(req, _res, next) {
+  const userId = verifyToken(req.cookies?.[AUTH_COOKIE]);
+  if (userId) req.user = (await User.findById(userId).lean()) ?? undefined;
+  next();
+}
+
 // Use after requireAuth
 export function requireAdmin(req, _res, next) {
   if (req.user?.role !== 'admin') throw ApiError.forbidden();

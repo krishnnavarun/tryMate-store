@@ -7,6 +7,7 @@ import ShopFilters from '../components/products/ShopFilters.jsx';
 import Pagination from '../components/ui/Pagination.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
+import { useAuth } from '../hooks/useAuth.js';
 import { TYPE_LABELS } from '../utils/format.js';
 
 const PAGE_SIZE = 12;
@@ -26,10 +27,16 @@ export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const params = Object.fromEntries(searchParams);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const { user, status } = useAuth();
+  const hasColors = Boolean(user?.fitProfile?.colorSuggestions?.length);
+  // Only ask for suitsMe when it can work (logged in, with suggested colours)
+  const query = { ...params, limit: PAGE_SIZE };
+  if (!hasColors) delete query.suitsMe;
 
   const { data, loading, error, reload } = useApi(
-    (signal) => fetchProducts({ ...params, limit: PAGE_SIZE }, { signal }),
-    [searchParams.toString()],
+    // Wait for the login check, so "Suits you" tags appear on the first load
+    (signal) => (status === 'loading' ? new Promise(() => {}) : fetchProducts(query, { signal })),
+    [searchParams.toString(), status, user?._id ?? null, user?.fitProfile?.updatedAt ?? null],
   );
 
   useEffect(() => {
@@ -48,7 +55,8 @@ export default function ShopPage() {
     setSearchParams(next);
   }
 
-  const title = params.type ? (TYPE_LABELS[params.type] ?? 'Shop') : 'Shop all';
+  const suitsMeOn = hasColors && params.suitsMe === 'true';
+  const title = suitsMeOn ? 'Colors that suit you' : params.type ? (TYPE_LABELS[params.type] ?? 'Shop') : 'Shop all';
   const filterPanel = (
     <ShopFilters options={data?.filters ?? EMPTY_OPTIONS} values={params} onChange={updateParams} />
   );
@@ -61,7 +69,18 @@ export default function ShopPage() {
           {data && <p className="mt-1 text-sm text-gray-500">{data.total} products</p>}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {hasColors && (
+            <label className="flex cursor-pointer items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800">
+              <input
+                type="checkbox"
+                checked={suitsMeOn}
+                onChange={(e) => updateParams({ suitsMe: e.target.checked ? 'true' : null })}
+                className="h-4 w-4 accent-emerald-600"
+              />
+              Colors that suit you
+            </label>
+          )}
           <button
             type="button"
             className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium lg:hidden"
@@ -109,7 +128,11 @@ export default function ShopPage() {
           ) : !loading && data?.items.length === 0 ? (
             <StatusMessage
               title="No products match these filters"
-              message="Try removing a filter or widening the price range."
+              message={
+                suitsMeOn
+                  ? 'None of these products come in your suggested colors. Try removing other filters.'
+                  : 'Try removing a filter or widening the price range.'
+              }
               action={
                 <button
                   type="button"

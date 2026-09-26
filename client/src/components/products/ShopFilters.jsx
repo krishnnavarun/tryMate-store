@@ -114,7 +114,7 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
           min="0"
           inputMode="numeric"
           defaultValue={minPrice ?? ''}
-          placeholder={`Min (${formatPrice(range.min)})`}
+          placeholder="Min"
           aria-label="Minimum price"
           className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
         />
@@ -125,11 +125,16 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
           min="0"
           inputMode="numeric"
           defaultValue={maxPrice ?? ''}
-          placeholder={`Max (${formatPrice(range.max)})`}
+          placeholder="Max"
           aria-label="Maximum price"
           className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
         />
       </div>
+      {range.max > 0 && (
+        <p className="text-xs text-gray-500">
+          From {formatPrice(range.min)} to {formatPrice(range.max)}
+        </p>
+      )}
       <button
         type="submit"
         className="w-full rounded-md border border-gray-300 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"

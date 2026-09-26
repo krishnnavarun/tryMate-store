@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { to: '/shop?type=shirt', label: 'Shirts' },
   { to: '/shop?type=tshirt', label: 'T-shirts' },
   { to: '/shop?type=polo', label: 'Polos' },
+  { to: '/fit-profile', label: 'My fit' },
 ];
 
 export function Logo() {
@@ -56,7 +57,7 @@ export default function Header() {
           {/* Hide account controls until we know whether the user is logged in (no flicker) */}
           {status === 'ready' &&
             (user ? (
-              <AccountMenu name={user.name} onLogout={handleLogout} />
+              <AccountMenu name={user.name} isAdmin={user.role === 'admin'} onLogout={handleLogout} />
             ) : (
               <Link
                 to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`}
@@ -99,6 +100,11 @@ export default function Header() {
                 <Link to="/orders" className="block py-3 text-base font-medium text-gray-700">
                   Your orders
                 </Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin/products" className="block py-3 text-base font-medium text-gray-700">
+                    Admin: products
+                  </Link>
+                )}
                 <button type="button" onClick={handleLogout} className="block py-3 text-base font-medium text-gray-700">
                   Log out
                 </button>
@@ -133,7 +139,7 @@ function CartButton() {
   );
 }
 
-function AccountMenu({ name, onLogout }) {
+function AccountMenu({ name, isAdmin, onLogout }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -159,9 +165,17 @@ function AccountMenu({ name, onLogout }) {
       </button>
       {open && (
         <div className="absolute right-0 mt-2 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+          <Link to="/fit-profile" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+            My fit profile
+          </Link>
           <Link to="/orders" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
             Your orders
           </Link>
+          {isAdmin && (
+            <Link to="/admin/products" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+              Admin: products
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => {

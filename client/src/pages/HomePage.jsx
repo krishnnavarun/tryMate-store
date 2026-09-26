@@ -42,12 +42,12 @@ export default function HomePage() {
               >
                 Shop now
               </Link>
-              <a
-                href="#find-your-fit"
+              <Link
+                to="/fit-profile"
                 className="rounded-lg border border-brand px-6 py-3 text-base font-semibold text-brand transition hover:bg-white"
               >
                 Find your perfect fit
-              </a>
+              </Link>
             </div>
           </div>
           <div className="hidden grid-cols-2 gap-4 md:grid">
@@ -74,14 +74,17 @@ export default function HomePage() {
         <ProductGrid products={data?.items ?? []} loading={loading} skeletonCount={8} />
       </section>
 
-      {/* ---- Find your fit (the scan page arrives in Phase 3) ---- */}
+      {/* ---- Find your fit ---- */}
       <section id="find-your-fit" className="scroll-mt-20 bg-brand text-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-2xl font-bold tracking-tight">Find your perfect fit</h2>
-            <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-              Coming soon
-            </span>
+            <Link
+              to="/fit-profile"
+              className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-brand transition hover:bg-cream"
+            >
+              Scan once, shop with confidence →
+            </Link>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {FIT_FEATURES.map((f) => (

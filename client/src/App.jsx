@@ -1,9 +1,13 @@
 import { Toaster } from 'react-hot-toast';
 import { Route, Routes } from 'react-router';
+import AdminRoute from './components/auth/AdminRoute.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import Layout from './components/layout/Layout.jsx';
+import AdminProductFormPage from './pages/admin/AdminProductFormPage.jsx';
+import AdminProductsPage from './pages/admin/AdminProductsPage.jsx';
 import CartPage from './pages/CartPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
+import FitProfilePage from './pages/FitProfilePage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -30,7 +34,14 @@ export default function App() {
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
-            {/* Later phases: fit-profile, admin */}
+            <Route path="fit-profile" element={<FitProfilePage />} />
+          </Route>
+
+          {/* Admins only */}
+          <Route path="admin" element={<AdminRoute />}>
+            <Route path="products" element={<AdminProductsPage />} />
+            <Route path="products/new" element={<AdminProductFormPage />} />
+            <Route path="products/:slug/edit" element={<AdminProductFormPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

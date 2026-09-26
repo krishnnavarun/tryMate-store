@@ -54,7 +54,7 @@ export function logout(_req, res) {
   res.status(204).end();
 }
 
-// GET /api/auth/me
+// GET /api/auth/me → { user } or { user: null } when not logged in
 export function me(req, res) {
-  res.json({ user: publicUser(req.user) });
+  res.json({ user: req.user ? publicUser(req.user) : null });
 }

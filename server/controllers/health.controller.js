@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { config } from '../config/env.js';
 import { dbStatus } from '../config/db.js';
+import { aiBaseUrl, aiHealth } from '../services/aiClient.js';
 
-// Ask the AI service (or the mock) for its /health. Short timeout: this must stay fast.
 async function checkAiService() {
   try {
-    const { data } = await axios.get(`${config.ai.url}/health`, { timeout: 2000 });
+    const data = await aiHealth();
     return { status: 'ok', version: data?.version ?? null };
   } catch {
     return { status: 'unreachable', version: null };
@@ -25,6 +24,11 @@ export async function getHealth(_req, res) {
     status,
     server: { status: 'ok', env: config.env, uptimeSec: Math.round(process.uptime()) },
     db: { status: db },
-    ai: { status: ai.status, mode: config.ai.mode, url: config.ai.url, version: ai.version },
+    ai: {
+      status: ai.status,
+      mode: config.ai.mode,
+      url: config.ai.mode === 'mock' ? 'built-in mock' : aiBaseUrl(),
+      version: ai.version,
+    },
   });
 }

@@ -1,28 +1,27 @@
 # tryMate Store
 
 AI-powered clothing store: React (Vite) + Express + MongoDB, plain JavaScript.
-AI features (measurements, skin tone, size recommendation, try-on) come from the separate
-**tryMate-Ai** service, which Express calls. The browser never calls it directly.
+Shoppers scan their body once and get a **size recommendation on every product**, **colors
+that suit their skin tone**, and a **virtual try-on**. The AI comes from the separate
+**tryMate-Ai** service, which only this server calls; the browser never calls it directly.
 The full spec is in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
-> **Status: Phase 2 (auth + cart + orders) done.** Shop and product pages run on 14 seeded
-> men's shirts / t-shirts / polos; you can register, log in, fill a cart and place (demo) orders.
-> AI features start in Phase 3.
+> **Status: Phases 1–8 built.** The whole store runs with the built-in mock AI (no Python
+> needed) and was tested end to end against the real AI service. What's left needs you:
+> real product photos, calibrating against a tape measure, and deploying.
+> See [What still needs you](#what-still-needs-you).
 
 ---
 
-## Requirements
+## Quick start
 
-- Node.js **20.19+** (developed on Node 24)
-- MongoDB running locally on `mongodb://localhost:27017` (or a MongoDB Atlas URI)
-
-## Setup
+Requirements: Node.js **20.19+** (developed on Node 24) and MongoDB (local, or a MongoDB Atlas URI).
 
 ```bash
-# 1. Install everything. client/ and server/ each get their own node_modules + package-lock.json;
+# 1. Install. client/ and server/ each have their own node_modules + package-lock.json;
 #    the root only has `concurrently` (to run both apps at once).
-npm install              # root: concurrently
-npm run install:all      # root + server/ + client/ in one go
+npm install              # root
+npm run install:all      # root + server/ + client/
 #    (or by hand: cd server && npm install, then cd client && npm install)
 
 # 2. Environment files (copy, then edit if needed)
@@ -31,32 +30,39 @@ cp client/.env.example client/.env        # PowerShell: copy client\.env.example
 #    In server/.env, set JWT_SECRET to a long random string:
 #    node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 
-# 3. Load the product catalog (replaces the products collection only)
+# 3. Load the product catalogue (replaces the products collection only)
 npm run seed
 
-# 4. Start client + server together
+# 4. Start client + server together (AI_MODE=mock: the fake AI is built in)
 npm run dev
+
+# 5. (optional) Make your account an admin, after registering it in the store
+npm run make-admin -- you@example.com
 ```
 
 - Store: http://localhost:5173
-- API: http://localhost:5000/api (`/api/health`, `/api/products`)
+- API: http://localhost:5000/api
 
-## Scripts (run from the repo root)
+### Using the real AI service
+1. Start **tryMate-Ai** (see its README): `uvicorn app.main:app --port 8000`.
+2. In `server/.env`: `AI_MODE=real`, `AI_SERVICE_URL=http://localhost:8000`, and
+   `AI_SERVICE_KEY` equal to the AI service's `SERVICE_API_KEY`.
+3. Restart `npm run dev`. `GET /api/health` shows `"ai": { "status": "ok", "mode": "real" }`.
+
+## Scripts (from the repo root)
 
 | Script | What it does |
 |---|---|
 | `npm run install:all` | `npm install` in the root, `server/` and `client/` |
 | `npm run dev` | Client (Vite, :5173) + server (`node --watch`, :5000) together |
 | `npm run seed` | Delete and re-insert all products |
+| `npm run make-admin -- <email> [--remove]` | Give (or take away) the admin role |
 | `npm run build` | Production build of the client into `client/dist` |
 | `npm start` | Start the server without watch mode |
 | `npm run lint` | ESLint on the client |
+| `npm run test:e2e` | End-to-end API tests against the running server (see [Tests](#tests)) |
 
-To run one side only: `cd server && npm run dev` or `cd client && npm run dev`.
-Add packages inside the app that uses them: `cd server && npm install <pkg>` (or `cd client ...`).
-
-Each app is self-contained (own `package.json` + `package-lock.json`), so it can be deployed
-on its own: e.g. Render/Railway with root directory `server`, Vercel/Netlify with root directory `client`.
+In `server/`: `npm run mock:ai` runs the mock AI on its own on port 8000 (like the real service).
 
 ## Environment variables
 
@@ -67,20 +73,42 @@ on its own: e.g. Render/Railway with root directory `server`, Vercel/Netlify wit
 | `NODE_ENV` | `development` | `development` \| `production` \| `test` |
 | `PORT` | `5000` | API port |
 | `MONGO_URI` | `mongodb://localhost:27017/trymate` | Database |
-| `JWT_SECRET` | *(random)* | Signs login tokens (Phase 2). Must not be `change-me` in production. |
+| `JWT_SECRET` | *(random)* | Signs login tokens. Must not be `change-me` in production. |
 | `CLIENT_URL` | `http://localhost:5173` | Only this origin is allowed by CORS |
-| `AI_SERVICE_URL` | `http://localhost:8000` | tryMate-Ai (or the mock, from Phase 3) |
+| `AI_MODE` | `mock` | `mock` = built-in fake AI · `real` = the tryMate-Ai service |
+| `AI_SERVICE_URL` | `http://localhost:8000` | tryMate-Ai (used when `AI_MODE=real`) |
 | `AI_SERVICE_KEY` | `change-me` | Sent as `X-API-Key`; must equal the AI service's `SERVICE_API_KEY` |
-| `AI_MODE` | `mock` | `mock` \| `real` |
 
-The server validates these at startup (`server/config/env.js`) and refuses to start with
-a clear message if something is missing.
+The server validates these at startup (`server/config/env.js`) and refuses to start with a
+clear message if something is missing.
 
-`client/.env`
+`client/.env`: `VITE_API_URL` = `http://localhost:5000/api` (in production, `/api` behind a rewrite; see Deployment).
 
-| Name | Example |
-|---|---|
-| `VITE_API_URL` | `http://localhost:5000/api` |
+---
+
+## Features, and how to try them
+
+1. **Shop** (`/shop`): filter by type / colour / price, sort, pages. Filters live in the URL.
+2. **Account**: register, log in, log out. The session is an httpOnly cookie.
+3. **Cart and demo checkout**: stock is checked; placing an order takes stock atomically;
+   nothing is charged.
+4. **Fit profile** (`/fit-profile`): photo tips, a privacy notice, upload **or** camera (with a
+   10-second self-timer for full-body shots), height/weight → measurements, skin tone,
+   suggested colours, confidence, warnings. Re-scan, delete, fit preference (slim/regular/loose).
+5. **Size recommendation** on every product page: a "Best fit" badge on the recommended size,
+   a fit note per size ("Tight at chest"), and a slim/regular/loose toggle that updates it.
+   Without a profile: a prompt to scan.
+6. **Colors that suit you**: "Suits you" tags on product cards and colour swatches, plus a
+   "Colors that suit you" filter on the shop page.
+7. **Virtual try-on** ("Try it on" on a product): upload or take a photo, a progress state for up
+   to a minute, the result side by side with the original, and the note *"This shows the look,
+   not the exact fit."* Limited to 10 per hour per user.
+8. **Admin** (`/admin/products`, admins only): product list, create/edit with a colour editor,
+   image URLs, garment (try-on) image URL and a **size chart + stock editor**; delete.
+
+**Testing every AI error message with the mock:** give the photo a file name containing
+`no-person`, `multiple`, `partial`, `no-face`, `face-error`, `server-error`, `tryon-fail` or
+`tryon-timeout` (e.g. `partial.jpg`), or enter height 999. See `server/mocks/aiMock.js`.
 
 ---
 
@@ -91,123 +119,152 @@ the same shape the AI service uses. Validation errors add a `details` array.
 
 | Code | HTTP | When |
 |---|---|---|
-| `VALIDATION_ERROR` | 400 | Bad query/body/params |
+| `VALIDATION_ERROR` | 400 | Bad query/body/params/upload |
 | `CART_EMPTY` | 400 | Placing an order with an empty cart |
 | `UNAUTHORIZED` | 401 | Not logged in / wrong email or password |
-| `FORBIDDEN` | 403 | Logged in but not allowed (admin routes) |
+| `FORBIDDEN` | 403 | Logged in but not an admin |
 | `NOT_FOUND` | 404 | Unknown route, product, cart item or order |
-| `CONFLICT` | 409 | Email already registered |
+| `CONFLICT` | 409 | Email or product slug already in use |
 | `OUT_OF_STOCK` | 409 | Not enough stock for the requested size |
-| `RATE_LIMITED` | 429 | More than 20 login/register attempts per 15 min from one IP |
-| `INTERNAL_ERROR` | 500 | Anything unexpected |
+| `NO_FIT_PROFILE` | 409 | Size recommendation / "suits me" without a scan |
+| `INVALID_INPUT`, `NO_PERSON_DETECTED`, `MULTIPLE_PEOPLE`, `PARTIAL_BODY`, `FACE_NOT_FOUND` | 422 | From the AI service, passed through |
+| `RATE_LIMITED` | 429 | Too many logins (20/15 min/IP in production, 200 in development), scans (20/h/user) or try-ons (10/h/user) |
+| `TRYON_FAILED` / `TRYON_TIMEOUT` / `AI_TIMEOUT` | 502 / 504 | The AI provider failed or was too slow |
+| `AI_UNAVAILABLE` | 503 | The AI service can't be reached |
+| `INTERNAL_ERROR` | 500 / 502 | Anything unexpected (incl. a wrong `AI_SERVICE_KEY`, which is logged) |
 
-### `GET /api/health`
-Server, DB and AI service status. `200` with `status: "ok"`, or `"degraded"` when the AI
-service is unreachable (the store still works). `503` with `status: "down"` if MongoDB is down.
+The client turns each code into a friendly message (`client/src/api/client.js`, following the
+table in PROJECT_SPEC.md §4).
 
-```bash
-curl http://localhost:5000/api/health
+### Routes
+
+```
+GET    /api/health                           server + DB + AI status
+
+POST   /api/auth/register | login | logout
+GET    /api/auth/me                          { user } or { user: null }
+
+GET    /api/products                         ?category&type&color&minPrice&maxPrice&sort&page&limit&suitsMe=true
+GET    /api/products/:slug                   full product (+ suitingColors for logged-in users)
+POST   /api/products                         (admin) create
+PUT    /api/products/:id                     (admin) replace
+DELETE /api/products/:id                     (admin)
+GET    /api/products/:id/size-recommendation (auth) → { recommendedSize, perSize, fitPreference }
+POST   /api/products/:id/try-on              (auth, multipart: image, color?) → { resultImage, latencyMs, provider }
+
+GET    /api/fit-profile                      (auth) → { fitProfile, fitPreference }
+POST   /api/fit-profile/scan                 (auth, multipart: image, heightCm, weightKg?) → { fitProfile, fitPreference, warnings }
+PUT    /api/fit-profile/preference           (auth) { fitPreference: slim | regular | loose }
+DELETE /api/fit-profile                      (auth)
+
+GET    /api/cart | POST /api/cart/items | PATCH /api/cart/items/:itemId | DELETE /api/cart/items/:itemId   (auth)
+POST   /api/orders | GET /api/orders | GET /api/orders/:id                                                (auth)
 ```
 
-### `GET /api/products`
-Query params (all optional):
+Every response has an `X-Request-ID` header; the same id is sent to the AI service, so one
+request can be followed through both services' logs.
 
-| Param | Values |
-|---|---|
-| `category` | `upper_body` \| `lower_body` \| `dresses` |
-| `type` | `shirt` \| `tshirt` \| `polo` |
-| `color` | color name, case-insensitive (`navy`) |
-| `minPrice`, `maxPrice` | numbers; compared with the discounted price when there is one |
-| `sort` | `newest` (default) \| `price_asc` \| `price_desc` \| `name` |
-| `page`, `limit` | default `1`, `12` (max 48) |
-
-Response: `{ items, page, limit, total, pages, filters: { types, colors, price: { min, max } } }`.
-`filters` lists every option in the catalog, for the shop's filter panel.
+### curl examples (Git Bash / macOS / Linux)
 
 ```bash
-curl "http://localhost:5000/api/products?type=polo&sort=price_asc"
-curl "http://localhost:5000/api/products?color=navy&maxPrice=1300"
-```
-
-### `GET /api/products/:slug`
-The full product, including `sizeChart` and `stock`.
-
-```bash
-curl http://localhost:5000/api/products/classic-oxford-shirt
-```
-
-### Auth: `/api/auth`
-
-The JWT lives in an **httpOnly cookie** (`trymate_token`, 7 days), so the client never
-touches it. Why a cookie rather than a Bearer token: JavaScript can't read an httpOnly
-cookie, so an XSS bug can't steal the session; `SameSite=Lax` plus CORS restricted to
-`CLIENT_URL` blocks CSRF; and the client needs no token code.
-
-| Route | Body | Response |
-|---|---|---|
-| `POST /register` | `{ name, email, password }` (8–72 bytes) | `201 { user }` + cookie |
-| `POST /login` | `{ email, password }` | `200 { user }` + cookie |
-| `POST /logout` | | `204`, cookie cleared |
-| `GET /me` | | `200 { user }` or `401` |
-
-`user` = `{ _id, name, email, role, fitProfile, fitPreference, createdAt }` (never the password hash).
-Registration always creates a `customer`; there's no way to self-register as admin.
-
-```bash
-# Git Bash / macOS / Linux: -c/-b store and send the cookie
-curl -c jar.txt -X POST http://localhost:5000/api/auth/register \
-  -H "Content-Type: application/json" \
+# Register (the cookie goes into jar.txt), then use it
+curl -c jar.txt -X POST http://localhost:5000/api/auth/register -H "Content-Type: application/json" \
   -d '{"name":"Asha","email":"asha@example.com","password":"correct-horse-1"}'
-curl -b jar.txt http://localhost:5000/api/auth/me
-```
 
-### Cart: `/api/cart` (logged in)
+# Scan (photo stays in memory, only the results are saved)
+curl -b jar.txt -X POST http://localhost:5000/api/fit-profile/scan -F "image=@photo.jpg" -F "heightCm=175"
 
-| Route | Body |
-|---|---|
-| `GET /` | |
-| `POST /items` | `{ productId, size, color, qty? }` (same product + size + color adds to that line) |
-| `PATCH /items/:itemId` | `{ qty }` (1–10) |
-| `DELETE /items/:itemId` | |
+# Size recommendation for a product (id from /api/products)
+curl -b jar.txt http://localhost:5000/api/products/<productId>/size-recommendation
 
-Every cart route returns the whole cart, priced live from the products:
-`{ items: [{ _id, product: { name, slug, image, price, discountPrice }, size, color, qty, unitPrice, lineTotal, available, inStock }], itemCount, subtotal, hasStockIssues }`.
-Stock is checked when adding/updating; lines whose product was deleted are dropped.
+# Change fit preference
+curl -b jar.txt -X PUT http://localhost:5000/api/fit-profile/preference -H "Content-Type: application/json" -d '{"fitPreference":"slim"}'
 
-```bash
-curl -b jar.txt -X POST http://localhost:5000/api/cart/items \
-  -H "Content-Type: application/json" \
-  -d '{"productId":"<id from /api/products>","size":"M","color":"Navy","qty":1}'
-```
+# Products that suit you
+curl -b jar.txt "http://localhost:5000/api/products?suitsMe=true"
 
-### Orders: `/api/orders` (logged in)
+# Try-on
+curl -b jar.txt -X POST http://localhost:5000/api/products/<productId>/try-on -F "image=@photo.jpg" -F "color=Navy"
 
-| Route | Body |
-|---|---|
-| `POST /` | `{ shippingAddress: { fullName, phone, line1, line2?, city, state, postalCode, country } }` |
-| `GET /` | (your orders, newest first) |
-| `GET /:id` | (only your own orders; others return 404) |
-
-Placing an order: stock is taken out atomically per line (if any line fails, what was
-already taken is put back), the items are snapshotted with the price paid, and the cart is
-emptied. Payment is a demo: `payment: { method: "demo", status: "paid" }`, nothing is charged.
-
-```bash
+# Cart and order
+curl -b jar.txt -X POST http://localhost:5000/api/cart/items -H "Content-Type: application/json" \
+  -d '{"productId":"<productId>","size":"M","color":"Navy","qty":1}'
 curl -b jar.txt -X POST http://localhost:5000/api/orders -H "Content-Type: application/json" \
   -d '{"shippingAddress":{"fullName":"Asha","phone":"9876543210","line1":"1 MG Road","city":"Bengaluru","state":"Karnataka","postalCode":"560001","country":"India"}}'
-curl -b jar.txt http://localhost:5000/api/orders
 ```
 
-### How to test in the browser
-1. `npm run dev`, open http://localhost:5173
-2. Home: hero, 8 new arrivals, the "Find your perfect fit" section
-3. Shop: filter by type / color / price, sort, page 2; filters stay in the URL, so refresh and back keep them
-4. Product: switch colors (the image changes), pick a size (sold-out sizes are crossed out), open the size guide
-5. Click **Add to cart** while logged out → you're sent to log in, then back to the product
-6. Register, add a few items (try a different color of the same shirt), check the cart badge in the header
-7. Cart: change quantities, remove a line; **Checkout** → fill the address → **Place order** → confirmation page
-8. **Your orders** (account menu) lists it; refresh the page and you're still logged in; **Log out**
-9. Visit `/cart` while logged out → redirected to login; `/products/nope` → not found; `/anything` → 404 page
+---
+
+## How the AI features work (store side)
+
+- **Photos are never stored.** `multer.memoryStorage()` keeps an upload in RAM; it's forwarded
+  to the AI service (`form-data` + axios, `server/services/aiClient.js`) and dropped when the
+  request ends. Only the scan *results* go into `user.fitProfile`. Photos are never logged.
+- **AI_MODE=mock** mounts the fake AI (`server/mocks/aiMock.js`) inside this server at
+  `/__mock-ai`, so nothing else has to run. It follows the same contract (including the
+  3-second try-on delay) and still requires the `X-API-Key`.
+- **Timeouts:** scan 60 s, recommendation 15 s, try-on 130 s (the AI service gives up at 120 s).
+- **Size recommendations are not stored.** They're computed on request and cached in memory
+  for 5 minutes per user + product + fit preference. The cache is cleared whenever the profile
+  or preference changes (`server/services/recommendationCache.js`).
+- **"Colors that suit you"** compares each product colour with the user's suggested colours
+  using **CIEDE2000** (ΔE00, the standard perceptual colour difference in CIELAB;
+  `server/utils/colorDistance.js`, checked against published test data). RGB distance doesn't
+  match how people see colour. A colour "suits you" when ΔE00 ≤ 6 (looks like the same colour);
+  white vs cream is ~7, navy vs indigo ~12. Change `SUITS_YOU_MAX_DELTA_E` to be more generous.
+- **Camera:** `getUserMedia` with a live preview and a 10-second self-timer, because a
+  full-body photo needs the phone propped up while you step back. `<input capture>` opens the
+  phone's own camera app, which has no timer. Uploading a file (which on phones also offers
+  the camera) is always available.
+
+---
+
+## Deployment
+
+A setup that works well:
+
+| Part | Where | Notes |
+|---|---|---|
+| Database | **MongoDB Atlas** (free M0) | Allow your server's IP (or 0.0.0.0/0 with a strong password) |
+| Server | **Render** or **Railway**, root directory `server` | Build `npm install`, start `npm start` |
+| Client | **Vercel** or **Netlify**, root directory `client` | Build `npm run build`, output `dist` |
+| AI service | Render/Railway (Docker), ≥ 1 GB RAM | See tryMate-Ai's README |
+
+**Important, cookies:** the login cookie is `SameSite=Lax` and `Secure` in production, so the
+browser only sends it when the client and API are on the **same site**. `your-app.vercel.app`
+and `your-api.onrender.com` are different sites, so logins would silently fail. Serve the API
+through the client's domain with a rewrite:
+
+- **Vercel**: add `client/vercel.json`
+  ```json
+  {
+    "rewrites": [
+      { "source": "/api/:path*", "destination": "https://YOUR-API.onrender.com/api/:path*" },
+      { "source": "/(.*)", "destination": "/index.html" }
+    ]
+  }
+  ```
+- **Netlify**: add `client/public/_redirects`
+  ```
+  /api/*  https://YOUR-API.onrender.com/api/:splat  200
+  /*      /index.html                                200
+  ```
+
+The second rule makes deep links like `/products/knit-polo` work (single-page app).
+
+Then set:
+- client: `VITE_API_URL=/api`
+- server: `NODE_ENV=production`, `CLIENT_URL=https://your-app.vercel.app`, `MONGO_URI` (Atlas),
+  a long random `JWT_SECRET`, `AI_MODE` (`mock` for a demo, `real` + `AI_SERVICE_URL` +
+  `AI_SERVICE_KEY` for the real service)
+
+With `NODE_ENV=production` the server trusts the platform's proxy (correct IPs for rate
+limits), sends `Secure` cookies, and refuses to start if `JWT_SECRET` or `AI_SERVICE_KEY` is
+still `change-me`. After deploying: `npm run seed` once against Atlas (run it locally with
+`MONGO_URI` pointing at Atlas), register, `npm run make-admin -- you@...`.
+
+**Try-on in production:** the Replicate IDM-VTON model is **non-commercial only** (CC BY-NC-SA).
+Fine for a demo; a real store needs a commercially licensed try-on model.
 
 ---
 
@@ -215,90 +272,107 @@ curl -b jar.txt http://localhost:5000/api/orders
 
 ```
 tryMate-store/
-├── client/                      # React 19 + Vite 8 + Tailwind CSS 4 + React Router
-│   ├── index.html
-│   ├── vite.config.js           # Tailwind via @tailwindcss/vite (no tailwind.config.js needed)
+├── client/                        # React 19 + Vite 8 + Tailwind CSS 4 + React Router
 │   └── src/
-│       ├── main.jsx, App.jsx    # router + routes
-│       ├── index.css            # Tailwind import + brand colors (@theme)
-│       ├── api/                 # axios instance (client.js) + auth/products/cart/orders calls
-│       ├── context/             # AuthProvider, CartProvider (+ contexts.js)
-│       ├── hooks/               # useApi (fetch-on-change), useAuth, useCart
+│       ├── main.jsx, App.jsx      # providers + routes
+│       ├── api/                   # axios instance (errors → friendly messages) + endpoint calls
+│       ├── context/               # AuthProvider, CartProvider
+│       ├── hooks/                 # useApi, useAuth, useCart, useObjectUrl
 │       ├── components/
-│       │   ├── auth/            # ProtectedRoute, AuthCard
-│       │   ├── layout/          # Layout, Header (account menu + cart badge), Footer
-│       │   ├── orders/          # OrderStatusBadge
-│       │   ├── products/        # ProductCard, ProductGrid, ShopFilters, Price, ColorDots, SizeGuide
-│       │   └── ui/              # FormField, Pagination, Spinner, StatusMessage
-│       ├── pages/               # Home, Shop, Product, Login, Register, Cart, Checkout, Orders, OrderDetail, NotFound
-│       └── utils/               # format.js (INR, dates), redirect.js (safe ?redirect=)
-├── server/                      # Express 5 + Mongoose 9, ES modules
-│   ├── index.js                 # connect DB → listen
-│   ├── app.js                   # express app: helmet, cors, json, cookies, routes, errors
-│   ├── config/                  # env.js (validated .env), db.js
-│   ├── models/                  # Product, User, Cart, Order
-│   ├── routes/ → controllers/   # thin routes, logic in controllers
-│   ├── validators/              # zod schemas for query/params/body
-│   ├── middleware/              # validate, auth (requireAuth/requireAdmin), rateLimit, errorHandler
-│   ├── utils/                   # ApiError, authToken (JWT + cookie), pricing, strings
-│   └── seed/                    # seed.js, products.data.js, sizeCharts.js
-├── scripts/install-all.mjs      # npm run install:all (root + server + client)
-├── package.json                 # root scripts only (concurrently runs both apps)
+│       │   ├── admin/             # SizeChartEditor
+│       │   ├── auth/              # ProtectedRoute, AdminRoute, AuthCard
+│       │   ├── fit/               # ScanForm, FitResults, PhotoPicker, CameraCapture, PrivacyNotice, FitPreferenceToggle
+│       │   ├── layout/            # Layout, Header, Footer
+│       │   ├── orders/            # OrderStatusBadge
+│       │   ├── products/          # ProductCard, ProductGrid, ShopFilters, Price, ColorDots, SizeGuide, TryOnModal
+│       │   └── ui/                # FormField, Modal, Pagination, Spinner, StatusMessage
+│       ├── pages/                 # Home, Shop, Product, FitProfile, Login, Register, Cart, Checkout, Orders, OrderDetail, NotFound
+│       │   └── admin/             # AdminProducts, AdminProductForm
+│       └── utils/                 # format (INR, dates), redirect (safe ?redirect=), productForm
+├── server/                        # Express 5 + Mongoose 9, ES modules
+│   ├── index.js, app.js
+│   ├── config/                    # env.js (validated .env), db.js
+│   ├── models/                    # Product, User (+ fitProfile), Cart, Order
+│   ├── routes/ → controllers/     # auth, products (+ AI + admin), fit-profile, cart, orders, health
+│   ├── services/                  # aiClient (the only AI caller), recommendationCache
+│   ├── mocks/aiMock.js            # fake AI service (same contract)
+│   ├── middleware/                # validate, auth, rateLimit, upload (memory only), requestId, errorHandler
+│   ├── validators/                # zod schemas
+│   ├── utils/                     # ApiError, authToken, colorDistance (CIEDE2000), pricing, strings
+│   ├── scripts/makeAdmin.js
+│   ├── seed/                      # seed.js, products.data.js, sizeCharts.js
+│   └── tests/e2e/                 # npm run test:e2e (run.mjs + shop/ai/admin suites)
+├── scripts/install-all.mjs
+├── package.json                   # root scripts (concurrently)
 └── PROJECT_SPEC.md
 ```
-
-Coming in later phases: `server/mocks/aiMock.js`, `server/services/aiClient.js`,
-fit-profile / size-recommendation / try-on routes, admin routes, and the matching pages.
 
 ---
 
 ## Notes and decisions
 
-### Phase 2
-- **Auth = JWT in an httpOnly cookie** (see the Auth section for why). Passwords are hashed
-  with bcrypt (cost 12). Login gives the same error and takes the same time for "unknown email"
-  and "wrong password", so it can't be used to discover registered emails.
-- **Production deploy note (Phase 8):** the cookie is `SameSite=Lax`, so the client and API must
-  be on the same *site*. Easiest: serve the API under the client's domain (e.g. a Vercel rewrite
-  from `/api/*` to the Render/Railway server) and set `VITE_API_URL=/api`. In development,
-  `localhost:5173` and `localhost:5000` already count as the same site.
-- **Login/register rate limit**: 20 attempts per 15 minutes per IP. It's kept in memory, so
-  restarting the server resets it. (Not in the spec; added because the login form would
-  otherwise allow unlimited password guessing.)
-- **Stock is enforced**: adding to cart and placing an order both check it, and placing an order
-  decrements it atomically. MongoDB transactions need a replica set, so a failed multi-line order
-  puts back what it already took instead.
-- **No admin user yet**: admin routes and UI come in Phase 8. To make yourself admin now, set
-  `role: "admin"` on your user in MongoDB Compass / mongosh.
+- **Auth = JWT in an httpOnly cookie.** JavaScript can't read it (an XSS bug can't steal the
+  session); `SameSite=Lax` + CORS restricted to `CLIENT_URL` block CSRF; the client has no
+  token code. bcrypt cost 12; login gives the same error and timing for unknown email and
+  wrong password.
+- **Stock is enforced** when adding to the cart and atomically when ordering (a failed multi-line
+  order puts back what it took; transactions would need a MongoDB replica set).
+- **FACE_NOT_FOUND:** the real AI returns measurements with `skin_tone: null` and a warning; the
+  profile is saved without colours and the page explains why. The 422 form is still handled.
+- **Contract additions (not breaking):** the AI service can answer `429 RATE_LIMITED` for
+  try-on; the store adds `NO_FIT_PROFILE`, `AI_UNAVAILABLE` and `AI_TIMEOUT` of its own.
+- **Beyond the spec** (small, for safety/UX): login/scan/try-on/recommendation rate limits,
+  a camera self-timer, `suitingColors` on the product page, `make-admin` script, request ids,
+  end-to-end tests.
+- **Database name** is `trymate` (the spec example said `fitstore`). **Currency** is INR (₹),
+  in `client/src/utils/format.js`.
+- **Express 5**: async errors reach the error handler automatically; `req.query` is read-only, so
+  validated values go on `req.valid`. Express 5's query parser can't build nested objects, so
+  `?color[$ne]=x` can't become a Mongo operator.
+- **Mongoose 9**: middleware has no `next`; use `returnDocument: 'after'` instead of `new: true`.
 - **Re-seeding** gives products new ids, so existing cart lines disappear (orders keep their snapshot).
-- bcrypt ships prebuilt binaries; npm 11 may print an "allow-scripts" warning for it on install. It's harmless.
+- bcrypt ships prebuilt binaries; npm 11 may print an "allow-scripts" warning for it. It's harmless.
 
-### Phase 1
+## Tests
 
-- **Database name** is `trymate` (the spec example said `fitstore`). Change `MONGO_URI` if you prefer the other name.
-- **Currency** is INR (₹), set in one place: `client/src/utils/format.js`.
-- **Express 5**: errors thrown in async controllers reach the error handler automatically,
-  so there are no try/catch blocks or `asyncHandler` wrappers. `req.query` is read-only in
-  Express 5, so validated values are put on `req.valid.query`.
-- **Query safety**: Express 5's default query parser doesn't build nested objects, so
-  `?color[$ne]=x` can't become a Mongo operator; zod also drops unknown params, and color
-  names are regex-escaped.
-- **Seed images** are placeholders from placehold.co (one per color). `garmentImageUrl` must be
-  swapped for real flat-lay photos before testing try-on against the real AI service.
-- **Size charts** (`server/seed/sizeCharts.js`) are realistic approximations of common
-  men's sizing, stored as *body* measurement ranges (length = garment length). Check them
-  against real brand charts in R&D.
-- **Size chart order** is kept (S → XXL) because the model stores it as a Mongoose `Map`.
-- **Mongoose 9**: middleware functions no longer receive `next`; write them as plain or async functions.
+End-to-end tests call the API of a **running** server, the way the React app does:
 
-## Open decisions for R&D (PROJECT_SPEC.md §9)
+```bash
+npm run dev            # terminal 1 (AI_MODE=mock is fine)
+npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
+```
 
-1. ~~JWT in an httpOnly cookie vs a Bearer token~~: decided in Phase 2 (cookie).
-2. Color distance method for "Colors that suit you" (e.g. CIEDE2000 in LAB vs RGB).
-3. Camera capture: `getUserMedia` vs `<input capture>`.
-4. Forwarding multer memory buffers to FastAPI (form-data + axios, 130 s timeout).
-5. How `AI_MODE=mock` should work: run `aiMock.js` as its own process on :8000, or start it
-   from the server when `AI_MODE=mock`.
+- **Shop** (auth, cart, orders, the stock race), **AI features** (scan, every AI error message
+  via the mock, size recommendation for each fit preference, "suits you", try-on) and **admin**
+  (permissions, validation, create/update/delete). Code: `server/tests/e2e/`.
+- **Safe on your dev database:** each run creates its own users (`…@example.test`) and product
+  (`E2E Test …`) and deletes them, with their carts and orders, when it ends, even after a
+  failure. Your products, stock and accounts are never touched.
+- With `AI_MODE=real`: set `E2E_PHOTO=path/to/full-body.jpg` (otherwise the AI part is
+  skipped), and `E2E_TRYON=1` to include one try-on (costs money unless the AI service has
+  `TRYON_MOCK=true`).
+- Other target: `E2E_API_URL=http://localhost:5000/api` (default).
+
+## What was tested
+
+- `npm run test:e2e`: 80 checks with the mock AI; with the real AI service + a real photo: 71
+  (the mock-only error cases are skipped). Run twice in a row; the database was identical
+  before and after.
+- The same scan → recommendation → "suits you" → try-on flow against the **real** AI service
+  (try-on provider mocked): no contract mismatches.
+- UI: a headless Chrome tour (desktop + 390 px mobile) through home, shop, product, register,
+  scan (upload and the camera with a fake video device), recommendations, try-on, cart,
+  checkout, order confirmation and admin, with no console errors.
+
+## What still needs you
+
+1. **Real product photos:** the seed uses placeholder images. For try-on, each product's
+   `garmentImageUrl` must be a real flat-lay photo (garment alone, plain background). Edit them
+   in `/admin/products` or in `server/seed/products.data.js`.
+2. **Real size charts:** `server/seed/sizeCharts.js` holds realistic approximations; check them
+   against real brand charts.
+3. **Calibrate** the AI measurements against a tape measure (see tryMate-Ai's README).
+4. **Deploy** (above) and run the demo flow on your phone.
 
 ## Tip: OneDrive
 
