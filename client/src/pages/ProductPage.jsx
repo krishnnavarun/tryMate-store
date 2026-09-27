@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { updateFitPreference } from '../api/fitProfile.js';
 import { fetchProduct, fetchProducts, fetchSizeRecommendation } from '../api/products.js';
 import FitPreferenceToggle from '../components/fit/FitPreferenceToggle.jsx';
+import FitBreakdown from '../components/products/FitBreakdown.jsx';
 import Price from '../components/products/Price.jsx';
 import ProductGrid from '../components/products/ProductGrid.jsx';
 import ProductImage from '../components/products/ProductImage.jsx';
@@ -305,6 +306,10 @@ function ProductDetails({ product }) {
               recommended={recommended}
               recommendedInStock={recommended ? inStock(recommended) : true}
               onLogin={() => requireLogin('Log in to get your size.', '/fit-profile')}
+              onChooseSize={(s) => {
+                setChosenSize(s);
+                setNeedSize(false);
+              }}
             />
           </div>
 
@@ -357,7 +362,7 @@ function SuitsYouBadge({ className = '' }) {
 }
 
 // The line under the size buttons: the fit note, a prompt to scan, or a loading/error state
-function FitNote({ user, recommendation, size, sizeFit, recommended, recommendedInStock, onLogin }) {
+function FitNote({ user, recommendation, size, sizeFit, recommended, recommendedInStock, onLogin, onChooseSize }) {
   const box = 'mt-5 rounded-2xl p-5 text-sm animate-rise';
 
   if (!user || !user.fitProfile?.measurements) {
@@ -394,12 +399,27 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
   if (!recommendation.data) return null;
 
   const bestScore = recommendation.data.perSize?.[recommended]?.score ?? 0;
+  const { alternativeSize, alternativeNote } = recommendation.data;
+  const shownSize = size ?? recommended; // the breakdown follows the size you're looking at
+  const confidence = user.fitProfile.confidence ?? 1;
   return (
     <div className={`${box} border border-emerald-200 bg-emerald-50/70 text-emerald-900`}>
       <p>
         <span className="font-display text-lg text-emerald-900">We recommend {recommended}</span> for your measurements
         {!recommendedInStock && <span className="text-emerald-800"> (sold out right now)</span>}.
       </p>
+      {alternativeNote && (
+        <p className="mt-1">
+          {alternativeNote}{' '}
+          <button
+            type="button"
+            onClick={() => onChooseSize(shownSize === alternativeSize ? recommended : alternativeSize)}
+            className="font-semibold underline"
+          >
+            Show size {shownSize === alternativeSize ? recommended : alternativeSize}
+          </button>
+        </p>
+      )}
       {size && sizeFit && (
         <p className="mt-1">
           Size {size}: <span className="font-semibold">{matchLabel(sizeFit.score)}</span>
@@ -412,7 +432,17 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
           clothes for more accurate measurements.
         </p>
       )}
-      <p className="mt-2 text-xs text-emerald-800/80">
+      <FitBreakdown size={shownSize} fields={recommendation.data.perSize?.[shownSize]?.fields} />
+      {confidence < 0.65 && (
+        <p className="mt-4 rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">
+          Your scan&rsquo;s confidence is {Math.round(confidence * 100)}%, so treat this as a guide.{' '}
+          <Link to="/fit-profile" className="font-semibold underline">
+            Re-scan
+          </Link>{' '}
+          in fitted clothes and good light for a more precise answer.
+        </p>
+      )}
+      <p className="mt-4 text-xs text-emerald-800/80">
         Based on your fit profile ({user.fitPreference} fit).{' '}
         <Link to="/fit-profile" className="underline">
           Update it

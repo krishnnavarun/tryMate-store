@@ -134,8 +134,16 @@ clear message if something is missing.
 4. **Fit profile** (`/fit-profile`): photo tips, a privacy notice, upload **or** camera (with a
    10-second self-timer for full-body shots), height/weight → measurements, skin tone,
    suggested colours, confidence, warnings. Re-scan, delete, fit preference (slim/regular/loose).
-5. **Size recommendation** on every product page: a "Best fit" badge on the recommended size,
-   a fit note per size ("Tight at chest"), and a slim/regular/loose toggle that updates it.
+5. **Size recommendation** on every product page:
+   - a "Best fit" badge on the recommended size, and a fit note per size ("Tight at chest");
+   - **how that size fits you, part by part**: chest, waist, shoulders, length and, for
+     long-sleeved shirts, sleeves. Each gets a verdict ("Just right", "A little snug", "Long"),
+     your number against the size's range, and a bar showing where you sit;
+   - **"between sizes" advice** ("You're between M and L: M is the closer match; L fits more
+     relaxed", with a button to view the other size);
+   - a note when your scan's confidence is low;
+   - a slim/regular/loose toggle that updates everything.
+
    Without a profile: a prompt to scan.
 6. **Colours that suit you**: "Suits you" tags on product cards and colour swatches, plus a
    "Colours that suit you" filter on the shop page.
@@ -199,7 +207,8 @@ GET    /api/products/:slug                   full product (+ suitingColors for l
 POST   /api/products                         (admin) create
 PUT    /api/products/:id                     (admin) replace
 DELETE /api/products/:id                     (admin)
-GET    /api/products/:id/size-recommendation (auth) → { recommendedSize, perSize, fitPreference }
+GET    /api/products/:id/size-recommendation (auth) → { recommendedSize, perSize: { M: { score, note, fields } },
+                                              alternativeSize, alternativeNote, fitPreference }
 POST   /api/products/:id/try-on              (auth, multipart: image, color?) → { resultImage, latencyMs, provider }
 
 GET    /api/fit-profile                      (auth) → { fitProfile, fitPreference }
@@ -435,7 +444,7 @@ tryMate-store/
 a second (no browser, camera or server):
 
 ```bash
-npm test               # → "pass 59"
+npm test               # → "pass 64"
 ```
 
 - `client/src/lib/fitting/drawGarment.test.js`: the garment drawing on a real detected pose
@@ -487,7 +496,7 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   scan (upload and the camera with a fake video device), recommendations, try-on, cart,
   checkout, order confirmation and admin, with no console errors.
 - Fitting room: the real MediaPipe model in headless Chrome on a person in a fake camera
-  feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 59 unit
+  feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 64 unit
   tests. They were also checked the other way round: with the old sleeve maths put back they fail.
 - Design and motion: a headless Chrome tour of the redesign (desktop 1440 px + 390 px mobile).
   It covered home, the shop (including the card hover), product, login, register, the scan
@@ -503,7 +512,7 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   - size prompt, low stock, related products and the 404 search;
   - password Show/rule, and height in feet and inches through a real scan;
   - cart undo, checkout steps and the address pre-fill.
-  `npm run test:e2e`: 85 checks (5 new for search).
+  `npm run test:e2e`: 87 checks (search, fit breakdown and "between sizes" included).
 - Keyboard only: 22 scripted checks in headless Chrome, all passing:
   - skip link, visible focus, and focus after navigation;
   - the page title on 9 routes;
@@ -520,7 +529,8 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
    `garmentImageUrl` must be a real flat-lay photo (garment alone, plain background). Edit them
    in `/admin/products` or in `server/seed/products.data.js`.
 2. **Real size charts:** `server/seed/sizeCharts.js` holds realistic approximations; check them
-   against real brand charts.
+   against real brand charts. Run `npm run seed` once to load the new **sleeve** lengths (long-sleeve
+   shirts and the henley). Re-seeding gives products new ids, so existing cart lines disappear.
 3. **Calibrate** the AI measurements against a tape measure: tryMate-Ai's `scripts/calibrate.py`
    turns a few photos + tape values into the constants to set (see tryMate-Ai's README).
 4. **Deploy** (above) and run the demo flow on your phone.

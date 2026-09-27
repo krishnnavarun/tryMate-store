@@ -4,7 +4,7 @@ import { slugify } from '../utils/strings.js';
 export const CATEGORIES = ['upper_body', 'lower_body', 'dresses'];
 export const PRODUCT_TYPES = ['shirt', 'tshirt', 'polo'];
 export const GENDERS = ['men', 'women', 'unisex'];
-export const SIZE_FIELDS = ['chest', 'waist', 'length', 'shoulder'];
+export const SIZE_FIELDS = ['chest', 'waist', 'length', 'shoulder', 'sleeve'];
 
 const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 const HTTP_URL = /^https?:\/\/\S+$/i;
@@ -20,7 +20,8 @@ const cmRange = {
 };
 
 // Body-measurement ranges (cm) that one size is meant to fit, e.g.
-// { chest: [92, 98], waist: [80, 86], length: [70, 72], shoulder: [43, 45] }
+// { chest: [92, 98], waist: [80, 86], length: [70, 72], shoulder: [43, 45], sleeve: [62.5, 64] }
+// (length and sleeve are garment lengths; sleeve only for long sleeves)
 // This is exactly the per-size shape the AI service's /recommend-size expects.
 const sizeRangesSchema = new mongoose.Schema(
   Object.fromEntries(SIZE_FIELDS.map((field) => [field, cmRange])),

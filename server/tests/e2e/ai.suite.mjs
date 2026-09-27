@@ -61,6 +61,19 @@ export async function runAiSuite({ product, aiMode }) {
     check(`${fit} → recommends ${r.body.recommendedSize}`, r.status === 200 && Boolean(r.body.perSize?.[r.body.recommendedSize]) && r.body.fitPreference === fit, r);
   }
   check('fit preference changes the scores', JSON.stringify(bySize.slim) !== JSON.stringify(bySize.loose));
+  const VERDICTS = ['good', 'slightly_tight', 'tight', 'slightly_loose', 'loose', 'slightly_short', 'short', 'slightly_long', 'long'];
+  const fields = r.body.perSize?.[r.body.recommendedSize]?.fields ?? [];
+  check(
+    'each size explains its fit in numbers (chest, waist, shoulders, length, sleeves)',
+    ['chest', 'waist', 'shoulder', 'length', 'sleeve'].every((name) => fields.some((f) => f.field === name)) &&
+      fields.every((f) => typeof f.bodyCm === 'number' && f.sizeMin <= f.sizeMax && VERDICTS.includes(f.verdict)),
+    fields,
+  );
+  check(
+    'the answer says whether you are between sizes',
+    'alternativeSize' in r.body && (r.body.alternativeSize === null || Boolean(r.body.perSize[r.body.alternativeSize])),
+    r.body,
+  );
   r = await a('PUT', '/fit-profile/preference', { json: { fitPreference: 'baggy' } });
   check('invalid preference → 400', r.status === 400, r);
   await a('PUT', '/fit-profile/preference', { json: { fitPreference: 'regular' } });

@@ -5,7 +5,7 @@
 // garmentImageUrl must become a real flat-lay photo (garment alone, plain background)
 // before try-on is tested with the real AI service (Phase 7).
 
-import { BOXY_TSHIRT, POLO, REGULAR_SHIRT, SLIM_SHIRT, TSHIRT } from './sizeCharts.js';
+import { BOXY_TSHIRT, LONG_SLEEVE_TEE, POLO, REGULAR_SHIRT, RESORT_SHIRT, SLIM_SHIRT, TSHIRT } from './sizeCharts.js';
 
 // Pick black or white text depending on how light the background is
 function textColorFor(hex) {
@@ -125,8 +125,8 @@ export const products = [
       { name: 'Navy', hex: '#1F2A44' },
       { name: 'Rust', hex: '#B7410E' },
     ],
-    sizeChart: REGULAR_SHIRT,
-    stock: stockFor(REGULAR_SHIRT, [9, 12, 12, 7, 4]),
+    sizeChart: RESORT_SHIRT, // short sleeves: no sleeve length
+    stock: stockFor(RESORT_SHIRT, [9, 12, 12, 7, 4]),
   },
 
   // -------------------------------------------------------------- t-shirts
@@ -201,8 +201,8 @@ export const products = [
       { name: 'Mustard', hex: '#D4A017' },
       { name: 'Teal', hex: '#008080' },
     ],
-    sizeChart: TSHIRT,
-    stock: stockFor(TSHIRT, [6, 10, 9, 5, 3]),
+    sizeChart: LONG_SLEEVE_TEE,
+    stock: stockFor(LONG_SLEEVE_TEE, [6, 10, 9, 5, 3]),
   },
 
   // ----------------------------------------------------------------- polos

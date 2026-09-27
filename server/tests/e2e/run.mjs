@@ -45,10 +45,10 @@ const PRODUCT = {
   ],
   garmentImageUrl: 'https://placehold.co/768x1024/708238/FFFFFF/png?text=E2E+flat-lay',
   sizeChart: {
-    S: { chest: [86, 92], waist: [74, 80], length: [68, 70], shoulder: [41, 43] },
-    M: { chest: [92, 98], waist: [80, 86], length: [70, 72], shoulder: [43, 45] },
-    L: { chest: [98, 104], waist: [86, 92], length: [72, 74], shoulder: [45, 47] },
-    XL: { chest: [104, 110], waist: [92, 98], length: [74, 76], shoulder: [47, 49] },
+    S: { chest: [86, 92], waist: [74, 80], length: [68, 70], shoulder: [41, 43], sleeve: [61, 62.5] },
+    M: { chest: [92, 98], waist: [80, 86], length: [70, 72], shoulder: [43, 45], sleeve: [62.5, 64] },
+    L: { chest: [98, 104], waist: [86, 92], length: [72, 74], shoulder: [45, 47], sleeve: [64, 65.5] },
+    XL: { chest: [104, 110], waist: [92, 98], length: [74, 76], shoulder: [47, 49], sleeve: [65.5, 67] },
   },
   stock: { S: 0, M: 8, L: 3, XL: 5 },
 };

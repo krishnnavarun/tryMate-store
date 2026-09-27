@@ -6,12 +6,14 @@ export const SIZE_FIELDS = [
   ['waist', 'Waist'],
   ['length', 'Length'],
   ['shoulder', 'Shoulder'],
+  ['sleeve', 'Sleeve'],
 ];
 
 const EMPTY_RANGE = ['', ''];
 
+// Built from SIZE_FIELDS, so a new measurement (like sleeve) can't be forgotten here
 export function emptySizeRow(size = '') {
-  return { size, chest: EMPTY_RANGE, waist: EMPTY_RANGE, length: EMPTY_RANGE, shoulder: EMPTY_RANGE, stock: '0' };
+  return { size, ...Object.fromEntries(SIZE_FIELDS.map(([field]) => [field, EMPTY_RANGE])), stock: '0' };
 }
 
 export const EMPTY_FORM = {
@@ -56,15 +58,15 @@ export function toFormState(product) {
   };
 }
 
-// A new size row continuing the last one: +6 cm chest/waist, +2 length, +1.5 shoulder,
+// A new size row continuing the last one: +6 cm chest/waist, +2 length, +1.5 shoulder/sleeve,
 // the usual steps between sizes (see server/seed/sizeCharts.js)
-const STEPS = { chest: 6, waist: 6, length: 2, shoulder: 1.5 };
+const STEPS = { chest: 6, waist: 6, length: 2, shoulder: 1.5, sleeve: 1.5 };
 export function nextSizeRow(rows) {
   const last = rows.at(-1);
   if (!last) return emptySizeRow();
   const row = emptySizeRow();
   for (const [field] of SIZE_FIELDS) {
-    const [min, max] = last[field];
+    const [min, max] = last[field] ?? EMPTY_RANGE;
     row[field] = min !== '' && max !== '' ? [str(Number(min) + STEPS[field]), str(Number(max) + STEPS[field])] : EMPTY_RANGE;
   }
   return row;
@@ -88,7 +90,7 @@ export function toProductBody(form) {
     if (sizeChart[size]) return { error: `Size "${size}" appears twice.` };
     const ranges = {};
     for (const [field, label] of SIZE_FIELDS) {
-      const [min, max] = row[field];
+      const [min, max] = row[field] ?? EMPTY_RANGE;
       if (min === '' && max === '') continue; // this field is optional
       if (min === '' || max === '') return { error: `Size ${size}: fill in both min and max for ${label.toLowerCase()}.` };
       if (Number(min) > Number(max)) return { error: `Size ${size}: ${label.toLowerCase()} min is bigger than max.` };

@@ -11,8 +11,21 @@ async function findProduct(id) {
   return product;
 }
 
+// The AI service's fit breakdown for one part of a size, in the store's camelCase
+const toFieldFit = (f) => ({
+  field: f.field,
+  label: f.label,
+  bodyCm: f.body_cm,
+  sizeMin: f.size_min,
+  sizeMax: f.size_max,
+  idealCm: f.ideal_cm,
+  differenceCm: f.difference_cm,
+  verdict: f.verdict,
+});
+
 // GET /api/products/:id/size-recommendation
-// → { recommendedSize, perSize: { S: { score, note }, ... }, fitPreference }
+// → { recommendedSize, perSize: { S: { score, note, fields: [...] }, ... },
+//     alternativeSize, alternativeNote, fitPreference }
 export async function getSizeRecommendation(req, res) {
   const { fitProfile, fitPreference, _id: userId } = req.user;
   if (!fitProfile?.measurements) {
@@ -32,7 +45,15 @@ export async function getSizeRecommendation(req, res) {
   });
   const body = {
     recommendedSize: result.recommended_size,
-    perSize: result.per_size,
+    perSize: Object.fromEntries(
+      Object.entries(result.per_size).map(([size, fit]) => [
+        size,
+        { score: fit.score, note: fit.note, fields: (fit.fields ?? []).map(toFieldFit) },
+      ]),
+    ),
+    // "Between sizes": a neighbouring size that fits almost as well (or null)
+    alternativeSize: result.alternative_size ?? null,
+    alternativeNote: result.alternative_note ?? null,
     fitPreference,
   };
   setCachedRecommendation(userId, product._id, fitPreference, product.updatedAt, body);

@@ -3,6 +3,7 @@ const FIELDS = [
   { key: 'waist', label: 'Waist' },
   { key: 'shoulder', label: 'Shoulder' },
   { key: 'length', label: 'Length' },
+  { key: 'sleeve', label: 'Sleeve' },
 ];
 
 function formatRange(range) {
@@ -52,7 +53,7 @@ export default function SizeGuide({ sizeChart }) {
           </tbody>
         </table>
         <p className="mt-3 text-xs text-gray-500">
-          Chest, waist and shoulder are body measurements. Length is the garment&rsquo;s back length.
+          Chest, waist and shoulder are body measurements. Length (collar to hem) and sleeve (shoulder seam to cuff) are garment measurements.
         </p>
       </div>
     </details>

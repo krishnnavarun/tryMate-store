@@ -125,6 +125,9 @@ export default function WornPanel({
               {recommended && (
                 <p className="mt-1 text-emerald-800">We recommend {recommended} for you.</p>
               )}
+              {recommendation.data?.alternativeNote && (
+                <p className="mt-1 text-gray-700">{recommendation.data.alternativeNote}</p>
+              )}
             </>
           )}
           <p className="mt-2 text-xs text-gray-500">

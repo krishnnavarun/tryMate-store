@@ -6,6 +6,7 @@
 //   waist    – natural waist circumference
 //   length   – garment back length, collar seam to hem (a garment measurement)
 //   shoulder – shoulder width, seam to seam across the back
+//   sleeve   – long sleeves only: garment sleeve length, shoulder seam to the end of the cuff
 //
 // Values follow common high-street conventions for men's tops: ~6 cm chest steps
 // between sizes, waist ~12 cm below chest, ~2 cm length and ~1.5–2 cm shoulder steps.
@@ -14,19 +15,19 @@
 
 // Formal/casual button-down shirts, regular fit
 export const REGULAR_SHIRT = {
-  S: { chest: [88, 94], waist: [76, 82], length: [72, 74], shoulder: [43, 44.5] },
-  M: { chest: [94, 100], waist: [82, 88], length: [74, 76], shoulder: [44.5, 46] },
-  L: { chest: [100, 106], waist: [88, 94], length: [76, 78], shoulder: [46, 47.5] },
-  XL: { chest: [106, 112], waist: [94, 100], length: [78, 80], shoulder: [47.5, 49] },
-  XXL: { chest: [112, 120], waist: [100, 108], length: [80, 82], shoulder: [49, 51] },
+  S: { chest: [88, 94], waist: [76, 82], length: [72, 74], shoulder: [43, 44.5], sleeve: [61, 62.5] },
+  M: { chest: [94, 100], waist: [82, 88], length: [74, 76], shoulder: [44.5, 46], sleeve: [62.5, 64] },
+  L: { chest: [100, 106], waist: [88, 94], length: [76, 78], shoulder: [46, 47.5], sleeve: [64, 65.5] },
+  XL: { chest: [106, 112], waist: [94, 100], length: [78, 80], shoulder: [47.5, 49], sleeve: [65.5, 67] },
+  XXL: { chest: [112, 120], waist: [100, 108], length: [80, 82], shoulder: [49, 51], sleeve: [67, 68.5] },
 };
 
 // Slim-fit shirts: cut closer to the body, so each size fits a smaller body range
 export const SLIM_SHIRT = {
-  S: { chest: [86, 92], waist: [72, 78], length: [71, 73], shoulder: [42, 43.5] },
-  M: { chest: [92, 98], waist: [78, 84], length: [73, 75], shoulder: [43.5, 45] },
-  L: { chest: [98, 104], waist: [84, 90], length: [75, 77], shoulder: [45, 46.5] },
-  XL: { chest: [104, 110], waist: [90, 96], length: [77, 79], shoulder: [46.5, 48] },
+  S: { chest: [86, 92], waist: [72, 78], length: [71, 73], shoulder: [42, 43.5], sleeve: [61, 62.5] },
+  M: { chest: [92, 98], waist: [78, 84], length: [73, 75], shoulder: [43.5, 45], sleeve: [62.5, 64] },
+  L: { chest: [98, 104], waist: [84, 90], length: [75, 77], shoulder: [45, 46.5], sleeve: [64, 65.5] },
+  XL: { chest: [104, 110], waist: [90, 96], length: [77, 79], shoulder: [46.5, 48], sleeve: [65.5, 67] },
 };
 
 // Crew/V-neck t-shirts, regular fit (S–L match the example in PROJECT_SPEC.md)
@@ -54,3 +55,13 @@ export const POLO = {
   XL: { chest: [106, 112], waist: [94, 100], length: [75, 77], shoulder: [48, 50] },
   XXL: { chest: [112, 120], waist: [100, 108], length: [77, 79], shoulder: [50, 52] },
 };
+
+// The regular shirt chart for SHORT-sleeved shirts (no sleeve length to compare)
+export const RESORT_SHIRT = Object.fromEntries(
+  Object.entries(REGULAR_SHIRT).map(([size, { sleeve: _sleeve, ...ranges }]) => [size, ranges]),
+);
+
+// T-shirt chart + sleeve lengths, for long-sleeve tees (e.g. the henley)
+export const LONG_SLEEVE_TEE = Object.fromEntries(
+  Object.entries(TSHIRT).map(([size, ranges]) => [size, { ...ranges, sleeve: REGULAR_SHIRT[size]?.sleeve ?? [67, 68.5] }]),
+);

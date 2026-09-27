@@ -65,32 +65,82 @@ function triggerFor(file, allowed) {
 const round1 = (n) => Math.round(n * 10) / 10;
 const wiggle = () => 1 + (Math.random() - 0.5) * 0.06; // ±3 %
 
-// ---- simplified version of the real size scoring (tryMate-Ai app/services/sizing.py) ----
-const FIELDS = { chest: ['chest_cm', 4, 'chest'], waist: ['waist_cm', 4, 'waist'], shoulder: ['shoulder_cm', 2, 'shoulders'] };
-const WEIGHTS = { upper_body: { chest: 0.5, shoulder: 0.3, waist: 0.2 }, dresses: { chest: 0.45, waist: 0.45, shoulder: 0.1 }, lower_body: { waist: 1 } };
+// ---- a JavaScript copy of the real size scoring (tryMate-Ai app/services/sizing.py) ----
+// Same fields, weights, bell curve, notes, fit breakdown and "between sizes" rule, so the
+// store behaves the same with the mock as with the real service.
+const LENGTH_PER_TORSO = 1.55;
+const SLEEVE_PER_ARM = 1.06;
+const FIELDS = {
+  chest: { body: (m) => m.chest_cm, sigma: 4, label: 'chest', girth: true },
+  waist: { body: (m) => m.waist_cm, sigma: 4, label: 'waist', girth: true },
+  shoulder: { body: (m) => m.shoulder_cm, sigma: 2, label: 'shoulders', girth: true },
+  length: { body: (m) => m.torso_cm * LENGTH_PER_TORSO, sigma: 4, label: 'length', girth: false },
+  sleeve: { body: (m) => m.arm_cm * SLEEVE_PER_ARM, sigma: 2.5, label: 'sleeves', girth: false },
+};
+const WEIGHTS = {
+  upper_body: { chest: 0.45, shoulder: 0.25, waist: 0.15, length: 0.15, sleeve: 0.12 },
+  dresses: { chest: 0.35, waist: 0.35, shoulder: 0.1, length: 0.2 },
+  lower_body: { waist: 0.6 },
+};
 const IDEAL = { slim: 0.75, regular: 0.5, loose: 0.25 };
+
+function verdictFor(field, d) {
+  const size = Math.abs(d);
+  if (size < 0.75) return 'good';
+  const strength = size < 1.5 ? 'slightly_' : '';
+  if (field.girth) return strength + (d > 0 ? 'tight' : 'loose');
+  return strength + (d > 0 ? 'short' : 'long');
+}
+
+const joinWords = (items) => (items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 function scoreSize(ranges, m, category, fit) {
   const weights = WEIGHTS[category] ?? WEIGHTS.upper_body;
   let total = 0;
   let squared = 0;
-  const issues = { tight: [], loose: [] };
-  for (const [field, range] of Object.entries(ranges)) {
-    const def = FIELDS[field];
-    if (!def || !weights[field] || !Array.isArray(range)) continue;
-    const [key, sigma, label] = def;
-    const ideal = range[0] + IDEAL[fit] * (range[1] - range[0]);
-    const d = (m[key] - ideal) / sigma;
-    squared += weights[field] * d * d;
-    total += weights[field];
-    if (Math.abs(d) >= 0.75) issues[d > 0 ? 'tight' : 'loose'].push(label);
+  const fields = [];
+  const groups = new Map(); // "tight at" → ["chest"], "slightly long" → []
+  for (const [name, range] of Object.entries(ranges)) {
+    const field = FIELDS[name];
+    if (!field || !weights[name] || !Array.isArray(range)) continue;
+    const value = field.body(m);
+    const ideal = range[0] + (field.girth ? IDEAL[fit] : 0.5) * (range[1] - range[0]);
+    const d = (value - ideal) / field.sigma;
+    squared += weights[name] * d * d;
+    total += weights[name];
+    const verdict = verdictFor(field, d);
+    fields.push({
+      field: name,
+      label: field.label,
+      body_cm: round1(value),
+      size_min: range[0],
+      size_max: range[1],
+      ideal_cm: round1(ideal),
+      difference_cm: round1(value - ideal),
+      verdict,
+    });
+    if (verdict === 'good') continue;
+    const slightly = verdict.startsWith('slightly_') ? 'slightly ' : '';
+    const word = verdict.replace('slightly_', '');
+    if (field.girth) groups.set(`${slightly}${word} at`, [...(groups.get(`${slightly}${word} at`) ?? []), field.label]);
+    else groups.set(name === 'length' ? `${slightly}${word}` : `${slightly}${word} in the ${field.label}`, []);
   }
-  if (!total) return { score: 0, note: 'No comparable measurements in this size chart' };
-  const parts = [];
-  if (issues.tight.length) parts.push(`tight at ${issues.tight.join(' and ')}`);
-  if (issues.loose.length) parts.push(`loose at ${issues.loose.join(' and ')}`);
+  if (!total) return { score: 0, note: 'No comparable measurements in this size chart', fields: [] };
+  const parts = [...groups].map(([prefix, labels]) => (labels.length ? `${prefix} ${joinWords(labels)}` : prefix));
   const note = parts.length ? parts.join(', ').replace(/^./, (c) => c.toUpperCase()) : 'Good fit';
-  return { score: Math.round(Math.exp((-0.5 * squared) / total) * 100) / 100, note };
+  return { score: Math.round(Math.exp((-0.5 * squared) / total) * 100) / 100, note, fields };
+}
+
+// A neighbouring size that fits almost as well → [size, note], otherwise [null, null]
+function betweenSizes(sizes, perSize, best) {
+  const i = sizes.indexOf(best);
+  const neighbours = [sizes[i - 1], sizes[i + 1]].filter(Boolean);
+  if (!neighbours.length || perSize[best].score <= 0) return [null, null];
+  const other = neighbours.reduce((a, b) => (perSize[b].score > perSize[a].score ? b : a));
+  if (perSize[other].score < 0.75 * perSize[best].score) return [null, null];
+  const larger = sizes.indexOf(other) > i;
+  const [smaller, bigger] = larger ? [best, other] : [other, best];
+  return [other, `You're between ${smaller} and ${bigger}: ${best} is the closer match; ${other} ${larger ? 'fits more relaxed' : 'fits closer'}.`];
 }
 
 export function createMockAiApp({ apiKey }) {
@@ -142,7 +192,8 @@ export function createMockAiApp({ apiKey }) {
       perSize[size] = scoreSize(ranges, measurements, category, fit);
       if (!best || perSize[size].score >= perSize[best].score) best = size;
     }
-    res.json({ recommended_size: best, per_size: perSize });
+    const [alternative, note] = betweenSizes(Object.keys(chart), perSize, best);
+    res.json({ recommended_size: best, per_size: perSize, alternative_size: alternative, alternative_note: note });
   });
 
   app.post(

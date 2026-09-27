@@ -91,7 +91,7 @@ export default function SizeChartEditor({ rows, onChange }) {
         + Add size
       </button>
       <p className="text-xs text-gray-500">
-        Ranges are the <strong>body</strong> measurements each size fits (length = garment back length). The AI size
+        Ranges are the <strong>body</strong> measurements each size fits (length = garment back length; sleeve = shoulder seam to cuff, long sleeves only). The AI size
         recommendation compares a shopper's measurements with these. A new size copies the last row plus the usual step
         (+6 cm chest/waist, +2 length, +1.5 shoulder).
       </p>
