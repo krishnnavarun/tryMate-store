@@ -3,10 +3,11 @@ import { CATEGORIES, PRODUCT_TYPES } from '../models/Product.js';
 
 export const PRODUCT_SORTS = ['newest', 'price_asc', 'price_desc', 'name'];
 
-// GET /api/products?category&type&color&minPrice&maxPrice&sort&page&limit
+// GET /api/products?q&category&type&color&minPrice&maxPrice&sort&page&limit
 // &suitsMe=true (logged-in users with a fit profile). Unknown query params are ignored.
 export const listProductsQuery = z
   .object({
+    q: z.string().trim().max(80).optional(), // search words: "navy polo"
     category: z.enum(CATEGORIES).optional(),
     type: z.enum(PRODUCT_TYPES).optional(),
     color: z.string().trim().min(1).max(40).optional(),

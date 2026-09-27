@@ -125,7 +125,9 @@ clear message if something is missing.
 
 ## Features, and how to try them
 
-1. **Shop** (`/shop`): filter by type / colour / price, sort, pages. Filters live in the URL.
+1. **Shop** (`/shop`): search ("navy polo", "linen", "tees"; also from the search button in the
+   header), filter by type / colour / price, sort, pages. Active filters show as removable
+   chips. Search and filters live in the URL.
 2. **Account**: register, log in, log out. The session is an httpOnly cookie.
 3. **Cart and demo checkout**: stock is checked; placing an order takes stock atomically;
    nothing is charged.
@@ -135,14 +137,23 @@ clear message if something is missing.
 5. **Size recommendation** on every product page: a "Best fit" badge on the recommended size,
    a fit note per size ("Tight at chest"), and a slim/regular/loose toggle that updates it.
    Without a profile: a prompt to scan.
-6. **Colors that suit you**: "Suits you" tags on product cards and colour swatches, plus a
-   "Colors that suit you" filter on the shop page.
+6. **Colours that suit you**: "Suits you" tags on product cards and colour swatches, plus a
+   "Colours that suit you" filter on the shop page.
 7. **Virtual try-on** ("Try it on" on a product): upload or take a photo, a progress state for up
    to a minute, the result side by side with the original, and the note *"This shows the look,
    not the exact fit."* Limited to 10 per hour per user.
 8. **Live fitting room** (`/fitting-room`, or "Try it live" on a product page): see below.
 9. **Admin** (`/admin/products`, admins only): product list, create/edit with a colour editor,
    image URLs, garment (try-on) image URL and a **size chart + stock editor**; delete.
+10. **Made to be easy to use**:
+    - **Product page:** "Add to cart" without a size points at the size picker. Low stock shows as
+      "Only 2 left in size L". A "You may also like" row.
+    - **Fit profile:** height in cm or feet and inches.
+    - **Cart and checkout:** "Removed … Undo" in the cart; Cart → Details → Done steps; the
+      checkout address is filled in from your last order.
+    - **Log in / Register:** Show/Hide password, and a live password rule when registering.
+    - **Everywhere:** Back returns to the same place in the list; a friendly page if something
+      breaks; search on the 404 page.
 
 **Testing every AI error message with the mock:** give the photo a file name containing
 `no-person`, `multiple`, `partial`, `no-face`, `face-error`, `server-error`, `tryon-fail` or
@@ -182,7 +193,8 @@ GET    /api/health                           server + DB + AI status
 POST   /api/auth/register | login | logout
 GET    /api/auth/me                          { user } or { user: null }
 
-GET    /api/products                         ?category&type&color&minPrice&maxPrice&sort&page&limit&suitsMe=true
+GET    /api/products                         ?q&category&type&color&minPrice&maxPrice&sort&page&limit&suitsMe=true
+                                              q = search words: each must match a name, brand, colour or type
 GET    /api/products/:slug                   full product (+ suitingColors for logged-in users)
 POST   /api/products                         (admin) create
 PUT    /api/products/:id                     (admin) replace
@@ -268,7 +280,7 @@ A warm, quiet look in the spirit of a tailor's shop.
 | **Motion** | CSS keyframes in `index.css` (`animate-rise`, `-word`, `-draw`, `-scan`, `-float`, `-marquee`…) with one easing curve. `components/ui/Motion.jsx`: `Reveal` (rises in when scrolled into view, via `IntersectionObserver`), `RevealText` (headline words slide up one by one), `CountUp`. Each page rises in on navigation; the cart badge bumps; buttons get a light sweep. |
 | **Motion graphics** | Home hero: a shirt drawn like a tailor's technical sheet, with measurement lines that draw themselves, a scan line and floating cards (`components/home/HeroGraphic.jsx`). A scan animation over your photo while it's analysed and during try-on (`ScanOverlay`); a hanger drawn on the 404 page; a check mark drawn when an order is placed. |
 | **Reduce motion** | With "reduce motion" on in the OS, every animation lands in its final state immediately. |
-| **Accessibility** | Audited with axe-core (WCAG 2.1 A + AA) on 19 screens: logged out, logged in, admin, the try-on dialog and the mobile menu. **0 violations.** Decorative illustrations are hidden from screen readers; the marquee is read once as plain text. |
+| **Accessibility** | Audited with axe-core (WCAG 2.1 A + AA) on 19 screens: logged out, logged in, admin, the try-on dialog and the mobile menu. **0 violations.** Decorative illustrations are hidden from screen readers; the marquee is read once as plain text. Keyboard: a "Skip to content" link, focus moves to the new page after navigation, dialogs keep Tab inside and return focus on close, Escape closes the menus, and every page has its own title (`usePageTitle`). |
 | **Product illustrations** | Until real photos are added, the seed's placehold.co images are drawn as flat-lay garments in the right colour, with the right collar, sleeves and fabric (stripes, checks, denim, linen, knit, piqué, oxford, print): `GarmentArt.jsx`, chosen by `lib/garmentStyle.js` from the product name. `ProductImage` shows real photos as they are and falls back to the illustration if a photo fails to load. |
 
 ## How the AI features work (store side)
@@ -485,6 +497,18 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
 - Accessibility: axe-core (WCAG 2.1 A + AA) on 19 screens, including admin, the try-on dialog
   and the mobile menu. There are 0 violations; the first run found low-contrast grey/brass text
   on bone panels, unlabeled decorative SVGs and a mislabeled marquee, all fixed.
+- Usability: 26 scripted checks in headless Chrome, all passing:
+  - search (header, live, chips, no results);
+  - Back keeps the scroll position;
+  - size prompt, low stock, related products and the 404 search;
+  - password Show/rule, and height in feet and inches through a real scan;
+  - cart undo, checkout steps and the address pre-fill.
+  `npm run test:e2e`: 85 checks (5 new for search).
+- Keyboard only: 22 scripted checks in headless Chrome, all passing:
+  - skip link, visible focus, and focus after navigation;
+  - the page title on 9 routes;
+  - the dialog focus trap (28 Tab / Shift+Tab presses) and focus return;
+  - account and mobile menus.
 - Docker: the CI `docker` job passed on its first run: both images built, the stack came up
   healthy, the nginx smoke tests passed and all e2e checks passed against the containers.
   (The development machine has no Docker, so CI is where the images are built.)

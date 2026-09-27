@@ -2,9 +2,10 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import AuthCard from '../components/auth/AuthCard.jsx';
-import FormField, { SubmitButton } from '../components/ui/FormField.jsx';
+import FormField, { PasswordField, SubmitButton } from '../components/ui/FormField.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 import { safeRedirect } from '../utils/redirect.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function RegisterPage() {
   const { user, register } = useAuth();
@@ -12,6 +13,7 @@ export default function RegisterPage() {
   const [searchParams] = useSearchParams();
   const redirect = safeRedirect(searchParams.get('redirect'));
   const [submitting, setSubmitting] = useState(false);
+  usePageTitle('Create your account');
 
   if (user) return <Navigate to={redirect} replace />;
 
@@ -48,15 +50,7 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField label="Name" name="name" required maxLength={80} autoComplete="name" autoFocus />
         <FormField label="Email" name="email" type="email" required autoComplete="email" />
-        <FormField
-          label="Password"
-          name="password"
-          type="password"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          hint="At least 8 characters."
-        />
+        <PasswordField name="password" required minLength={8} requirement={8} autoComplete="new-password" />
         <SubmitButton loading={submitting} loadingText="Creating account…">
           Create account
         </SubmitButton>

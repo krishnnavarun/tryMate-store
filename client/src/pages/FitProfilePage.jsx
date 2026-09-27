@@ -6,6 +6,7 @@ import FitPreferenceToggle from '../components/fit/FitPreferenceToggle.jsx';
 import FitResults from '../components/fit/FitResults.jsx';
 import ScanForm from '../components/fit/ScanForm.jsx';
 import { useAuth } from '../hooks/useAuth.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function FitProfilePage() {
   const { user, setUser } = useAuth();
@@ -14,6 +15,7 @@ export default function FitProfilePage() {
   const [warnings, setWarnings] = useState([]); // warnings from the latest scan (not stored)
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
+  usePageTitle('Your fit profile');
 
   function handleScanned(result) {
     setUser({ ...user, fitProfile: result.fitProfile, fitPreference: result.fitPreference });

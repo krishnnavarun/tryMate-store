@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { updateFitPreference } from '../api/fitProfile.js';
-import { fetchProduct, fetchSizeRecommendation } from '../api/products.js';
+import { fetchProduct, fetchProducts, fetchSizeRecommendation } from '../api/products.js';
 import FitPreferenceToggle from '../components/fit/FitPreferenceToggle.jsx';
 import Price from '../components/products/Price.jsx';
+import ProductGrid from '../components/products/ProductGrid.jsx';
 import ProductImage from '../components/products/ProductImage.jsx';
 import SizeGuide from '../components/products/SizeGuide.jsx';
 import TryOnModal from '../components/products/TryOnModal.jsx';
@@ -13,6 +14,7 @@ import { useApi } from '../hooks/useApi.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useCart } from '../hooks/useCart.js';
 import { TYPE_LABELS } from '../utils/format.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -22,6 +24,7 @@ export default function ProductPage() {
     (signal) => fetchProduct(slug, { signal }),
     [slug, user?._id ?? null, user?.fitProfile?.updatedAt ?? null],
   );
+  usePageTitle(product?.name ?? (error ? 'Product not found' : null));
 
   if (loading && !product) return <ProductPageSkeleton />;
 
@@ -66,6 +69,8 @@ function ProductDetails({ product }) {
   const [chosenSize, setChosenSize] = useState(null);
   const [adding, setAdding] = useState(false);
   const [tryOnOpen, setTryOnOpen] = useState(false);
+  const [needSize, setNeedSize] = useState(false); // "Add to cart" was pressed without a size
+  const sizesRef = useRef(null);
   const [savingFit, setSavingFit] = useState(false);
   const { user, setUser } = useAuth();
   const { addItem } = useCart();
@@ -91,7 +96,13 @@ function ProductDetails({ product }) {
   }
 
   async function handleAddToCart() {
-    if (!size) return toast.error('Please choose a size first.');
+    if (!size) {
+      // Point at the size picker instead of only showing a toast
+      setNeedSize(true);
+      sizesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      sizesRef.current?.querySelector('button:not([disabled])')?.focus({ preventScroll: true });
+      return;
+    }
     if (!user) return requireLogin('Log in to add items to your cart.');
 
     setAdding(true);
@@ -232,7 +243,12 @@ function ProductDetails({ product }) {
                 <FitPreferenceToggle value={user.fitPreference} onChange={handleFitPreference} disabled={savingFit} />
               )}
             </div>
-            <div className="flex flex-wrap gap-2.5">
+            <div
+              ref={sizesRef}
+              role="group"
+              aria-label="Sizes"
+              className={`-m-2 flex flex-wrap gap-2.5 rounded-2xl p-2 transition-shadow duration-500 ${needSize && !size ? 'ring-2 ring-red-300' : ''}`}
+            >
               {sizes.map((s) => {
                 const soldOut = !inStock(s);
                 const isRecommended = s === recommended;
@@ -247,7 +263,11 @@ function ProductDetails({ product }) {
                       type="button"
                       disabled={soldOut}
                       aria-pressed={size === s}
-                      onClick={() => setChosenSize(s)}
+                      onClick={() => {
+                        setChosenSize(s);
+                        setNeedSize(false);
+                      }}
+                      aria-label={soldOut ? `${s}, sold out` : isRecommended ? `${s}, best fit for you` : s}
                       title={soldOut ? 'Sold out' : recommendation.data?.perSize?.[s]?.note}
                       className={`h-12 min-w-16 rounded-xl border px-4 text-sm font-semibold transition duration-300 ${
                         size === s
@@ -265,6 +285,17 @@ function ProductDetails({ product }) {
                 );
               })}
             </div>
+            {needSize && !size && (
+              <p role="alert" className="mt-3 animate-rise text-sm font-medium text-red-700">
+                Choose your size to add it to your cart.
+              </p>
+            )}
+            {size && inStock(size) && product.stock[size] <= 3 && (
+              <p className="mt-3 flex items-center gap-2 text-sm font-medium text-amber-800">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-600" aria-hidden="true" />
+                Only {product.stock[size]} left in size {size}
+              </p>
+            )}
 
             <FitNote
               user={user}
@@ -307,6 +338,8 @@ function ProductDetails({ product }) {
           <SizeGuide sizeChart={product.sizeChart} />
         </div>
       </div>
+
+      <RelatedProducts product={product} />
 
       {tryOnOpen && <TryOnModal product={product} color={color} onClose={() => setTryOnOpen(false)} />}
     </div>
@@ -386,6 +419,36 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
         </Link>
       </p>
     </div>
+  );
+}
+
+// A few other pieces of the same type, to keep browsing without going back to the shop
+function RelatedProducts({ product }) {
+  const { data, loading } = useApi(
+    (signal) => fetchProducts({ type: product.type, limit: 5, sort: 'newest' }, { signal }),
+    [product._id],
+  );
+  const items = (data?.items ?? []).filter((p) => p._id !== product._id).slice(0, 4);
+  if (!loading && items.length === 0) return null;
+
+  return (
+    <section className="mt-24 border-t border-sand pt-16" aria-labelledby="related-heading">
+      <div className="mb-10 flex items-end justify-between gap-6">
+        <div>
+          <p className="eyebrow">Keep browsing</p>
+          <h2 id="related-heading" className="heading-display mt-3 text-4xl">
+            You may also like
+          </h2>
+        </div>
+        <Link
+          to={`/shop?type=${product.type}`}
+          className="link-underline pb-1 text-[12px] font-semibold tracking-[0.18em] text-ink uppercase"
+        >
+          See all {TYPE_LABELS[product.type] ?? 'pieces'}
+        </Link>
+      </div>
+      <ProductGrid products={items} loading={loading} skeletonCount={4} />
+    </section>
   );
 }
 

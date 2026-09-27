@@ -5,6 +5,7 @@ import GarmentArt from '../components/products/GarmentArt.jsx';
 import ProductGrid from '../components/products/ProductGrid.jsx';
 import { CountUp, Reveal, RevealText } from '../components/ui/Motion.jsx';
 import { useApi } from '../hooks/useApi.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 const FACTS = [
   [1, 'photo is all it takes'],
@@ -40,6 +41,7 @@ const STEPS = [
 
 export default function HomePage() {
   const { data, loading } = useApi((signal) => fetchProducts({ sort: 'newest', limit: 8 }, { signal }), []);
+  usePageTitle();
 
   return (
     <>

@@ -31,11 +31,30 @@ const CARD_FIELDS = {
   createdAt: 1,
 };
 
+// Words people type for each product type
+const TYPE_WORDS = { tshirt: ['t-shirt', 'tshirt', 'tee'], polo: ['polo'], shirt: ['shirt'] };
+
+// ?q=navy polo → every word must match the name, brand, a colour or the type
+// (in any order). Simple plurals work too ("shirts", "tees", "polos").
+export function searchMatch(q) {
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean).slice(0, 6);
+  return words.map((raw) => {
+    const word = raw.length > 3 && raw.endsWith('s') ? raw.slice(0, -1) : raw;
+    const re = new RegExp(escapeRegex(word), 'i');
+    const types = Object.entries(TYPE_WORDS)
+      .filter(([, names]) => names.some((name) => name.startsWith(word) || word.startsWith(name)))
+      .map(([type]) => type);
+    return {
+      $or: [{ name: re }, { brand: re }, { 'colors.name': re }, ...(types.length ? [{ type: { $in: types } }] : [])],
+    };
+  });
+}
+
 // GET /api/products
 // Logged-in users with suggested colours get a "suitsYou" tag on each item; with
 // ?suitsMe=true only the products whose colours suit them are returned.
 export async function listProducts(req, res) {
-  const { category, type, color, minPrice, maxPrice, sort, page, limit, suitsMe } = req.valid.query;
+  const { q, category, type, color, minPrice, maxPrice, sort, page, limit, suitsMe } = req.valid.query;
   const suggestions = req.user?.fitProfile?.colorSuggestions ?? [];
   if (suitsMe && suggestions.length === 0) {
     throw new ApiError(409, 'NO_FIT_PROFILE', 'Scan your body first to see colours that suit you.');
@@ -46,6 +65,7 @@ export async function listProducts(req, res) {
   if (type) match.type = type;
   // Exact color name, case-insensitive ("navy" matches "Navy")
   if (color) match['colors.name'] = new RegExp(`^${escapeRegex(color)}$`, 'i');
+  if (q) match.$and = searchMatch(q);
 
   const priceMatch = {};
   if (minPrice != null) priceMatch.$gte = minPrice;

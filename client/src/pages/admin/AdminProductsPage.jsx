@@ -9,6 +9,7 @@ import Spinner from '../../components/ui/Spinner.jsx';
 import StatusMessage from '../../components/ui/StatusMessage.jsx';
 import { useApi } from '../../hooks/useApi.js';
 import { TYPE_LABELS, formatPrice } from '../../utils/format.js';
+import { usePageTitle } from '../../hooks/usePageTitle.js';
 
 export default function AdminProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,6 +20,7 @@ export default function AdminProductsPage() {
   );
   const [confirmId, setConfirmId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  usePageTitle('Admin · Products');
 
   async function handleDelete(product) {
     setDeleting(true);

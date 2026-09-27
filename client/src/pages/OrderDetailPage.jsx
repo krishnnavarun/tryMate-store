@@ -1,17 +1,20 @@
 import { Link, useLocation, useParams } from 'react-router';
 import { fetchOrder } from '../api/orders.js';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
+import CheckoutSteps from '../components/orders/CheckoutSteps.jsx';
 import ProductImage from '../components/products/ProductImage.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
 import { formatDate, formatPrice, shortId } from '../utils/format.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function OrderDetailPage() {
   const { id } = useParams();
   const location = useLocation();
   const justPlaced = location.state?.justPlaced === true;
   const { data: order, loading, error } = useApi((signal) => fetchOrder(id, { signal }), [id]);
+  usePageTitle(order ? `Order #${shortId(order._id)}` : error ? 'Order not found' : null);
 
   if (loading) return <Spinner className="py-24" />;
   if (error) {
@@ -34,8 +37,9 @@ export default function OrderDetailPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      {justPlaced && <CheckoutSteps current={3} />}
       {justPlaced && (
-        <div className="mb-10 flex animate-rise items-center gap-5 rounded-[28px] bg-emerald-50 p-7 text-emerald-900">
+        <div className="mt-8 mb-10 flex animate-rise items-center gap-5 rounded-[28px] bg-emerald-50 p-7 text-emerald-900">
           {/* A check mark that draws itself */}
           <svg className="h-12 w-12 shrink-0 text-emerald-700" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <circle cx="24" cy="24" r="22" strokeDasharray="139" className="animate-draw" style={{ '--dash': 139 }} />
@@ -44,6 +48,9 @@ export default function OrderDetailPage() {
           <div>
             <h2 className="heading-display text-3xl text-emerald-900">Thank you, your order is placed.</h2>
             <p className="mt-1 text-sm">This is a demo, so nothing was charged and nothing will ship.</p>
+            <Link to="/shop" className="btn-primary btn-sm mt-4">
+              Continue shopping
+            </Link>
           </div>
         </div>
       )}

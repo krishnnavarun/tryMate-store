@@ -101,4 +101,18 @@ export async function runShopSuite({ product }) {
   check('the failed order left 1 in stock', (await stockOf('L')) === 1);
   r = await a('GET', '/cart');
   check('the failed order kept the cart and flags the problem', r.body.items.length === 1 && r.body.hasStockIssues === true, r.body);
+
+  console.log('\nSearch');
+  const search = async (q) => a('GET', `/products?q=${encodeURIComponent(q)}&limit=48`);
+  const found = (res) => res.body.items?.some((p) => p._id === id);
+  r = await search(product.name);
+  check('the full product name finds exactly that product', r.status === 200 && r.body.total === 1 && found(r), r.body);
+  r = await search('olive e2e');
+  check('words match in any order, colours included ("olive e2e")', found(r), r.body);
+  r = await search('E2E tees');
+  check('plurals and the type work ("tees" finds a tee)', found(r), r.body);
+  r = await search('e2e polo');
+  check('every word must match ("e2e polo" finds nothing)', r.status === 200 && r.body.total === 0, r.body);
+  r = await search('x'.repeat(81));
+  check('a search over 80 characters → 400', r.status === 400, r);
 }

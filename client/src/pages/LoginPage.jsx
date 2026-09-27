@@ -2,9 +2,10 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import AuthCard from '../components/auth/AuthCard.jsx';
-import FormField, { SubmitButton } from '../components/ui/FormField.jsx';
+import FormField, { PasswordField, SubmitButton } from '../components/ui/FormField.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 import { safeRedirect } from '../utils/redirect.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirect = safeRedirect(searchParams.get('redirect'));
   const [submitting, setSubmitting] = useState(false);
+  usePageTitle('Log in');
 
   if (user) return <Navigate to={redirect} replace />;
 
@@ -43,7 +45,7 @@ export default function LoginPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField label="Email" name="email" type="email" required autoComplete="email" autoFocus />
-        <FormField label="Password" name="password" type="password" required autoComplete="current-password" />
+        <PasswordField name="password" required autoComplete="current-password" />
         <SubmitButton loading={submitting} loadingText="Logging in…">
           Log in
         </SubmitButton>

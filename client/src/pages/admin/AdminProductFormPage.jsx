@@ -9,6 +9,7 @@ import Spinner from '../../components/ui/Spinner.jsx';
 import StatusMessage from '../../components/ui/StatusMessage.jsx';
 import { useApi } from '../../hooks/useApi.js';
 import { EMPTY_FORM, toFormState, toProductBody } from '../../utils/productForm.js';
+import { usePageTitle } from '../../hooks/usePageTitle.js';
 
 // /admin/products/new and /admin/products/:slug/edit
 export default function AdminProductFormPage() {
@@ -17,6 +18,7 @@ export default function AdminProductFormPage() {
     (signal) => (slug ? fetchProduct(slug, { signal }) : Promise.resolve(null)),
     [slug ?? null],
   );
+  usePageTitle(slug ? `Edit ${product?.name ?? 'product'}` : 'New product');
 
   if (slug && loading) return <Spinner className="py-24" />;
   if (slug && error) {

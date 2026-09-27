@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import { useCart } from '../hooks/useCart.js';
 import ProductImage from '../components/products/ProductImage.jsx';
 import { fitScales } from '../lib/fitting/fit.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 const DRAG_THRESHOLD_PX = 6;
 
@@ -24,6 +25,7 @@ export default function FittingRoomPage() {
   const [searchParams] = useSearchParams();
   const mirrorRef = useRef(null);
   const dragRef = useRef(null);
+  usePageTitle('Fitting room');
 
   const measurements = user?.fitProfile?.measurements ?? null;
   const hasProfile = Boolean(measurements);

@@ -6,9 +6,11 @@ import Spinner from '../components/ui/Spinner.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
 import { formatDate, formatPrice, shortId } from '../utils/format.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function OrdersPage() {
   const { data: orders, loading, error, reload } = useApi((signal) => fetchOrders({ signal }), []);
+  usePageTitle('Your orders');
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">

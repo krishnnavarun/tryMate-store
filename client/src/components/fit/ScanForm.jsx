@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { scanBody } from '../../api/fitProfile.js';
 import { messageAt, useElapsedSeconds } from '../../hooks/useElapsedSeconds.js';
 import FormField, { SubmitButton } from '../ui/FormField.jsx';
+import HeightField from './HeightField.jsx';
 import PhotoPicker from './PhotoPicker.jsx';
 import PrivacyNotice from './PrivacyNotice.jsx';
 
@@ -75,17 +76,7 @@ export default function ScanForm({ defaultHeight, defaultWeight, onScanned, onCa
         <section className={`${section} animate-rise`} style={{ animationDelay: '100ms' }}>
           {step(2, 'Your height')}
           <div className="grid gap-5 sm:grid-cols-2">
-            <FormField
-              label="Height (cm)"
-              name="heightCm"
-              type="number"
-              min={120}
-              max={230}
-              step="0.5"
-              required
-              defaultValue={defaultHeight ?? ''}
-              hint="Needed to turn the photo into centimetres."
-            />
+            <HeightField defaultCm={defaultHeight} />
             <FormField
               label="Weight (kg, optional)"
               name="weightKg"

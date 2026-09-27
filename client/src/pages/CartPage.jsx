@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
+import CheckoutSteps from '../components/orders/CheckoutSteps.jsx';
 import ProductImage from '../components/products/ProductImage.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import { useCart } from '../hooks/useCart.js';
 import { formatPrice } from '../utils/format.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 const MAX_QTY = 10;
 
 export default function CartPage() {
   const { cart, loaded, refresh } = useCart();
+  usePageTitle('Your cart');
 
   // Always show fresh prices and stock when the cart page opens
   useEffect(() => {
@@ -37,7 +40,8 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <p className="eyebrow">Your selection</p>
+      <CheckoutSteps current={1} />
+      <p className="eyebrow mt-8">Your selection</p>
       <h1 className="heading-display mt-3 text-5xl sm:text-6xl">Your cart</h1>
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_340px]">
@@ -90,7 +94,7 @@ export default function CartPage() {
 }
 
 function CartLine({ item }) {
-  const { updateQty, removeItem } = useCart();
+  const { updateQty, removeItem, addItem } = useCart();
   const [busy, setBusy] = useState(false);
 
   // Offer quantities up to what's in stock (and at least the current qty, so it stays selectable)
@@ -155,7 +159,32 @@ function CartLine({ item }) {
           <button
             type="button"
             disabled={busy}
-            onClick={() => run(() => removeItem(item._id))}
+            onClick={() =>
+              run(async () => {
+                await removeItem(item._id);
+                // A way back from an accidental tap
+                toast(
+                  (t) => (
+                    <span className="flex items-center gap-3">
+                      Removed {item.product.name}.
+                      <button
+                        type="button"
+                        onClick={() => {
+                          toast.dismiss(t.id);
+                          addItem({ productId: item.product._id, size: item.size, color: item.color, qty: item.qty }).catch(
+                            (err) => toast.error(err.userMessage),
+                          );
+                        }}
+                        className="font-semibold text-brass-light underline"
+                      >
+                        Undo
+                      </button>
+                    </span>
+                  ),
+                  { duration: 6000 },
+                );
+              })
+            }
             className="text-sm font-medium text-gray-500 hover:text-red-600"
           >
             Remove

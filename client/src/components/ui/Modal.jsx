@@ -1,14 +1,39 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 // A centered dialog over a soft, blurred backdrop. Closes on Escape and on backdrop click
-// (unless `locked`, e.g. while a request is running).
+// (unless `locked`, e.g. while a request is running). Keyboard: Tab stays inside the dialog,
+// and closing it puts focus back on whatever opened it.
 export default function Modal({ title, onClose, children, locked = false, size = 'max-w-2xl' }) {
   const panelRef = useRef(null);
+
+  // Remember what had focus (usually the button that opened the dialog) and return to it
+  useEffect(() => {
+    const opener = document.activeElement;
+    return () => {
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+    };
+  }, []);
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape' && !locked) onClose();
+      if (e.key !== 'Tab' || !panelRef.current) return;
+      // Focus trap: wrap from the last element to the first (and back with Shift+Tab)
+      const items = [...panelRef.current.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null);
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items.at(-1);
+      const inside = panelRef.current.contains(document.activeElement);
+      if (e.shiftKey && (document.activeElement === first || !inside)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener('keydown', onKey);
     // Stop the page behind from scrolling

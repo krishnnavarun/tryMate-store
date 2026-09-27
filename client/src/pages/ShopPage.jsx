@@ -5,10 +5,12 @@ import { fetchProducts } from '../api/products.js';
 import ProductGrid from '../components/products/ProductGrid.jsx';
 import ShopFilters from '../components/products/ShopFilters.jsx';
 import Pagination from '../components/ui/Pagination.jsx';
+import SearchBox from '../components/ui/SearchBox.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
 import { useAuth } from '../hooks/useAuth.js';
-import { TYPE_LABELS } from '../utils/format.js';
+import { TYPE_LABELS, formatPrice } from '../utils/format.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 const PAGE_SIZE = 12;
 
@@ -56,7 +58,14 @@ export default function ShopPage() {
   }
 
   const suitsMeOn = hasColors && params.suitsMe === 'true';
-  const title = suitsMeOn ? 'Colours that suit you' : params.type ? (TYPE_LABELS[params.type] ?? 'Shop') : 'Shop all';
+  const title = params.q
+    ? `Results for “${params.q}”`
+    : suitsMeOn
+      ? 'Colours that suit you'
+      : params.type
+        ? (TYPE_LABELS[params.type] ?? 'Shop')
+        : 'Shop all';
+  usePageTitle(title);
   const filterPanel = (
     <ShopFilters options={data?.filters ?? EMPTY_OPTIONS} values={params} onChange={updateParams} />
   );
@@ -67,7 +76,11 @@ export default function ShopPage() {
         <div>
           <p className="eyebrow">The collection</p>
           <h1 className="heading-display mt-3 text-5xl sm:text-6xl">{title}</h1>
-          {data && <p className="mt-2 text-sm text-gray-500">{data.total} pieces</p>}
+          {data && (
+            <p className="mt-2 text-sm text-gray-500" aria-live="polite">
+              {data.total} {data.total === 1 ? 'piece' : 'pieces'}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -107,6 +120,12 @@ export default function ShopPage() {
         </div>
       </div>
 
+      {/* Search + what's currently filtered (each chip removes one filter) */}
+      <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-center">
+        <SearchBox value={params.q ?? ''} onSearch={(q) => updateParams({ q: q || null })} live className="w-full lg:max-w-md" />
+        <ActiveFilters params={params} suitsMeOn={suitsMeOn} onChange={updateParams} />
+      </div>
+
       <div className="mt-10 lg:grid lg:grid-cols-[220px_1fr] lg:gap-12">
         {/* Filters: always visible on desktop, toggled on mobile */}
         <aside className={`${filtersOpen ? 'mb-8 block animate-rise' : 'hidden'} h-fit lg:sticky lg:top-32 lg:block`}>{filterPanel}</aside>
@@ -128,11 +147,13 @@ export default function ShopPage() {
             />
           ) : !loading && data?.items.length === 0 ? (
             <StatusMessage
-              title="No products match these filters"
+              title={params.q ? `Nothing matches “${params.q}”` : 'No products match these filters'}
               message={
-                suitsMeOn
-                  ? 'None of these products come in your suggested colours. Try removing other filters.'
-                  : 'Try removing a filter or widening the price range.'
+                params.q
+                  ? 'Check the spelling, or try a colour or a type, like “navy”, “linen” or “polo”.'
+                  : suitsMeOn
+                    ? 'None of these products come in your suggested colours. Try removing other filters.'
+                    : 'Try removing a filter or widening the price range.'
               }
               action={
                 <button
@@ -140,7 +161,7 @@ export default function ShopPage() {
                   onClick={() => setSearchParams({})}
                   className="btn-primary btn-sm"
                 >
-                  Clear filters
+                  {params.q ? 'Clear search and filters' : 'Clear filters'}
                 </button>
               }
             />
@@ -158,6 +179,54 @@ export default function ShopPage() {
           )}
         </section>
       </div>
+    </div>
+  );
+}
+
+const ALL_FILTERS = { q: null, type: null, color: null, minPrice: null, maxPrice: null, suitsMe: null };
+
+function priceLabel(min, max) {
+  if (min && max) return `${formatPrice(Number(min))} – ${formatPrice(Number(max))}`;
+  return min ? `From ${formatPrice(Number(min))}` : `Up to ${formatPrice(Number(max))}`;
+}
+
+// The filters in use, as chips: click one to remove just that filter
+function ActiveFilters({ params, suitsMeOn, onChange }) {
+  const chips = [];
+  if (params.q) chips.push({ key: 'q', label: `“${params.q}”`, clear: { q: null } });
+  if (params.type) chips.push({ key: 'type', label: TYPE_LABELS[params.type] ?? params.type, clear: { type: null } });
+  if (params.color) chips.push({ key: 'color', label: params.color, clear: { color: null } });
+  if (params.minPrice || params.maxPrice) {
+    chips.push({ key: 'price', label: priceLabel(params.minPrice, params.maxPrice), clear: { minPrice: null, maxPrice: null } });
+  }
+  if (suitsMeOn) chips.push({ key: 'suitsMe', label: 'Colours that suit you', clear: { suitsMe: null } });
+  if (chips.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Active filters">
+      {chips.map((chip) => (
+        <button
+          key={chip.key}
+          type="button"
+          onClick={() => onChange(chip.clear)}
+          aria-label={`Remove filter: ${chip.label}`}
+          className="inline-flex animate-pop items-center gap-2 rounded-full bg-ink py-1.5 pr-2.5 pl-3.5 text-[13px] text-ivory transition-colors hover:bg-ink-soft"
+        >
+          {chip.label}
+          <svg className="h-3.5 w-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+            <path strokeLinecap="round" d="M6 6l12 12M6 18L18 6" />
+          </svg>
+        </button>
+      ))}
+      {chips.length > 1 && (
+        <button
+          type="button"
+          onClick={() => onChange(ALL_FILTERS)}
+          className="link-underline ml-1 text-[11px] font-semibold tracking-[0.14em] text-gray-600 uppercase hover:text-ink"
+        >
+          Clear all
+        </button>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/useAuth.js';
 import { useCart } from '../../hooks/useCart.js';
+import SearchBox from '../ui/SearchBox.jsx';
 
 const NAV_LINKS = [
   { to: '/shop', label: 'Shop all' },
@@ -35,17 +36,52 @@ function useScrolled(threshold = 8) {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchButtonRef = useRef(null);
   const { user, status, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const scrolled = useScrolled();
+
+  const menuButtonRef = useRef(null);
 
   // Close the mobile menu whenever the page changes
   const [menuPath, setMenuPath] = useState(location.pathname);
   if (menuPath !== location.pathname) {
     setMenuPath(location.pathname);
     setMenuOpen(false);
+    setSearchOpen(false);
   }
+
+  // Escape closes the search bar and puts focus back on its button
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onKey = (event) => {
+      if (event.key !== 'Escape') return;
+      setSearchOpen(false);
+      searchButtonRef.current?.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [searchOpen]);
+
+  function search(text) {
+    setSearchOpen(false);
+    setMenuOpen(false);
+    navigate(text ? `/shop?q=${encodeURIComponent(text)}` : '/shop');
+  }
+
+  // Escape closes the mobile menu and puts focus back on its button
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event) => {
+      if (event.key !== 'Escape') return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
   async function handleLogout() {
     await logout();
@@ -100,10 +136,24 @@ export default function Header() {
                   Log in
                 </Link>
               ))}
+            <button
+              ref={searchButtonRef}
+              type="button"
+              onClick={() => setSearchOpen((open) => !open)}
+              aria-expanded={searchOpen}
+              aria-label={searchOpen ? 'Close search' : 'Search'}
+              className="rounded-full p-2 text-ink transition-colors hover:text-brass"
+            >
+              <svg className="h-[22px] w-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4} aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path strokeLinecap="round" d="M16 16l4.5 4.5" />
+              </svg>
+            </button>
             <CartButton />
 
             {/* Mobile menu button */}
             <button
+              ref={menuButtonRef}
               type="button"
               className="rounded-full p-2 text-ink lg:hidden"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -121,8 +171,18 @@ export default function Header() {
           </div>
         </div>
 
+        {searchOpen && (
+          <div className="animate-fade border-t border-sand bg-ivory">
+            <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6">
+              <SearchBox autoFocus onSearch={search} />
+              <p className="mt-3 text-center text-xs text-gray-500">Try &ldquo;navy polo&rdquo;, &ldquo;linen&rdquo; or &ldquo;tees&rdquo;</p>
+            </div>
+          </div>
+        )}
+
         {menuOpen && (
-          <nav className="animate-fade border-t border-sand bg-ivory px-4 pt-2 pb-4 lg:hidden">
+          <nav className="animate-fade border-t border-sand bg-ivory px-4 pt-4 pb-4 lg:hidden">
+            <SearchBox onSearch={search} className="mb-2" />
             {NAV_LINKS.map((link, i) => (
               <Link
                 key={link.to}
@@ -186,15 +246,25 @@ function CartButton() {
 function AccountMenu({ name, isAdmin, onLogout }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const buttonRef = useRef(null);
 
-  // Close when clicking anywhere outside the menu
+  // Close when clicking anywhere outside the menu, or on Escape (focus back on the button)
   useEffect(() => {
     if (!open) return;
     const close = (event) => {
       if (!ref.current?.contains(event.target)) setOpen(false);
     };
+    const onKey = (event) => {
+      if (event.key !== 'Escape') return;
+      setOpen(false);
+      buttonRef.current?.focus();
+    };
     document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', onKey);
+    };
   }, [open]);
 
   const item = 'block w-full px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-bone hover:text-ink';
@@ -202,9 +272,11 @@ function AccountMenu({ name, isAdmin, onLogout }) {
   return (
     <div ref={ref} className="relative hidden sm:block">
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
+        aria-haspopup="true"
         className="flex items-center gap-2 rounded-full px-3 py-2 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase transition-colors hover:text-ink"
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-bone font-display text-base tracking-normal text-ink normal-case">

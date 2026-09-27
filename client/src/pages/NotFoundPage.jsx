@@ -1,6 +1,10 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import SearchBox from '../components/ui/SearchBox.jsx';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function NotFoundPage() {
+  usePageTitle('Page not found');
+  const navigate = useNavigate();
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
       {/* An empty hanger, drawn line by line */}
@@ -16,9 +20,13 @@ export default function NotFoundPage() {
       </svg>
       <p className="eyebrow mt-8">Error 404</p>
       <h1 className="heading-display mt-3 text-5xl">Nothing on this hanger</h1>
-      <p className="mt-4 text-gray-600">We couldn&rsquo;t find the page you&rsquo;re looking for.</p>
-      <Link to="/shop" className="btn-primary mt-10">
-        Back to the collection
+      <p className="mt-4 text-gray-600">We couldn&rsquo;t find the page you&rsquo;re looking for. Try a search instead:</p>
+      <SearchBox
+        className="mt-8 w-full max-w-md"
+        onSearch={(q) => navigate(q ? `/shop?q=${encodeURIComponent(q)}` : '/shop')}
+      />
+      <Link to="/shop" className="link-underline mt-8 text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
+        Or browse the whole collection
       </Link>
     </div>
   );
