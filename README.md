@@ -263,11 +263,12 @@ A warm, quiet look in the spirit of a tailor's shop.
 
 | Part | How |
 |---|---|
-| **Palette** | ivory `#FAF8F4` page, bone `#F1ECE4` surfaces, ink `#1C1A17` text and buttons, brass `#8B6D3F` accent; sage (success, "suits you"), oxblood (errors, sale) and ochre (notes). All tokens live in `client/src/index.css` (`@theme`). The default `gray` / `emerald` / `red` / `amber` scales are replaced by warm versions, so every existing class follows the palette. Text colours pass 4.5:1 contrast on ivory. |
+| **Palette** | ivory `#FAF8F4` page, bone `#F1ECE4` surfaces, ink `#1C1A17` text and buttons, brass `#7F6338` accent; sage (success, "suits you"), oxblood (errors, sale) and ochre (notes). All tokens live in `client/src/index.css` (`@theme`). The default `gray` / `emerald` / `red` / `amber` scales are replaced by warm versions, so every existing class follows the palette. Text colours pass WCAG AA (4.5:1) on both ivory and bone. |
 | **Type** | Instrument Serif for display text (its italic for emphasis), Manrope for the interface. Self-hosted with `@fontsource` (bundled; no Google Fonts request). |
 | **Motion** | CSS keyframes in `index.css` (`animate-rise`, `-word`, `-draw`, `-scan`, `-float`, `-marquee`…) with one easing curve. `components/ui/Motion.jsx`: `Reveal` (rises in when scrolled into view, via `IntersectionObserver`), `RevealText` (headline words slide up one by one), `CountUp`. Each page rises in on navigation; the cart badge bumps; buttons get a light sweep. |
 | **Motion graphics** | Home hero: a shirt drawn like a tailor's technical sheet, with measurement lines that draw themselves, a scan line and floating cards (`components/home/HeroGraphic.jsx`). A scan animation over your photo while it's analysed and during try-on (`ScanOverlay`); a hanger drawn on the 404 page; a check mark drawn when an order is placed. |
 | **Reduce motion** | With "reduce motion" on in the OS, every animation lands in its final state immediately. |
+| **Accessibility** | Audited with axe-core (WCAG 2.1 A + AA) on 19 screens: logged out, logged in, admin, the try-on dialog and the mobile menu. **0 violations.** Decorative illustrations are hidden from screen readers; the marquee is read once as plain text. |
 | **Product illustrations** | Until real photos are added, the seed's placehold.co images are drawn as flat-lay garments in the right colour, with the right collar, sleeves and fabric (stripes, checks, denim, linen, knit, piqué, oxford, print): `GarmentArt.jsx`, chosen by `lib/garmentStyle.js` from the product name. `ProductImage` shows real photos as they are and falls back to the illustration if a photo fails to load. |
 
 ## How the AI features work (store side)
@@ -481,6 +482,9 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   animation (the scan request held for 3 s to see it), results, recommendation, add to cart,
   cart, the fitting room and 404. There were no console errors. All 31 product/colour
   illustrations were also rendered side by side and checked.
+- Accessibility: axe-core (WCAG 2.1 A + AA) on 19 screens, including admin, the try-on dialog
+  and the mobile menu. There are 0 violations; the first run found low-contrast grey/brass text
+  on bone panels, unlabeled decorative SVGs and a mislabeled marquee, all fixed.
 - Docker: the CI `docker` job passed on its first run: both images built, the stack came up
   healthy, the nginx smoke tests passed and all e2e checks passed against the containers.
   (The development machine has no Docker, so CI is where the images are built.)

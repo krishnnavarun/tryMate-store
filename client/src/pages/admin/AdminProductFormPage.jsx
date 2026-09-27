@@ -32,7 +32,7 @@ export default function AdminProductFormPage() {
 
 function Section({ title, children }) {
   return (
-    <section className="rounded-2xl border border-gray-200 p-5">
+    <section className="animate-rise rounded-[28px] border border-sand bg-white p-6 sm:p-8">
       <h2 className="heading-display mb-5 text-2xl">{title}</h2>
       {children}
     </section>
@@ -42,11 +42,11 @@ function Section({ title, children }) {
 function Select({ label, value, onChange, options }) {
   return (
     <label className="block text-sm">
-      <span className="mb-1.5 block font-medium text-gray-700">{label}</span>
+      <span className="mb-2 block text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
+        className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-colors hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
       >
         {options.map(([v, text]) => (
           <option key={v} value={v}>
@@ -84,7 +84,7 @@ function ProductForm({ product }) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <Link to="/admin/products" className="text-sm font-medium text-brand hover:underline">
+      <Link to="/admin/products" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase hover:text-ink">
         ← All products
       </Link>
       <h1 className="heading-display mt-2 text-5xl">
@@ -124,13 +124,13 @@ function ProductForm({ product }) {
               />
             </div>
             <label className="block text-sm sm:col-span-2">
-              <span className="mb-1.5 block font-medium text-gray-700">Description</span>
+              <span className="mb-2 block text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">Description</span>
               <textarea
                 rows={3}
                 maxLength={4000}
                 value={form.description}
                 onChange={(e) => set({ description: e.target.value })}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"
+                className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-colors hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
               />
             </label>
           </div>
@@ -152,7 +152,7 @@ function ProductForm({ product }) {
                   aria-label={`Color ${i + 1}`}
                   value={c.hex}
                   onChange={(e) => set({ colors: form.colors.map((x, j) => (j === i ? { ...x, hex: e.target.value } : x)) })}
-                  className="h-10 w-12 cursor-pointer rounded border border-gray-300"
+                  className="h-11 w-12 cursor-pointer rounded-xl border border-sand bg-white p-1"
                 />
                 <input
                   aria-label={`Color ${i + 1} name`}
@@ -161,14 +161,14 @@ function ProductForm({ product }) {
                   maxLength={40}
                   value={c.name}
                   onChange={(e) => set({ colors: form.colors.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })}
-                  className="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  className="w-48 rounded-xl border border-sand bg-white px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
                 />
                 <code className="text-xs text-gray-500">{c.hex.toUpperCase()}</code>
                 <button
                   type="button"
                   disabled={form.colors.length === 1}
                   onClick={() => set({ colors: form.colors.filter((_, j) => j !== i) })}
-                  className="ml-auto text-xs font-medium text-gray-500 hover:text-red-600 disabled:opacity-30"
+                  className="ml-auto text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase hover:text-red-600 disabled:opacity-30"
                 >
                   Remove
                 </button>
@@ -177,24 +177,24 @@ function ProductForm({ product }) {
             <button
               type="button"
               onClick={() => set({ colors: [...form.colors, { name: '', hex: '#9E9E9E' }] })}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50"
+              className="btn-secondary btn-sm"
             >
-              + Add color
+              + Add colour
             </button>
           </div>
         </Section>
 
         <Section title="Images">
           <p className="mb-3 text-xs text-gray-500">
-            Display image URLs, ideally one per color in the same order as the colors above.
+            Display image URLs, ideally one per colour, in the same order as the colours above.
           </p>
           <div className="space-y-2">
             {form.images.map((url, i) => (
               <div key={i} className="flex items-center gap-2">
                 {url ? (
-                  <img src={url} alt="" className="h-12 w-9 shrink-0 rounded bg-gray-100 object-cover" />
+                  <img src={url} alt="" className="h-12 w-9 shrink-0 rounded-md bg-bone object-cover" />
                 ) : (
-                  <span className="h-12 w-9 shrink-0 rounded bg-gray-100" />
+                  <span className="h-12 w-9 shrink-0 rounded-md bg-bone" />
                 )}
                 <input
                   aria-label={`Image ${i + 1} URL`}
@@ -203,13 +203,13 @@ function ProductForm({ product }) {
                   placeholder="https://…"
                   value={url}
                   onChange={(e) => set({ images: form.images.map((x, j) => (j === i ? e.target.value : x)) })}
-                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  className="flex-1 rounded-xl border border-sand bg-white px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
                 />
                 <button
                   type="button"
                   disabled={form.images.length === 1}
                   onClick={() => set({ images: form.images.filter((_, j) => j !== i) })}
-                  className="text-xs font-medium text-gray-500 hover:text-red-600 disabled:opacity-30"
+                  className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase hover:text-red-600 disabled:opacity-30"
                 >
                   Remove
                 </button>
@@ -218,7 +218,7 @@ function ProductForm({ product }) {
             <button
               type="button"
               onClick={() => set({ images: [...form.images, ''] })}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50"
+              className="btn-secondary btn-sm"
             >
               + Add image
             </button>
@@ -226,7 +226,7 @@ function ProductForm({ product }) {
 
           <div className="mt-6 flex items-start gap-3">
             {form.garmentImageUrl && (
-              <img src={form.garmentImageUrl} alt="" className="h-20 w-16 shrink-0 rounded bg-gray-100 object-cover" />
+              <img src={form.garmentImageUrl} alt="" className="h-20 w-16 shrink-0 rounded-md bg-bone object-cover" />
             )}
             <FormField
               label="Garment image URL (for try-on)"
@@ -253,17 +253,17 @@ function ProductForm({ product }) {
           <SizeChartEditor rows={form.sizes} onChange={(sizes) => set({ sizes })} />
         </Section>
 
-        {problem && <p className="rounded-lg bg-red-50 p-4 text-sm font-medium text-red-700">{problem}</p>}
+        {problem && <p className="animate-rise rounded-2xl bg-red-50 p-4 text-sm font-medium text-red-700">{problem}</p>}
 
         <div className="flex gap-3">
           <button
             type="submit"
             disabled={saving}
-            className="rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-white hover:bg-brand-light disabled:opacity-60"
+            className="btn-primary px-8"
           >
             {saving ? 'Saving…' : product ? 'Save changes' : 'Create product'}
           </button>
-          <Link to="/admin/products" className="px-4 py-3 text-sm font-medium text-gray-600">
+          <Link to="/admin/products" className="link-underline self-center px-2 text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">
             Cancel
           </Link>
         </div>

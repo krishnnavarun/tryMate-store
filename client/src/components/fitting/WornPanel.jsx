@@ -127,7 +127,7 @@ export default function WornPanel({
               )}
             </>
           )}
-          <p className="mt-2 text-xs text-gray-400">
+          <p className="mt-2 text-xs text-gray-500">
             The mirror is a live preview of colour, style and proportions. Fit notes come from your measurements.
           </p>
         </div>

@@ -13,7 +13,8 @@
  *   emerald, green sage         "suits you", best fit, success
  *   red            oxblood      errors, destructive actions, sold out
  *   amber          ochre        warnings and notes
- * Text colours were checked for contrast on ivory: gray-500 and brass pass 4.5:1.
+ * Text colours pass WCAG AA (4.5:1) on both ivory and bone (audited with axe-core):
+ * brass 5.29 / 4.77, gray-500 5.35 / 4.82. Keep gray-400 and lighter for decoration only.
  */
 @theme {
   --color-ink: #1c1a17;
@@ -21,7 +22,7 @@
   --color-ivory: #faf8f4;
   --color-bone: #f1ece4;
   --color-sand: #e3dcd0;
-  --color-brass: #8b6d3f;
+  --color-brass: #7f6338;
   --color-brass-light: #c8ad7f;
 
   /* Earlier names, kept so existing classes follow the new palette */
@@ -35,7 +36,7 @@
   --color-gray-200: #e3ddd4;
   --color-gray-300: #cfc7bb;
   --color-gray-400: #a8a094;
-  --color-gray-500: #756e63;
+  --color-gray-500: #6d665b;
   --color-gray-600: #5f594f;
   --color-gray-700: #4a453e;
   --color-gray-800: #312e29;

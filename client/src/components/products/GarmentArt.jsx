@@ -110,12 +110,17 @@ export default function GarmentArt({ name, type, hex, title, backdrop = true, cl
     buttons.push(ny + 38, ny + 54, ny + 70);
   }
 
+  // title="" (like alt="") marks a decorative copy, e.g. the hover image: hidden from screen readers
+  const label = title ?? name;
+  const decorative = !label;
+
   return (
     <svg
       viewBox="0 0 300 400"
       preserveAspectRatio="xMidYMid slice"
-      role="img"
-      aria-label={title ?? name}
+      role={decorative ? undefined : 'img'}
+      aria-label={decorative ? undefined : label}
+      aria-hidden={decorative ? 'true' : undefined}
       className={className}
     >
       <defs>

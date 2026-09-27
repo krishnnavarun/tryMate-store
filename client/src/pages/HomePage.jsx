@@ -102,7 +102,9 @@ export default function HomePage() {
       </section>
 
       {/* ---- Marquee ------------------------------------------------------------------------ */}
-      <div className="overflow-hidden border-y border-ink bg-ink py-4 text-ivory" aria-label={MARQUEE.join(', ')}>
+      <div className="overflow-hidden border-y border-ink bg-ink py-4 text-ivory">
+        {/* Screen readers get the list once; the moving copy is decoration */}
+        <p className="sr-only">{MARQUEE.join('. ')}.</p>
         <div className="flex w-max animate-marquee hover:[animation-play-state:paused]" aria-hidden="true">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0 items-center">

@@ -84,7 +84,7 @@ export default function AdminProductsPage() {
                     <td className="px-4 py-3 text-gray-900">
                       {formatPrice(p.discountPrice ?? p.price)}
                       {p.discountPrice != null && (
-                        <span className="ml-1 text-xs text-gray-400 line-through">{formatPrice(p.price)}</span>
+                        <span className="ml-1 text-xs text-gray-500 line-through">{formatPrice(p.price)}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">

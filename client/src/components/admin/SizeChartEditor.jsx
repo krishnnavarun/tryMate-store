@@ -1,6 +1,6 @@
 import { SIZE_FIELDS, nextSizeRow } from '../../utils/productForm.js';
 
-const cell = 'w-16 rounded border border-gray-300 px-1.5 py-1 text-sm';
+const cell = 'w-16 rounded-lg border border-sand bg-white px-2 py-1.5 text-sm tabular-nums focus:border-ink focus:outline-none';
 
 // Table editor for the size chart + stock. One row per size; each measurement is a
 // [min, max] range in cm (leave both empty if the size chart doesn't use it).
@@ -14,22 +14,22 @@ export default function SizeChartEditor({ rows, onChange }) {
 
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
+      <div className="overflow-x-auto rounded-2xl border border-sand">
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="bg-gray-50 text-xs text-gray-500">
+          <thead className="bg-bone text-[11px] tracking-[0.1em] text-gray-600 uppercase">
             <tr>
               <th className="px-2 py-2 font-medium">Size</th>
               {SIZE_FIELDS.map(([field, label]) => (
                 <th key={field} className="px-2 py-2 font-medium">
                   {label} (cm)
-                  <span className="block font-normal">min – max</span>
+                  <span className="block font-normal tracking-normal normal-case">min – max</span>
                 </th>
               ))}
               <th className="px-2 py-2 font-medium">Stock</th>
               <th />
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-sand/70">
             {rows.map((row, i) => (
               <tr key={i}>
                 <td className="px-2 py-2">
@@ -73,7 +73,7 @@ export default function SizeChartEditor({ rows, onChange }) {
                     type="button"
                     disabled={rows.length === 1}
                     onClick={() => onChange(rows.filter((_, j) => j !== i))}
-                    className="text-xs font-medium text-gray-500 hover:text-red-600 disabled:opacity-30"
+                    className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase hover:text-red-600 disabled:opacity-30"
                   >
                     Remove
                   </button>
@@ -86,7 +86,7 @@ export default function SizeChartEditor({ rows, onChange }) {
       <button
         type="button"
         onClick={() => onChange([...rows, nextSizeRow(rows)])}
-        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50"
+        className="btn-secondary btn-sm"
       >
         + Add size
       </button>

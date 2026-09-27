@@ -12,7 +12,7 @@ export default function Price({ price, discountPrice, size = 'md' }) {
   return (
     <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 tabular-nums">
       <span className={`${main} font-semibold text-ink`}>{formatPrice(discountPrice)}</span>
-      <span className="text-sm text-gray-400 line-through">{formatPrice(price)}</span>
+      <span className="text-sm text-gray-500 line-through">{formatPrice(price)}</span>
       <span className="text-xs font-semibold tracking-wide text-red-600">−{off}%</span>
     </p>
   );

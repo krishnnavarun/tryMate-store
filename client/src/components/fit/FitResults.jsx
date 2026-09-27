@@ -47,7 +47,7 @@ export default function FitResults({ fitProfile, warnings = [] }) {
           {MEASUREMENTS.map(([key, label, kind], i) => (
             <div key={key} className="animate-rise rounded-2xl bg-ivory p-5 ring-1 ring-sand/70" style={{ animationDelay: `${120 + i * 70}ms` }}>
               <dt className="text-[10.5px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
-                {label} <span className="tracking-normal text-gray-400 normal-case">({kind})</span>
+                {label} <span className="tracking-normal text-gray-500 normal-case">({kind})</span>
               </dt>
               <dd className="mt-2 font-display text-4xl leading-none text-ink tabular-nums">
                 <CountUp value={measurements?.[key]} decimals={1} />

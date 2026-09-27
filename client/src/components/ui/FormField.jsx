@@ -9,7 +9,7 @@ export default function FormField({ label, hint, className = '', ...inputProps }
       </label>
       <input
         id={id}
-        className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-[border-color,box-shadow] duration-300 placeholder:text-gray-400 hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
+        className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-[border-color,box-shadow] duration-300 placeholder:text-gray-500 hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
         {...inputProps}
       />
       {hint && <p className="mt-1.5 text-xs text-gray-500">{hint}</p>}
