@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ORDER_STATUSES } from '../models/Order.js';
 
 const text = (max, label) => z.string().trim().min(1, `${label} is required`).max(max);
 
@@ -20,3 +21,9 @@ export const createOrderBody = z.object({
     country: text(60, 'country'),
   }),
 });
+
+// GET /api/admin/orders?status=placed
+export const adminOrdersQuery = z.object({ status: z.enum(ORDER_STATUSES).optional() });
+
+// PATCH /api/admin/orders/:id: which changes are allowed is checked in the controller
+export const orderStatusBody = z.object({ status: z.enum(['shipped', 'delivered', 'cancelled']) });

@@ -1,11 +1,14 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Link, useLocation, useParams } from 'react-router';
-import { fetchOrder } from '../api/orders.js';
+import { cancelOrder, fetchOrder } from '../api/orders.js';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
 import CheckoutSteps from '../components/orders/CheckoutSteps.jsx';
 import ProductImage from '../components/products/ProductImage.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import StatusMessage from '../components/ui/StatusMessage.jsx';
 import { useApi } from '../hooks/useApi.js';
+import { useAuth } from '../hooks/useAuth.js';
 import { formatDate, formatPrice, shortId } from '../utils/format.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
@@ -13,10 +16,13 @@ export default function OrderDetailPage() {
   const { id } = useParams();
   const location = useLocation();
   const justPlaced = location.state?.justPlaced === true;
-  const { data: order, loading, error } = useApi((signal) => fetchOrder(id, { signal }), [id]);
+  const { data: order, loading, error, reload } = useApi((signal) => fetchOrder(id, { signal }), [id]);
+  const { user } = useAuth();
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   usePageTitle(order ? `Order #${shortId(order._id)}` : error ? 'Order not found' : null);
 
-  if (loading) return <Spinner className="py-24" />;
+  if (loading && !order) return <Spinner className="py-24" />;
   if (error) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16">
@@ -34,6 +40,27 @@ export default function OrderDetailPage() {
   }
 
   const address = order.shippingAddress;
+  // Customers can cancel their own order until it ships (admins use /admin/orders)
+  const canCancel = order.status === 'placed' && String(order.user) === String(user?._id);
+
+  async function handleCancel() {
+    setCancelling(true);
+    try {
+      await cancelOrder(order._id);
+      toast.success('Your order is cancelled. Nothing was charged.');
+      setConfirmCancel(false);
+      reload();
+    } catch (err) {
+      toast.error(err.userMessage);
+      // It shipped (or was cancelled) since this page loaded: show where it is now
+      if (err.errorCode === 'CANNOT_CANCEL') {
+        setConfirmCancel(false);
+        reload();
+      }
+    } finally {
+      setCancelling(false);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
@@ -114,6 +141,36 @@ export default function OrderDetailPage() {
             <span>Total</span>
             <span>{formatPrice(order.total)}</span>
           </div>
+          {order.status === 'cancelled' && (
+            <p className="rounded-2xl bg-gray-100 p-4 text-gray-600">This order was cancelled. Nothing was charged.</p>
+          )}
+          {canCancel &&
+            (confirmCancel ? (
+              <div className="space-y-3 rounded-2xl bg-bone p-4">
+                <p className="text-gray-700">Cancel this order? You can order again any time.</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={cancelling}
+                    className="rounded-full bg-red-600 px-4 py-1.5 font-semibold text-ivory transition-colors hover:bg-red-700 disabled:opacity-60"
+                  >
+                    {cancelling ? 'Cancelling…' : 'Yes, cancel it'}
+                  </button>
+                  <button type="button" onClick={() => setConfirmCancel(false)} className="px-3 py-1.5 font-semibold">
+                    Keep it
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmCancel(true)}
+                className="link-underline block text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase hover:text-red-700"
+              >
+                Cancel order
+              </button>
+            ))}
           <Link to="/orders" className="link-underline inline-block text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
             ← All orders
           </Link>

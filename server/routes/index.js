@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getHealth } from '../controllers/health.controller.js';
+import adminRoutes from './admin.routes.js';
 import authRoutes from './auth.routes.js';
 import cartRoutes from './cart.routes.js';
 import fitProfileRoutes from './fitProfile.routes.js';
@@ -15,6 +16,7 @@ router.use('/products', productRoutes);
 router.use('/cart', cartRoutes);
 router.use('/orders', orderRoutes);
 router.use('/fit-profile', fitProfileRoutes);
+router.use('/admin', adminRoutes);
 // Size recommendation + try-on live under /products/:id (product.routes.js)
 
 export default router;

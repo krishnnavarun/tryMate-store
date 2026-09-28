@@ -200,9 +200,14 @@ export default function Header() {
                     Your orders
                   </Link>
                   {user.role === 'admin' && (
-                    <Link to="/admin/products" className="block py-2.5 text-sm font-medium text-gray-700">
-                      Admin: products
-                    </Link>
+                    <>
+                      <Link to="/admin/products" className="block py-2.5 text-sm font-medium text-gray-700">
+                        Admin: products
+                      </Link>
+                      <Link to="/admin/orders" className="block py-2.5 text-sm font-medium text-gray-700">
+                        Admin: orders
+                      </Link>
+                    </>
                   )}
                   <button type="button" onClick={handleLogout} className="block py-2.5 text-sm font-medium text-gray-700">
                     Log out
@@ -296,9 +301,14 @@ function AccountMenu({ name, isAdmin, onLogout }) {
             Your orders
           </Link>
           {isAdmin && (
-            <Link to="/admin/products" onClick={() => setOpen(false)} className={item}>
-              Admin: products
-            </Link>
+            <>
+              <Link to="/admin/products" onClick={() => setOpen(false)} className={item}>
+                Admin: products
+              </Link>
+              <Link to="/admin/orders" onClick={() => setOpen(false)} className={item}>
+                Admin: orders
+              </Link>
+            </>
           )}
           <div className="my-1 border-t border-sand" />
           <button

@@ -44,9 +44,14 @@ export default function AdminProductsPage() {
           <h1 className="heading-display mt-2 text-5xl">Products</h1>
           {data && <p className="mt-1 text-sm text-gray-500">{data.total} products</p>}
         </div>
-        <Link to="/admin/products/new" className="btn-primary btn-sm">
-          + New product
-        </Link>
+        <div className="flex items-center gap-5">
+          <Link to="/admin/orders" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
+            Orders
+          </Link>
+          <Link to="/admin/products/new" className="btn-primary btn-sm">
+            + New product
+          </Link>
+        </div>
       </div>
 
       <div className="mt-8">

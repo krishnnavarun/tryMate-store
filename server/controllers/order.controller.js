@@ -85,3 +85,54 @@ export async function getOrder(req, res) {
   if (!order) throw ApiError.notFound('Order not found');
   res.json(order);
 }
+
+// ---- order status ----------------------------------------------------------------------
+
+// Allowed status changes. Delivered and cancelled are final.
+export const NEXT_STATUSES = { placed: ['shipped', 'cancelled'], shipped: ['delivered'], delivered: [], cancelled: [] };
+
+// Change the status in ONE atomic update that only matches when the change is allowed from
+// the order's current status, so two clicks at the same moment can't both cancel an order
+// (and put its stock back twice). A cancelled order's items go back into stock.
+async function changeStatus(filter, status) {
+  const allowedFrom = Object.keys(NEXT_STATUSES).filter((from) => NEXT_STATUSES[from].includes(status));
+  const order = await Order.findOneAndUpdate(
+    { ...filter, status: { $in: allowedFrom } },
+    { $set: { status } },
+    { returnDocument: 'after' },
+  ).lean();
+  if (order && status === 'cancelled') {
+    await Promise.all(order.items.map((item) => releaseStock(item.product, item.size, item.qty)));
+  }
+  return order;
+}
+
+// POST /api/orders/:id/cancel: customers can cancel their own order until it ships
+export async function cancelOrder(req, res) {
+  const filter = { _id: req.valid.params.id, user: req.user._id };
+  const order = await changeStatus(filter, 'cancelled');
+  if (order) return res.json(order);
+  if (!(await Order.exists(filter))) throw ApiError.notFound('Order not found');
+  throw new ApiError(409, 'CANNOT_CANCEL', 'This order can no longer be cancelled (it has shipped or was already cancelled).');
+}
+
+// GET /api/admin/orders?status=: every order, newest first, with the customer's name + email
+export async function listAllOrders(req, res) {
+  const { status } = req.valid.query;
+  const orders = await Order.find(status ? { status } : {})
+    .sort({ createdAt: -1 })
+    .limit(200)
+    .populate('user', 'name email')
+    .lean();
+  res.json(orders);
+}
+
+// PATCH /api/admin/orders/:id  { status: shipped | delivered | cancelled }
+export async function updateOrderStatus(req, res) {
+  const { status } = req.valid.body;
+  const order = await changeStatus({ _id: req.valid.params.id }, status);
+  if (order) return res.json(order);
+  const current = await Order.findById(req.valid.params.id, 'status').lean();
+  if (!current) throw ApiError.notFound('Order not found');
+  throw new ApiError(409, 'INVALID_STATUS_CHANGE', `An order that is ${current.status} can't be marked ${status}.`);
+}

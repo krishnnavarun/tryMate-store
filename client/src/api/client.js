@@ -38,6 +38,8 @@ const SHOW_SERVER_MESSAGE = new Set([
   'CART_EMPTY',
   'RATE_LIMITED',
   'NO_FIT_PROFILE',
+  'CANNOT_CANCEL', // "This order can no longer be cancelled (it has shipped…)"
+  'INVALID_STATUS_CHANGE', // admin: "An order that is shipped can't be marked cancelled."
   'AI_UNAVAILABLE',
   'AI_TIMEOUT',
 ]);

@@ -130,7 +130,8 @@ clear message if something is missing.
    chips. Search and filters live in the URL.
 2. **Account**: register, log in, log out. The session is an httpOnly cookie.
 3. **Cart and demo checkout**: stock is checked; placing an order takes stock atomically;
-   nothing is charged.
+   nothing is charged. **Your orders** (`/orders`): you can cancel an order until it ships, and
+   its items go back into stock.
 4. **Fit profile** (`/fit-profile`): photo tips, a privacy notice, upload **or** camera (with a
    10-second self-timer for full-body shots), height/weight → measurements, skin tone,
    suggested colours, confidence, warnings. Re-scan, delete, fit preference (slim/regular/loose).
@@ -151,8 +152,11 @@ clear message if something is missing.
    to a minute, the result side by side with the original, and the note *"This shows the look,
    not the exact fit."* Limited to 10 per hour per user.
 8. **Live fitting room** (`/fitting-room`, or "Try it live" on a product page): see below.
-9. **Admin** (`/admin/products`, admins only): product list, create/edit with a colour editor,
-   image URLs, garment (try-on) image URL and a **size chart + stock editor**; delete.
+9. **Admin** (admins only):
+   - `/admin/products`: product list, create/edit with a colour editor, image URLs, garment
+     (try-on) image URL and a **size chart + stock editor**; delete.
+   - `/admin/orders`: every order with the customer, filter by status, and move it along
+     **placed → shipped → delivered** (or cancel it, which puts the stock back).
 10. **Made to be easy to use**:
     - **Product page:** "Add to cart" without a size points at the size picker. Low stock shows as
       "Only 2 left in size L". A "You may also like" row.
@@ -184,6 +188,8 @@ the same shape the AI service uses. Validation errors add a `details` array.
 | `CONFLICT` | 409 | Email or product slug already in use |
 | `OUT_OF_STOCK` | 409 | Not enough stock for the requested size |
 | `NO_FIT_PROFILE` | 409 | Size recommendation / "suits me" without a scan |
+| `CANNOT_CANCEL` | 409 | Cancelling an order that has shipped or is already cancelled |
+| `INVALID_STATUS_CHANGE` | 409 | Admin: a status change that isn't allowed (e.g. placed → delivered) |
 | `INVALID_INPUT`, `NO_PERSON_DETECTED`, `MULTIPLE_PEOPLE`, `PARTIAL_BODY`, `FACE_NOT_FOUND` | 422 | From the AI service, passed through |
 | `RATE_LIMITED` | 429 | Too many logins (20/15 min/IP in production, 200 in development), scans (20/h/user) or try-ons (10/h/user) |
 | `TRYON_FAILED` / `TRYON_TIMEOUT` / `AI_TIMEOUT` | 502 / 504 | The AI provider failed or was too slow |
@@ -218,6 +224,11 @@ DELETE /api/fit-profile                      (auth)
 
 GET    /api/cart | POST /api/cart/items | PATCH /api/cart/items/:itemId | DELETE /api/cart/items/:itemId   (auth)
 POST   /api/orders | GET /api/orders | GET /api/orders/:id                                                (auth)
+POST   /api/orders/:id/cancel                (auth) your own order, only while "placed"; stock goes back
+GET    /api/admin/orders?status=             (admin) newest first, with the customer's name + email
+PATCH  /api/admin/orders/:id                 (admin) { status: shipped | delivered | cancelled }
+                                              placed → shipped → delivered; placed → cancelled. Anything
+                                              else → 409 INVALID_STATUS_CHANGE
 ```
 
 Every response has an `X-Request-ID` header; the same id is sent to the AI service, so one
@@ -289,7 +300,7 @@ A warm, quiet look in the spirit of a tailor's shop.
 | **Motion** | CSS keyframes in `index.css` (`animate-rise`, `-word`, `-draw`, `-scan`, `-float`, `-marquee`…) with one easing curve. `components/ui/Motion.jsx`: `Reveal` (rises in when scrolled into view, via `IntersectionObserver`), `RevealText` (headline words slide up one by one), `CountUp`. Each page rises in on navigation; the cart badge bumps; buttons get a light sweep. |
 | **Motion graphics** | Home hero: a shirt drawn like a tailor's technical sheet, with measurement lines that draw themselves, a scan line and floating cards (`components/home/HeroGraphic.jsx`). A scan animation over your photo while it's analysed and during try-on (`ScanOverlay`); a hanger drawn on the 404 page; a check mark drawn when an order is placed. |
 | **Reduce motion** | With "reduce motion" on in the OS, every animation lands in its final state immediately. |
-| **Accessibility** | Audited with axe-core (WCAG 2.1 A + AA) on 19 screens: logged out, logged in, admin, the try-on dialog and the mobile menu. **0 violations.** Decorative illustrations are hidden from screen readers; the marquee is read once as plain text. Keyboard: a "Skip to content" link, focus moves to the new page after navigation, dialogs keep Tab inside and return focus on close, Escape closes the menus, and every page has its own title (`usePageTitle`). |
+| **Accessibility** | Audited with axe-core (WCAG 2.1 A + AA) on 20 screens: logged out, logged in, admin, the try-on dialog and the mobile menu. **0 violations.** Decorative illustrations are hidden from screen readers; the marquee is read once as plain text. Keyboard: a "Skip to content" link, focus moves to the new page after navigation, dialogs keep Tab inside and return focus on close, Escape closes the menus, and every page has its own title (`usePageTitle`). |
 | **Product illustrations** | Until real photos are added, the seed's placehold.co images are drawn as flat-lay garments in the right colour, with the right collar, sleeves and fabric (stripes, checks, denim, linen, knit, piqué, oxford, print): `GarmentArt.jsx`, chosen by `lib/garmentStyle.js` from the product name. `ProductImage` shows real photos as they are and falls back to the illustration if a photo fails to load. |
 
 ## How the AI features work (store side)
@@ -389,14 +400,14 @@ tryMate-store/
 │       │   └── ui/                # FormField, Modal, Pagination, Spinner, StatusMessage, Motion (Reveal, RevealText, CountUp)
 │       ├── lib/                   # camera.js, color.js, garmentStyle.js; fitting/ (poseTracker, drawGarment, fit, landmarks); unit tests
 │       ├── pages/                 # Home, Shop, Product, FitProfile, FittingRoom, Login, Register, Cart, Checkout, Orders, OrderDetail, NotFound
-│       │   └── admin/             # AdminProducts, AdminProductForm
+│       │   └── admin/             # AdminProducts, AdminProductForm, AdminOrders
 │       └── utils/                 # format (INR, dates), redirect (safe ?redirect=), productForm
 ├── server/                        # Express 5 + Mongoose 9, ES modules
 │   ├── Dockerfile                 # Docker: node:24-slim, production deps, non-root, healthcheck
 │   ├── index.js, app.js
 │   ├── config/                    # env.js (validated .env), db.js
 │   ├── models/                    # Product, User (+ fitProfile), Cart, Order
-│   ├── routes/ → controllers/     # auth, products (+ AI + admin), fit-profile, cart, orders, health
+│   ├── routes/ → controllers/     # auth, products (+ AI + admin), fit-profile, cart, orders, admin (orders), health
 │   ├── services/                  # aiClient (the only AI caller), recommendationCache
 │   ├── mocks/aiMock.js            # fake AI service (same contract)
 │   ├── middleware/                # validate, auth, rateLimit, upload (memory only), requestId, errorHandler
@@ -463,12 +474,13 @@ npm test               # → "pass 64"
 
 ```bash
 npm run dev            # terminal 1 (AI_MODE=mock is fine)
-npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
+npm run test:e2e       # terminal 2 → "✅ All 100 checks passed"
 ```
 
 - **Shop** (auth, cart, orders, the stock race), **AI features** (scan, every AI error message
   via the mock, size recommendation for each fit preference, "suits you", try-on) and **admin**
-  (permissions, validation, create/update/delete). Code: `server/tests/e2e/`.
+  (permissions, validation, create/update/delete, order status changes, cancelling puts stock
+  back exactly once). Code: `server/tests/e2e/`.
 - **Safe on your dev database:** each run creates its own users (`…@example.test`) and product
   (`E2E Test …`) and deletes them, with their carts and orders, when it ends, even after a
   failure. Your products, stock and accounts are never touched.
@@ -487,9 +499,9 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
 
 ## What was tested
 
-- `npm run test:e2e`: 80 checks with the mock AI; with the real AI service + a real photo: 71
-  (the mock-only error cases are skipped). Run twice in a row; the database was identical
-  before and after.
+- `npm run test:e2e`: 100 checks with the mock AI (search, fit breakdown, "between sizes" and
+  the order lifecycle included). With the real AI service + a real photo the mock-only error
+  cases are skipped. Run twice in a row; the database was identical before and after.
 - The same scan → recommendation → "suits you" → try-on flow against the **real** AI service
   (try-on provider mocked): no contract mismatches.
 - UI: a headless Chrome tour (desktop + 390 px mobile) through home, shop, product, register,
@@ -503,7 +515,7 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   animation (the scan request held for 3 s to see it), results, recommendation, add to cart,
   cart, the fitting room and 404. There were no console errors. All 31 product/colour
   illustrations were also rendered side by side and checked.
-- Accessibility: axe-core (WCAG 2.1 A + AA) on 19 screens, including admin, the try-on dialog
+- Accessibility: axe-core (WCAG 2.1 A + AA) on 20 screens, including admin, the try-on dialog
   and the mobile menu. There are 0 violations; the first run found low-contrast grey/brass text
   on bone panels, unlabeled decorative SVGs and a mislabeled marquee, all fixed.
 - Usability: 26 scripted checks in headless Chrome, all passing:
@@ -512,7 +524,10 @@ npm run test:e2e       # terminal 2 → "✅ All 80 checks passed"
   - size prompt, low stock, related products and the 404 search;
   - password Show/rule, and height in feet and inches through a real scan;
   - cart undo, checkout steps and the address pre-fill.
-  `npm run test:e2e`: 87 checks (search, fit breakdown and "between sizes" included).
+- Orders: 33 scripted checks in headless Chrome, all passing: a customer cancels (with a
+  confirm step, and stock goes back), the admin ships, delivers and cancels from the table,
+  the status filter, a cancel on a page that is out of date (the order shipped meanwhile)
+  explains why, and no sideways scroll at 390 px. axe-core: 0 violations on those screens.
 - Keyboard only: 22 scripted checks in headless Chrome, all passing:
   - skip link, visible focus, and focus after navigation;
   - the page title on 9 routes;

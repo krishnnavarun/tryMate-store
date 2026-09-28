@@ -93,7 +93,7 @@ async function main() {
 
     await runShopSuite({ product });
     await runAiSuite({ product, aiMode: health.ai.mode });
-    await runAdminSuite({ admin, productBody: PRODUCT });
+    await runAdminSuite({ admin, productBody: PRODUCT, product });
   } finally {
     await cleanUp();
     await mongoose.disconnect();

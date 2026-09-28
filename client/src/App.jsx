@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router';
 import AdminRoute from './components/auth/AdminRoute.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import Layout from './components/layout/Layout.jsx';
+import AdminOrdersPage from './pages/admin/AdminOrdersPage.jsx';
 import AdminProductFormPage from './pages/admin/AdminProductFormPage.jsx';
 import AdminProductsPage from './pages/admin/AdminProductsPage.jsx';
 import CartPage from './pages/CartPage.jsx';
@@ -55,6 +56,7 @@ export default function App() {
             <Route path="products" element={<AdminProductsPage />} />
             <Route path="products/new" element={<AdminProductFormPage />} />
             <Route path="products/:slug/edit" element={<AdminProductFormPage />} />
+            <Route path="orders" element={<AdminOrdersPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />
