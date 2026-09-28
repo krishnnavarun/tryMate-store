@@ -43,7 +43,7 @@ export default function SearchBox({ value = '', onSearch, live = false, autoFocu
         aria-label="Search the collection"
         maxLength={80}
         autoFocus={autoFocus}
-        className="block w-full rounded-full border border-sand bg-white py-3 pr-11 pl-11 text-sm text-ink transition-[border-color,box-shadow] duration-300 placeholder:text-gray-500 hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+        className="block w-full rounded-full border border-smoke bg-coal py-3 pr-11 pl-11 text-sm text-alabaster transition-[border-color,box-shadow] duration-300 placeholder:text-gray-500 hover:border-gray-300 focus:border-alabaster focus:ring-4 focus:ring-alabaster/5 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
       />
       {text && (
         <button
@@ -52,7 +52,7 @@ export default function SearchBox({ value = '', onSearch, live = false, autoFocu
             setText('');
             onSearch('');
           }}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1.5 text-gray-500 transition-colors hover:bg-bone hover:text-ink"
+          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1.5 text-gray-500 transition-colors hover:bg-onyx hover:text-alabaster"
           aria-label="Clear search"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">

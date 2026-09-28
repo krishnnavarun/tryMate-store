@@ -36,7 +36,7 @@ export default function FitResults({ fitProfile, warnings = [] }) {
         </div>
       )}
 
-      <section className="animate-rise rounded-[28px] border border-sand bg-white p-6 sm:p-8">
+      <section className="animate-rise rounded-[28px] border border-smoke bg-coal p-6 sm:p-8">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="heading-display text-3xl">Your measurements</h2>
           <p className="text-xs text-gray-500">
@@ -45,11 +45,11 @@ export default function FitResults({ fitProfile, warnings = [] }) {
         </div>
         <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {MEASUREMENTS.map(([key, label, kind], i) => (
-            <div key={key} className="animate-rise rounded-2xl bg-ivory p-5 ring-1 ring-sand/70" style={{ animationDelay: `${120 + i * 70}ms` }}>
+            <div key={key} className="animate-rise rounded-2xl bg-noir p-5 ring-1 ring-smoke/70" style={{ animationDelay: `${120 + i * 70}ms` }}>
               <dt className="text-[10.5px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
                 {label} <span className="tracking-normal text-gray-500 normal-case">({kind})</span>
               </dt>
-              <dd className="mt-2 font-display text-4xl leading-none text-ink tabular-nums">
+              <dd className="mt-2 heading-display text-4xl leading-none text-alabaster tabular-nums">
                 <CountUp value={measurements?.[key]} decimals={1} />
                 <span className="ml-1 font-sans text-sm text-gray-500">cm</span>
               </dd>
@@ -76,18 +76,18 @@ export default function FitResults({ fitProfile, warnings = [] }) {
         </div>
       </section>
 
-      <section className="animate-rise rounded-[28px] border border-sand bg-white p-6 sm:p-8" style={{ animationDelay: '150ms' }}>
+      <section className="animate-rise rounded-[28px] border border-smoke bg-coal p-6 sm:p-8" style={{ animationDelay: '150ms' }}>
         <h2 className="heading-display text-3xl">Your colours</h2>
         {skinTone ? (
           <>
             <div className="mt-5 flex items-center gap-5">
               <span
-                className="h-16 w-16 shrink-0 animate-pop rounded-full shadow-inner ring-4 ring-bone"
+                className="h-16 w-16 shrink-0 animate-pop rounded-full shadow-inner ring-4 ring-onyx"
                 style={{ backgroundColor: skinTone.hex }}
                 aria-hidden="true"
               />
               <div>
-                <p className="font-display text-2xl text-ink">
+                <p className="heading-display text-2xl text-alabaster">
                   {skinTone.tone[0].toUpperCase() + skinTone.tone.slice(1)} skin tone, {skinTone.undertone} undertone
                 </p>
                 <p className="text-sm text-gray-600">These colours tend to flatter you:</p>
@@ -97,7 +97,7 @@ export default function FitResults({ fitProfile, warnings = [] }) {
               {colorSuggestions.map((c, i) => (
                 <li
                   key={c.name}
-                  className="flex animate-pop items-center gap-2 rounded-full border border-sand bg-ivory py-1 pr-4 pl-1 text-sm"
+                  className="flex animate-pop items-center gap-2 rounded-full border border-smoke bg-noir py-1 pr-4 pl-1 text-sm"
                   style={{ animationDelay: `${300 + i * 60}ms` }}
                 >
                   <span className="h-7 w-7 rounded-full ring-1 ring-black/10 ring-inset" style={{ backgroundColor: c.hex }} />

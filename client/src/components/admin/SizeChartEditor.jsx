@@ -1,6 +1,6 @@
 import { SIZE_FIELDS, nextSizeRow } from '../../utils/productForm.js';
 
-const cell = 'w-16 rounded-lg border border-sand bg-white px-2 py-1.5 text-sm tabular-nums focus:border-ink focus:outline-none';
+const cell = 'w-16 rounded-lg border border-smoke bg-coal px-2 py-1.5 text-sm tabular-nums focus:border-alabaster focus:outline-none';
 
 // Table editor for the size chart + stock. One row per size; each measurement is a
 // [min, max] range in cm (leave both empty if the size chart doesn't use it).
@@ -14,9 +14,9 @@ export default function SizeChartEditor({ rows, onChange }) {
 
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-2xl border border-sand">
+      <div className="overflow-x-auto rounded-2xl border border-smoke">
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="bg-bone text-[11px] tracking-[0.1em] text-gray-600 uppercase">
+          <thead className="bg-onyx text-[11px] tracking-[0.1em] text-gray-600 uppercase">
             <tr>
               <th className="px-2 py-2 font-medium">Size</th>
               {SIZE_FIELDS.map(([field, label]) => (
@@ -29,7 +29,7 @@ export default function SizeChartEditor({ rows, onChange }) {
               <th />
             </tr>
           </thead>
-          <tbody className="divide-y divide-sand/70">
+          <tbody className="divide-y divide-smoke/70">
             {rows.map((row, i) => (
               <tr key={i}>
                 <td className="px-2 py-2">

@@ -1,5 +1,5 @@
 const STYLES = {
-  placed: 'bg-bone text-ink',
+  placed: 'bg-onyx text-alabaster',
   shipped: 'bg-amber-50 text-amber-800',
   delivered: 'bg-emerald-50 text-emerald-800',
   cancelled: 'bg-gray-100 text-gray-600',

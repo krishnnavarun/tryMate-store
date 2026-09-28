@@ -37,7 +37,7 @@ export default function LoginPage() {
       footer={
         <>
           New to tryMate?{' '}
-          <Link to={`/register?redirect=${encodeURIComponent(redirect)}`} className="link-underline font-semibold text-ink">
+          <Link to={`/register?redirect=${encodeURIComponent(redirect)}`} className="link-underline font-semibold text-alabaster">
             Create an account
           </Link>
         </>

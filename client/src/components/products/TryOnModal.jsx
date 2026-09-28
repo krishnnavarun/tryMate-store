@@ -58,7 +58,7 @@ export default function TryOnModal({ product, color, onClose, initialPhoto = nul
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <figure className="animate-rise">
-              <img src={photoUrl} alt="Your photo" className="aspect-[3/4] w-full rounded-2xl bg-bone object-cover" />
+              <img src={photoUrl} alt="Your photo" className="aspect-[3/4] w-full rounded-2xl bg-onyx object-cover" />
               <figcaption className="mt-2 text-center text-[11px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
                 Your photo
               </figcaption>
@@ -67,7 +67,7 @@ export default function TryOnModal({ product, color, onClose, initialPhoto = nul
               <img
                 src={result.resultImage}
                 alt={`You wearing ${product.name}`}
-                className="aspect-[3/4] w-full rounded-2xl bg-bone object-cover"
+                className="aspect-[3/4] w-full rounded-2xl bg-onyx object-cover"
               />
               <figcaption className="mt-2 text-center text-[11px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
                 With {product.name}
@@ -106,8 +106,8 @@ export default function TryOnModal({ product, color, onClose, initialPhoto = nul
           <p className="sr-only" aria-live="polite">
             {message}
           </p>
-          <div className="mx-auto h-px max-w-sm overflow-hidden bg-sand">
-            <div className="h-full bg-brass transition-[width] duration-700 ease-out-expo" style={{ width: `${progress}%` }} />
+          <div className="mx-auto h-px max-w-sm overflow-hidden bg-smoke">
+            <div className="h-full bg-ember transition-[width] duration-700 ease-out-expo" style={{ width: `${progress}%` }} />
           </div>
           <p className="text-xs text-gray-500">This usually takes 10–60 seconds. You can close this window to cancel.</p>
         </div>

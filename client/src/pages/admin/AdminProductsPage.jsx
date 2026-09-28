@@ -45,7 +45,7 @@ export default function AdminProductsPage() {
           {data && <p className="mt-1 text-sm text-gray-500">{data.total} products</p>}
         </div>
         <div className="flex items-center gap-5">
-          <Link to="/admin/orders" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
+          <Link to="/admin/orders" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-alabaster uppercase">
             Orders
           </Link>
           <Link to="/admin/products/new" className="btn-primary btn-sm">
@@ -62,9 +62,9 @@ export default function AdminProductsPage() {
         ) : data.items.length === 0 ? (
           <StatusMessage title="No products yet" message="Create your first product, or run npm run seed." />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-sand bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-smoke bg-coal">
             <table className="w-full min-w-[640px] text-left text-sm">
-              <thead className="bg-bone text-[11px] tracking-[0.14em] text-gray-600 uppercase">
+              <thead className="bg-onyx text-[11px] tracking-[0.14em] text-gray-600 uppercase">
                 <tr>
                   <th className="px-4 py-3 font-medium">Product</th>
                   <th className="px-4 py-3 font-medium">Type</th>
@@ -78,7 +78,7 @@ export default function AdminProductsPage() {
                   <tr key={p._id} className="align-middle">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <span className="relative block h-12 w-9 shrink-0 overflow-hidden rounded-md bg-bone">
+                        <span className="relative block h-12 w-9 shrink-0 overflow-hidden rounded-md bg-onyx">
                           <ProductImage src={p.images[0]} alt="" name={p.name} type={p.type} hex={p.colors[0]?.hex} className="absolute inset-0 h-full w-full" />
                         </span>
                         <div>
@@ -114,7 +114,7 @@ export default function AdminProductsPage() {
                             type="button"
                             disabled={deleting}
                             onClick={() => handleDelete(p)}
-                            className="rounded bg-red-600 px-2 py-1 font-medium text-white disabled:opacity-60"
+                            className="rounded bg-red-500 px-2 py-1 font-medium text-white disabled:opacity-60"
                           >
                             Yes
                           </button>
@@ -124,10 +124,10 @@ export default function AdminProductsPage() {
                         </span>
                       ) : (
                         <span className="inline-flex gap-3">
-                          <Link to={`/products/${p.slug}`} className="font-medium text-gray-600 hover:text-brand">
+                          <Link to={`/products/${p.slug}`} className="font-medium text-gray-600 hover:text-alabaster">
                             View
                           </Link>
-                          <Link to={`/admin/products/${p.slug}/edit`} className="font-medium text-brand hover:underline">
+                          <Link to={`/admin/products/${p.slug}/edit`} className="font-medium text-alabaster hover:underline">
                             Edit
                           </Link>
                           <button

@@ -24,7 +24,7 @@ export default function WornPanel({
   const sizeFit = size ? recommendation.data?.perSize?.[size] : null;
 
   return (
-    <section className="animate-rise space-y-6 rounded-[28px] border border-sand bg-white p-6" aria-label="Garment you're wearing">
+    <section className="animate-rise space-y-6 rounded-[28px] border border-smoke bg-coal p-6" aria-label="Garment you're wearing">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow">{product.brand}</p>
@@ -56,11 +56,11 @@ export default function WornPanel({
               aria-label={c.name}
               aria-pressed={i === colorIndex}
               onClick={() => onColor(i)}
-              className={`relative h-9 w-9 rounded-full ring-offset-[3px] ring-offset-white transition duration-300 ${i === colorIndex ? 'ring-1 ring-ink' : 'hover:scale-110'}`}
+              className={`relative h-9 w-9 rounded-full ring-offset-[3px] ring-offset-coal transition duration-300 ${i === colorIndex ? 'ring-1 ring-alabaster' : 'hover:scale-110'}`}
               style={{ backgroundColor: c.hex }}
             >
               {suiting.has(c.name) && (
-                <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-600" />
+                <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-noir bg-emerald-600" />
               )}
             </button>
           ))}
@@ -75,7 +75,7 @@ export default function WornPanel({
           {sizes.map((s) => (
             <div key={s} className="relative pt-2.5">
               {s === recommended && (
-                <span className="absolute -top-0.5 left-1/2 z-10 -translate-x-1/2 animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold tracking-[0.14em] whitespace-nowrap text-ivory uppercase">
+                <span className="absolute -top-0.5 left-1/2 z-10 -translate-x-1/2 animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold tracking-[0.14em] whitespace-nowrap text-noir uppercase">
                   Best fit
                 </span>
               )}
@@ -86,10 +86,10 @@ export default function WornPanel({
                 onClick={() => onSize(s)}
                 className={`h-11 min-w-14 rounded-xl border px-3 text-sm font-semibold transition duration-300 ${
                   size === s
-                    ? 'border-ink bg-ink text-ivory'
+                    ? 'border-alabaster bg-alabaster text-noir'
                     : !inStock(s)
-                      ? 'cursor-not-allowed border-sand text-gray-300 line-through'
-                      : 'border-sand bg-white hover:border-ink'
+                      ? 'cursor-not-allowed border-smoke text-gray-300 line-through'
+                      : 'border-smoke bg-coal hover:border-alabaster'
                 }`}
               >
                 {s}
@@ -98,11 +98,11 @@ export default function WornPanel({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl bg-ivory p-4 text-sm ring-1 ring-sand/70">
+        <div className="mt-4 rounded-2xl bg-noir p-4 text-sm ring-1 ring-smoke/70">
           {!hasProfile ? (
             <p className="text-gray-600">
               The mirror shows your own proportions.{' '}
-              <Link to={loggedIn ? '/fit-profile' : '/login?redirect=%2Ffit-profile'} className="font-semibold text-ink underline">
+              <Link to={loggedIn ? '/fit-profile' : '/login?redirect=%2Ffit-profile'} className="font-semibold text-alabaster underline">
                 Scan your body
               </Link>{' '}
               to see how each size really fits you.

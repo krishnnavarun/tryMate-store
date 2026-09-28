@@ -91,16 +91,16 @@ export default function OrderDetailPage() {
       </div>
 
       <div className="mt-8 grid gap-10 md:grid-cols-[1fr_260px]">
-        <ul className="divide-y divide-sand border-y border-sand">
+        <ul className="divide-y divide-smoke border-y border-smoke">
           {order.items.map((item, i) => (
             <li key={i} className="flex gap-4 py-4">
-              <span className="relative block h-24 w-18 shrink-0 overflow-hidden rounded-xl bg-bone">
+              <span className="relative block h-24 w-18 shrink-0 overflow-hidden rounded-xl bg-onyx">
                 <ProductImage src={item.image} alt={item.name} name={item.name} className="absolute inset-0 h-full w-full" />
               </span>
               <div className="flex flex-1 justify-between gap-4">
                 <div>
                   {item.slug ? (
-                    <Link to={`/products/${item.slug}`} className="font-medium text-gray-900 hover:text-brand-accent">
+                    <Link to={`/products/${item.slug}`} className="font-medium text-gray-900 hover:text-ember">
                       {item.name}
                     </Link>
                   ) : (
@@ -146,14 +146,14 @@ export default function OrderDetailPage() {
           )}
           {canCancel &&
             (confirmCancel ? (
-              <div className="space-y-3 rounded-2xl bg-bone p-4">
+              <div className="space-y-3 rounded-2xl bg-onyx p-4">
                 <p className="text-gray-700">Cancel this order? You can order again any time.</p>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={handleCancel}
                     disabled={cancelling}
-                    className="rounded-full bg-red-600 px-4 py-1.5 font-semibold text-ivory transition-colors hover:bg-red-700 disabled:opacity-60"
+                    className="rounded-full bg-red-500 px-4 py-1.5 font-semibold text-white transition-colors hover:bg-red-400 disabled:opacity-60"
                   >
                     {cancelling ? 'Cancelling…' : 'Yes, cancel it'}
                   </button>
@@ -171,7 +171,7 @@ export default function OrderDetailPage() {
                 Cancel order
               </button>
             ))}
-          <Link to="/orders" className="link-underline inline-block text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
+          <Link to="/orders" className="link-underline inline-block text-[11px] font-semibold tracking-[0.16em] text-alabaster uppercase">
             ← All orders
           </Link>
         </aside>

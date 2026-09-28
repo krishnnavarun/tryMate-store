@@ -22,7 +22,7 @@ const toFeetInches = (cm) => {
 
 const label = 'mb-2 block text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase';
 const input =
-  'block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-[border-color,box-shadow] duration-300 hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none';
+  'block w-full rounded-xl border border-smoke bg-coal px-4 py-3 text-sm text-alabaster transition-[border-color,box-shadow] duration-300 hover:border-gray-300 focus:border-alabaster focus:ring-4 focus:ring-alabaster/5 focus:outline-none';
 
 /**
  * Height in centimetres or in feet + inches (many people know theirs in feet).
@@ -64,7 +64,7 @@ export default function HeightField({ defaultCm }) {
         <span id="height-label" className={`${label} mb-0`}>
           Height
         </span>
-        <div role="radiogroup" aria-label="Height unit" className="inline-flex rounded-full border border-sand bg-white p-0.5">
+        <div role="radiogroup" aria-label="Height unit" className="inline-flex rounded-full border border-smoke bg-coal p-0.5">
           {[
             ['cm', 'cm'],
             ['ftin', 'ft in'],
@@ -76,7 +76,7 @@ export default function HeightField({ defaultCm }) {
               aria-checked={unit === value}
               onClick={() => unit !== value && chooseUnit(value)}
               className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.1em] uppercase transition-colors ${
-                unit === value ? 'bg-ink text-ivory' : 'text-gray-600 hover:text-ink'
+                unit === value ? 'bg-alabaster text-noir' : 'text-gray-600 hover:text-alabaster'
               }`}
             >
               {text}

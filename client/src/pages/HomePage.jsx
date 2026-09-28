@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { fetchProducts } from '../api/products.js';
 import HeroGraphic from '../components/home/HeroGraphic.jsx';
+import { LogoMark } from '../components/layout/Header.jsx';
 import GarmentArt from '../components/products/GarmentArt.jsx';
 import ProductGrid from '../components/products/ProductGrid.jsx';
 import { CountUp, Reveal, RevealText } from '../components/ui/Motion.jsx';
@@ -46,74 +47,51 @@ export default function HomePage() {
   return (
     <>
       {/* ---- Hero ------------------------------------------------------------------------ */}
-      <section className="relative overflow-hidden">
-        {/* A faint tailor's grid in the background */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.35] [mask-image:radial-gradient(ellipse_at_70%_40%,black,transparent_70%)]"
-          style={{
-            backgroundImage:
-              'linear-gradient(var(--color-sand) 1px, transparent 1px), linear-gradient(90deg, var(--color-sand) 1px, transparent 1px)',
-            backgroundSize: '56px 56px',
-          }}
-        />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-16 px-4 pt-14 pb-24 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pt-20 lg:pb-32">
-          <div>
-            <p className="eyebrow animate-rise" style={{ animationDelay: '100ms' }}>
-              Tailored by AI · Menswear
-            </p>
-            <h1 className="heading-display mt-6 text-[56px] leading-[0.95] sm:text-[76px] lg:text-[88px]">
-              <RevealText text="Clothes cut to *your* measure." delay={200} italicClassName="italic text-brass" />
-            </h1>
-            <p className="mt-8 max-w-lg animate-rise text-lg leading-relaxed text-gray-600" style={{ animationDelay: '650ms' }}>
-              One photo and your height give us your measurements and skin tone. Every shirt, tee and polo then shows the
-              size that fits you and the colours that suit you.
-            </p>
-            <div className="mt-10 flex animate-rise flex-wrap items-center gap-6" style={{ animationDelay: '800ms' }}>
-              <Link to="/shop" className="btn-primary px-8 py-4">
-                Explore the collection
-              </Link>
-              <Link
-                to="/fit-profile"
-                className="link-underline group inline-flex items-center gap-2 pb-1 text-[12px] font-semibold tracking-[0.18em] text-ink uppercase"
-              >
-                Find your fit
-                <span aria-hidden="true" className="transition-transform duration-500 ease-out-expo group-hover:translate-x-1">
-                  →
-                </span>
-              </Link>
-            </div>
+      {/* Centred type on black between two lights: the red one comes from the Layout (behind
+          the header), the cream one rises from this section's bottom-right corner. */}
+      <section className="relative flex min-h-[calc(100svh-6.5rem)] items-center overflow-hidden">
+        {/* Faded out over the last fifth, so the light doesn't end in a hard line at the section's edge */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black_78%,transparent)]">
+          <div className="glow-cream absolute -inset-[8%] -translate-y-[6%] origin-bottom-right animate-drift [animation-direction:alternate-reverse]" />
+        </div>
 
-            <dl className="mt-14 grid max-w-lg animate-rise grid-cols-3 divide-x divide-sand border-t border-sand pt-6" style={{ animationDelay: '950ms' }}>
-              {FACTS.map(([value, label]) => (
-                <div key={label} className="px-4 first:pl-0">
-                  <dt className="sr-only">{label}</dt>
-                  <dd>
-                    <CountUp value={value} duration={1600} className="font-display text-4xl text-ink" />
-                    <p className="mt-1 text-xs leading-snug text-gray-500">{label}</p>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+        <div className="relative mx-auto w-full max-w-5xl px-4 pt-10 pb-44 text-center sm:px-6 sm:pb-56">
+          <p className="eyebrow animate-rise" style={{ animationDelay: '100ms' }}>
+            Tailored by AI · Menswear
+          </p>
+          <h1 className="heading-display mt-8 text-[52px] leading-[0.98] sm:text-[84px] lg:text-[112px]">
+            <RevealText text="Clothes cut to *your* *measure.*" delay={200} />
+          </h1>
+          <p
+            className="mx-auto mt-7 max-w-xl animate-rise text-lg leading-relaxed text-gray-600 sm:text-xl"
+            style={{ animationDelay: '650ms' }}
+          >
+            One photo and your height. Every shirt, tee and polo then shows the size that fits you and the colours that
+            suit you.
+          </p>
+          <div className="mt-11 flex animate-rise flex-wrap items-center justify-center gap-4" style={{ animationDelay: '800ms' }}>
+            <Link to="/shop" className="btn-primary px-8 py-4">
+              Explore the collection
+            </Link>
+            <Link to="/fit-profile" className="btn-secondary px-8 py-4">
+              Find your fit
+            </Link>
           </div>
 
-          <div className="animate-rise px-6 sm:px-10" style={{ animationDelay: '300ms' }}>
-            <HeroGraphic />
-          </div>
         </div>
       </section>
 
       {/* ---- Marquee ------------------------------------------------------------------------ */}
-      <div className="overflow-hidden border-y border-ink bg-ink py-4 text-ivory">
+      <div className="overflow-hidden border-y border-white/[0.07] py-6">
         {/* Screen readers get the list once; the moving copy is decoration */}
         <p className="sr-only">{MARQUEE.join('. ')}.</p>
         <div className="flex w-max animate-marquee hover:[animation-play-state:paused]" aria-hidden="true">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0 items-center">
               {MARQUEE.map((text) => (
-                <span key={text} className="flex items-center font-display text-2xl italic">
-                  <span className="px-8">{text}</span>
-                  <span className="text-sm text-brass-light not-italic">✦</span>
+                <span key={text} className="flex items-center text-2xl font-medium tracking-[-0.03em] text-gray-600 sm:text-3xl">
+                  <span className="px-9">{text}</span>
+                  <LogoMark className="h-3.5 w-3.5" />
                 </span>
               ))}
             </div>
@@ -122,13 +100,13 @@ export default function HomePage() {
       </div>
 
       {/* ---- New arrivals ---------------------------------------------------------------------- */}
-      <section className="mx-auto max-w-7xl px-4 pt-24 pb-8 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 pt-28 pb-8 sm:px-6">
         <Reveal className="mb-12 flex items-end justify-between gap-6">
           <div>
             <p className="eyebrow">Just in</p>
-            <h2 className="heading-display mt-3 text-5xl">New arrivals</h2>
+            <h2 className="heading-display mt-4 text-5xl">New arrivals</h2>
           </div>
-          <Link to="/shop" className="link-underline pb-1 text-[12px] font-semibold tracking-[0.18em] text-ink uppercase">
+          <Link to="/shop" className="link-underline pb-1 text-[12px] font-semibold tracking-[0.18em] text-alabaster uppercase">
             View all
           </Link>
         </Reveal>
@@ -136,55 +114,78 @@ export default function HomePage() {
       </section>
 
       {/* ---- How it works ---------------------------------------------------------------------- */}
-      <section id="find-your-fit" className="scroll-mt-24 py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal className="max-w-2xl">
-            <p className="eyebrow">How it works</p>
-            <h2 className="heading-display mt-3 text-5xl leading-tight">
-              A tailor&rsquo;s eye, <em className="text-brass">in your pocket</em>.
-            </h2>
-          </Reveal>
-          <ol className="mt-16 grid gap-12 md:grid-cols-3 md:gap-10">
-            {STEPS.map((step, i) => (
-              <Reveal as="li" key={step.title} delay={i * 140} className="border-t border-ink/80 pt-6">
-                <div className="flex items-start justify-between">
-                  <span className="font-display text-6xl leading-none text-brass">0{i + 1}</span>
-                  <svg className="h-8 w-8 text-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.1}>
-                    <path d={step.icon} strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+      <section id="find-your-fit" className="scroll-mt-24 py-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-20 px-4 sm:px-6 lg:grid-cols-[1fr_0.85fr]">
+          <div>
+            <Reveal className="max-w-xl">
+              <p className="eyebrow">How it works</p>
+              <h2 className="heading-display mt-4 text-5xl leading-[1.05]">
+                A tailor&rsquo;s eye, <span className="text-sheen">in your pocket.</span>
+              </h2>
+            </Reveal>
+            <Reveal as="dl" className="mt-10 grid max-w-md grid-cols-3 divide-x divide-white/10">
+              {FACTS.map(([value, label]) => (
+                <div key={label} className="px-4 first:pl-0">
+                  <dt className="sr-only">{label}</dt>
+                  <dd>
+                    <CountUp value={value} duration={1600} className="text-4xl font-semibold tracking-[-0.04em] text-alabaster" />
+                    <p className="mt-1 text-xs leading-snug text-gray-500">{label}</p>
+                  </dd>
                 </div>
-                <h3 className="heading-display mt-8 text-3xl">{step.title}</h3>
-                <p className="mt-3 max-w-sm leading-relaxed text-gray-600">{step.text}</p>
-              </Reveal>
-            ))}
-          </ol>
-          <Reveal className="mt-14">
-            <Link to="/fit-profile" className="btn-secondary">
-              Create your fit profile
-            </Link>
+              ))}
+            </Reveal>
+            <ol className="mt-12">
+              {STEPS.map((step, i) => (
+                <Reveal
+                  as="li"
+                  key={step.title}
+                  delay={i * 140}
+                  className="grid grid-cols-[3rem_1fr] gap-4 border-t border-white/[0.08] py-7 last:border-b"
+                >
+                  <span className="pt-1 text-sm font-medium text-ember tabular-nums">0{i + 1}</span>
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <svg className="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3} aria-hidden="true">
+                        <path d={step.icon} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <h3 className="text-xl font-semibold tracking-[-0.02em]">{step.title}</h3>
+                    </div>
+                    <p className="mt-2 max-w-md leading-relaxed text-gray-600">{step.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ol>
+            <Reveal className="mt-10">
+              <Link to="/fit-profile" className="btn-primary">
+                Create your fit profile
+              </Link>
+            </Reveal>
+          </div>
+          <Reveal className="px-6 sm:px-10">
+            <HeroGraphic />
           </Reveal>
         </div>
       </section>
 
-      {/* ---- Live fitting room ---------------------------------------------------------------- */}
+      {/* ---- Live fitting room: the full gradient, as a panel ------------------------------------ */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6">
-        <Reveal className="grid items-center gap-12 overflow-hidden rounded-[32px] bg-ink px-8 py-14 text-ivory sm:px-14 lg:grid-cols-2 lg:py-20">
+        <Reveal className="bg-luxe grain relative grid items-center gap-12 overflow-hidden rounded-[32px] px-8 py-14 ring-1 ring-white/10 sm:px-14 lg:grid-cols-2 lg:py-20">
           <div>
-            <p className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.24em] text-brass-light uppercase">
+            <p className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.26em] text-alabaster uppercase">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brass-light opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-brass-light" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
               </span>
               Live
             </p>
-            <h2 className="mt-5 font-display text-5xl leading-[1.05] sm:text-6xl">
-              A fitting room that <em className="text-brass-light">moves with you</em>.
+            <h2 className="mt-5 text-5xl leading-[1.02] font-semibold tracking-[-0.04em] sm:text-6xl">
+              A fitting room that <span className="text-sheen">moves with you.</span>
             </h2>
-            <p className="mt-6 max-w-md leading-relaxed text-ivory/70">
+            <p className="mt-6 max-w-md leading-relaxed text-gray-600">
               Turn on your camera, drag a shirt onto yourself and switch colours and sizes as you move. It runs on your
               device: nothing is recorded or uploaded.
             </p>
-            <Link to="/fitting-room" className="btn-light mt-10 px-8 py-4">
+            <Link to="/fitting-room" className="btn-primary mt-10 px-8 py-4">
               Step into the fitting room
             </Link>
           </div>
@@ -193,13 +194,14 @@ export default function HomePage() {
       </section>
 
       {/* ---- Promise ------------------------------------------------------------------------------ */}
-      <section className="mx-auto max-w-4xl px-4 pt-28 text-center sm:px-6">
+      <section className="mx-auto max-w-4xl px-4 pt-32 text-center sm:px-6">
         <Reveal>
-          <svg className="mx-auto h-8 w-8 text-brass" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+          <svg className="mx-auto h-8 w-8 text-ember" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z" />
           </svg>
-          <p className="heading-display mt-6 text-3xl leading-snug sm:text-4xl">
-            Your photo is used once, to measure you, and then it&rsquo;s gone. Only your measurements are kept.
+          <p className="heading-display mt-7 text-3xl leading-snug font-medium sm:text-4xl">
+            Your photo is used once, to measure you, and then it&rsquo;s gone.{' '}
+            <span className="text-gray-500">Only your measurements are kept.</span>
           </p>
         </Reveal>
       </section>
@@ -210,22 +212,22 @@ export default function HomePage() {
 // A stylised live mirror: a garment floating in a dark frame, tracked by viewfinder corners
 function FittingRoomVisual() {
   return (
-    <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[24px] bg-[radial-gradient(ellipse_at_50%_35%,#3b3731,#1c1a17_70%)] ring-1 ring-ivory/10">
+    <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[24px] bg-[radial-gradient(ellipse_at_50%_35%,#2c2622,#0b0a09_72%)] shadow-[0_40px_90px_-30px_rgb(0_0_0/0.9)] ring-1 ring-white/10">
       <div className="absolute inset-[12%] animate-float">
         <GarmentArt name="Classic Pique Polo" type="polo" hex="#8B6D3F" backdrop={false} title="An illustrated polo" className="h-full w-full" />
       </div>
       {['top-6 left-6 border-t border-l', 'top-6 right-6 border-t border-r', 'bottom-6 left-6 border-b border-l', 'bottom-6 right-6 border-b border-r'].map(
         (corner) => (
-          <span key={corner} className={`absolute h-7 w-7 animate-breathe border-brass-light ${corner}`} />
+          <span key={corner} className={`absolute h-7 w-7 animate-breathe border-ember ${corner}`} />
         ),
       )}
-      <div className="pointer-events-none absolute inset-0 animate-scan bg-linear-to-b from-transparent via-transparent to-brass-light/20">
-        <div className="absolute inset-x-0 bottom-0 h-px bg-brass-light/80" />
+      <div className="pointer-events-none absolute inset-0 animate-scan bg-linear-to-b from-transparent via-transparent to-racing/25">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-ember shadow-[0_0_14px_2px_rgb(221_2_0/0.8)]" />
       </div>
-      <div className="absolute inset-x-6 bottom-6 flex items-center justify-between text-[10px] font-semibold tracking-[0.2em] text-ivory/70 uppercase">
+      <div className="absolute inset-x-6 bottom-6 flex items-center justify-between text-[10px] font-semibold tracking-[0.2em] text-alabaster/80 uppercase">
         <span>Size M · Regular</span>
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 animate-breathe rounded-full bg-emerald-400" /> Tracking
+          <span className="h-1.5 w-1.5 animate-breathe rounded-full bg-emerald-600" /> Tracking
         </span>
       </div>
     </div>

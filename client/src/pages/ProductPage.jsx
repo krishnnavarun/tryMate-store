@@ -140,11 +140,11 @@ function ProductDetails({ product }) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <nav className="mb-8 flex items-center gap-2 text-[11px] font-semibold tracking-[0.16em] text-gray-500 uppercase">
-        <Link to="/shop" className="link-underline hover:text-ink">
+        <Link to="/shop" className="link-underline hover:text-alabaster">
           Shop
         </Link>
         <span className="text-gray-300">/</span>
-        <Link to={`/shop?type=${product.type}`} className="link-underline hover:text-ink">
+        <Link to={`/shop?type=${product.type}`} className="link-underline hover:text-alabaster">
           {TYPE_LABELS[product.type] ?? 'Shirts'}
         </Link>
       </nav>
@@ -152,7 +152,7 @@ function ProductDetails({ product }) {
       <div className="grid gap-10 md:grid-cols-2 lg:gap-16">
         {/* ---- Images (stays in view while the details scroll) ---- */}
         <div className="h-fit md:sticky md:top-32">
-          <div className="relative aspect-[3/4] overflow-hidden rounded-[28px] bg-bone">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-[28px] bg-onyx">
             {/* key: switching colour cross-fades to the new image */}
             <ProductImage
               key={imageIndex}
@@ -172,8 +172,8 @@ function ProductDetails({ product }) {
                   key={src}
                   type="button"
                   onClick={() => setColorIndex(Math.min(i, product.colors.length - 1))}
-                  className={`relative aspect-[3/4] overflow-hidden rounded-xl ring-offset-2 ring-offset-ivory transition ${
-                    i === imageIndex ? 'ring-1 ring-ink' : 'opacity-70 hover:opacity-100'
+                  className={`relative aspect-[3/4] overflow-hidden rounded-xl ring-offset-2 ring-offset-noir transition ${
+                    i === imageIndex ? 'ring-1 ring-alabaster' : 'opacity-70 hover:opacity-100'
                   }`}
                   aria-label={`Show ${product.colors[i]?.name ?? `image ${i + 1}`}`}
                 >
@@ -203,7 +203,7 @@ function ProductDetails({ product }) {
           {/* Color picker */}
           <div>
             <p className="mb-4 text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">
-              Colour <span className="ml-1 tracking-normal text-ink normal-case">{color.name}</span>
+              Colour <span className="ml-1 tracking-normal text-alabaster normal-case">{color.name}</span>
               {suiting.has(color.name) && <SuitsYouBadge className="ml-3" />}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -215,13 +215,13 @@ function ProductDetails({ product }) {
                   aria-label={suiting.has(c.name) ? `${c.name}, suits you` : c.name}
                   aria-pressed={i === colorIndex}
                   onClick={() => setColorIndex(i)}
-                  className={`relative h-10 w-10 rounded-full ring-offset-[3px] ring-offset-ivory transition duration-300 ${
-                    i === colorIndex ? 'ring-1 ring-ink' : 'hover:scale-110'
+                  className={`relative h-10 w-10 rounded-full ring-offset-[3px] ring-offset-noir transition duration-300 ${
+                    i === colorIndex ? 'ring-1 ring-alabaster' : 'hover:scale-110'
                   }`}
                 >
                   <span className="absolute inset-0 rounded-full ring-1 ring-black/10 ring-inset" style={{ backgroundColor: c.hex }} />
                   {suiting.has(c.name) && (
-                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-ivory bg-emerald-600" />
+                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-noir bg-emerald-600" />
                   )}
                 </button>
               ))}
@@ -238,7 +238,7 @@ function ProductDetails({ product }) {
           <div>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <p className="text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase">
-                Size <span className="ml-1 tracking-normal text-ink normal-case">{size ?? 'Choose a size'}</span>
+                Size <span className="ml-1 tracking-normal text-alabaster normal-case">{size ?? 'Choose a size'}</span>
               </p>
               {recommendation.data && (
                 <FitPreferenceToggle value={user.fitPreference} onChange={handleFitPreference} disabled={savingFit} />
@@ -256,7 +256,7 @@ function ProductDetails({ product }) {
                 return (
                   <div key={s} className="relative pt-3">
                     {isRecommended && (
-                      <span className="absolute top-0 left-1/2 z-10 -translate-x-1/2 animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold tracking-[0.14em] whitespace-nowrap text-ivory uppercase">
+                      <span className="absolute top-0 left-1/2 z-10 -translate-x-1/2 animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold tracking-[0.14em] whitespace-nowrap text-noir uppercase">
                         Best fit
                       </span>
                     )}
@@ -272,12 +272,12 @@ function ProductDetails({ product }) {
                       title={soldOut ? 'Sold out' : recommendation.data?.perSize?.[s]?.note}
                       className={`h-12 min-w-16 rounded-xl border px-4 text-sm font-semibold transition duration-300 ${
                         size === s
-                          ? 'border-ink bg-ink text-ivory'
+                          ? 'border-alabaster bg-alabaster text-noir'
                           : soldOut
-                            ? 'cursor-not-allowed border-sand text-gray-300 line-through'
+                            ? 'cursor-not-allowed border-smoke text-gray-300 line-through'
                             : isRecommended
-                              ? 'border-emerald-600 bg-white text-ink hover:border-ink'
-                              : 'border-sand bg-white text-ink hover:border-ink'
+                              ? 'border-emerald-600 bg-coal text-alabaster hover:border-alabaster'
+                              : 'border-smoke bg-coal text-alabaster hover:border-alabaster'
                       }`}
                     >
                       {s}
@@ -328,7 +328,7 @@ function ProductDetails({ product }) {
             </div>
             <Link
               to={`/fitting-room?product=${product.slug}&color=${encodeURIComponent(color.name)}`}
-              className="group flex items-center justify-center gap-2.5 rounded-full bg-bone py-3.5 text-[12px] font-semibold tracking-[0.14em] text-ink uppercase transition-colors hover:bg-sand"
+              className="group flex items-center justify-center gap-2.5 rounded-full bg-onyx py-3.5 text-[12px] font-semibold tracking-[0.14em] text-alabaster uppercase transition-colors hover:bg-smoke"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.5-2.5v9L15 14M4 7h11v10H4z" />
@@ -367,9 +367,9 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
 
   if (!user || !user.fitProfile?.measurements) {
     return (
-      <div className={`${box} flex flex-wrap items-center justify-between gap-4 bg-bone`}>
+      <div className={`${box} flex flex-wrap items-center justify-between gap-4 bg-onyx`}>
         <p className="max-w-xs text-gray-700">
-          <span className="font-display text-lg text-ink">Not sure about your size?</span>
+          <span className="heading-display text-lg text-alabaster">Not sure about your size?</span>
           <br />
           Scan once and we&rsquo;ll recommend the right size on every piece.
         </p>
@@ -388,9 +388,9 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
   if (recommendation.loading) return <p className={`${box} skeleton text-gray-500`}>Finding your size…</p>;
   if (recommendation.error) {
     return (
-      <p className={`${box} bg-bone text-gray-600`}>
+      <p className={`${box} bg-onyx text-gray-600`}>
         {recommendation.error.userMessage}{' '}
-        <button type="button" onClick={recommendation.reload} className="font-semibold text-ink underline">
+        <button type="button" onClick={recommendation.reload} className="font-semibold text-alabaster underline">
           Try again
         </button>
       </p>
@@ -405,7 +405,7 @@ function FitNote({ user, recommendation, size, sizeFit, recommended, recommended
   return (
     <div className={`${box} border border-emerald-200 bg-emerald-50/70 text-emerald-900`}>
       <p>
-        <span className="font-display text-lg text-emerald-900">We recommend {recommended}</span> for your measurements
+        <span className="heading-display text-lg text-emerald-900">We recommend {recommended}</span> for your measurements
         {!recommendedInStock && <span className="text-emerald-800"> (sold out right now)</span>}.
       </p>
       {alternativeNote && (
@@ -462,7 +462,7 @@ function RelatedProducts({ product }) {
   if (!loading && items.length === 0) return null;
 
   return (
-    <section className="mt-24 border-t border-sand pt-16" aria-labelledby="related-heading">
+    <section className="mt-24 border-t border-smoke pt-16" aria-labelledby="related-heading">
       <div className="mb-10 flex items-end justify-between gap-6">
         <div>
           <p className="eyebrow">Keep browsing</p>
@@ -472,7 +472,7 @@ function RelatedProducts({ product }) {
         </div>
         <Link
           to={`/shop?type=${product.type}`}
-          className="link-underline pb-1 text-[12px] font-semibold tracking-[0.18em] text-ink uppercase"
+          className="link-underline pb-1 text-[12px] font-semibold tracking-[0.18em] text-alabaster uppercase"
         >
           See all {TYPE_LABELS[product.type] ?? 'pieces'}
         </Link>

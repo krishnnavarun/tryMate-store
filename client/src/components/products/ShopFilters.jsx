@@ -47,7 +47,7 @@ export default function ShopFilters({ options, values, onChange }) {
         <button
           type="button"
           onClick={() => onChange({ type: null, color: null, minPrice: null, maxPrice: null })}
-          className="link-underline text-[11px] font-semibold tracking-[0.16em] text-brass uppercase"
+          className="link-underline text-[11px] font-semibold tracking-[0.16em] text-ember uppercase"
         >
           Clear all filters
         </button>
@@ -72,7 +72,7 @@ function Pill({ active, onClick, children }) {
       aria-pressed={active}
       onClick={onClick}
       className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-300 ${
-        active ? 'border-ink bg-ink text-ivory' : 'border-sand bg-white text-gray-700 hover:border-ink'
+        active ? 'border-alabaster bg-alabaster text-noir' : 'border-smoke bg-coal text-gray-700 hover:border-alabaster'
       }`}
     >
       {children}
@@ -98,7 +98,7 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
           defaultValue={minPrice ?? ''}
           placeholder="Min"
           aria-label="Minimum price"
-          className="w-full rounded-full border border-sand bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none"
+          className="w-full rounded-full border border-smoke bg-coal px-3 py-2 text-sm focus:border-alabaster focus:outline-none"
         />
         <span className="text-gray-400">–</span>
         <input
@@ -109,7 +109,7 @@ function PriceFilter({ range, minPrice, maxPrice, onApply }) {
           defaultValue={maxPrice ?? ''}
           placeholder="Max"
           aria-label="Maximum price"
-          className="w-full rounded-full border border-sand bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none"
+          className="w-full rounded-full border border-smoke bg-coal px-3 py-2 text-sm focus:border-alabaster focus:outline-none"
         />
       </div>
       {range.max > 0 && (
@@ -146,7 +146,7 @@ function ColourList({ colors, value, onChange }) {
                 aria-pressed={active}
                 onClick={() => onChange({ color: active ? null : color.name })}
                 className={`flex w-full items-center gap-2.5 rounded-full px-2.5 py-1.5 text-left text-[13px] transition-colors duration-300 ${
-                  active ? 'bg-ink text-ivory' : 'text-gray-700 hover:bg-bone'
+                  active ? 'bg-alabaster text-noir' : 'text-gray-700 hover:bg-onyx'
                 }`}
               >
                 <span
@@ -164,7 +164,7 @@ function ColourList({ colors, value, onChange }) {
           type="button"
           onClick={() => setExpanded((e) => !e)}
           aria-expanded={expanded}
-          className="link-underline mt-3 ml-2.5 text-[11px] font-semibold tracking-[0.14em] text-ink uppercase"
+          className="link-underline mt-3 ml-2.5 text-[11px] font-semibold tracking-[0.14em] text-alabaster uppercase"
         >
           {expanded ? 'Show fewer' : `Show all ${colors.length} colours`}
         </button>

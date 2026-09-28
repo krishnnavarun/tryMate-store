@@ -52,7 +52,7 @@ export default function Modal({ title, onClose, children, locked = false, size =
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex animate-fade items-end justify-center bg-ink/45 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex animate-fade items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-4"
       style={{ animationDuration: '0.35s' }}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget && !locked) onClose();
@@ -64,16 +64,16 @@ export default function Modal({ title, onClose, children, locked = false, size =
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className={`max-h-[95vh] w-full ${size} animate-rise overflow-y-auto rounded-t-[28px] bg-ivory shadow-[0_40px_90px_-30px_rgb(28_26_23/0.55)] outline-none sm:rounded-[28px]`}
+        className={`max-h-[95vh] w-full ${size} animate-rise overflow-y-auto rounded-t-[28px] bg-noir shadow-[0_40px_90px_-30px_rgb(28_26_23/0.55)] outline-none sm:rounded-[28px]`}
         style={{ animationDuration: '0.6s' }}
       >
-        <div className="flex items-center justify-between border-b border-sand px-6 py-5">
+        <div className="flex items-center justify-between border-b border-smoke px-6 py-5">
           <h2 className="heading-display text-2xl">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             disabled={locked}
-            className="rounded-full p-1.5 text-gray-500 transition-colors hover:bg-bone hover:text-ink disabled:opacity-40"
+            className="rounded-full p-1.5 text-gray-500 transition-colors hover:bg-onyx hover:text-alabaster disabled:opacity-40"
             aria-label="Close"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

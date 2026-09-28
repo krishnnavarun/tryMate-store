@@ -91,8 +91,10 @@ export default function GarmentArt({ name, type, hex, title, backdrop = true, cl
     button: light ? '#E2DBCE' : '#F3EFE7',
     buttonEdge: shade(base, -0.4),
     motif: light ? shade(base, -0.22) : shade(base, 0.42),
-    bgInner: mix('#F6F2EC', base, 0.05),
-    bgOuter: mix('#E6DFD4', base, 0.1),
+    // Backdrop: the cream light of the brand gradient, fading to near-black at the corners
+    bgCore: mix('#F4F0EA', base, 0.04),
+    bgMid: mix('#DDD5CD', base, 0.07),
+    bgEdge: mix('#A08870', base, 0.1),
   };
 
   const d = outline(g);
@@ -124,9 +126,11 @@ export default function GarmentArt({ name, type, hex, title, backdrop = true, cl
       className={className}
     >
       <defs>
-        <radialGradient id={`${id}-bg`} cx="50%" cy="42%" r="75%">
-          <stop offset="0%" stopColor={c.bgInner} />
-          <stop offset="100%" stopColor={c.bgOuter} />
+        <radialGradient id={`${id}-bg`} cx="50%" cy="56%" r="74%">
+          <stop offset="0%" stopColor={c.bgCore} />
+          <stop offset="40%" stopColor={c.bgMid} />
+          <stop offset="72%" stopColor={c.bgEdge} />
+          <stop offset="100%" stopColor="#1c1512" />
         </radialGradient>
         <linearGradient id={`${id}-sx`} x1="0" x2="1" y1="0" y2="0">
           <stop offset="0" stopColor="#000" stopOpacity="0.18" />

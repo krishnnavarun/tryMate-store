@@ -43,20 +43,21 @@ export function Reveal({ as: Tag = 'div', delay = 0, className = '', style, chil
 
 /**
  * A headline whose words slide up from behind a mask, one after another.
- * Wrap a word in *asterisks* to set it in italic:  text="Clothes cut to *your* measure."
+ * Wrap a word in *asterisks* to emphasise it (gradient text by default):
+ *   text="Clothes cut to *your* measure."
  */
-export function RevealText({ text, delay = 0, stagger = 70, italicClassName = 'italic', className = '' }) {
+export function RevealText({ text, delay = 0, stagger = 70, emphasisClassName = 'text-sheen', className = '' }) {
   const words = text.split(' ');
   return (
     <span className={className}>
       <span className="sr-only">{text.replaceAll('*', '')}</span>
       {words.map((word, i) => {
-        const italic = /^\*.*\*[.,!?]?$/.test(word);
+        const emphasis = /^\*.*\*[.,!?]?$/.test(word);
         const clean = word.replaceAll('*', '');
         return (
           <span key={i} aria-hidden="true" className="inline-block overflow-hidden pb-[0.14em] align-bottom">
             <span
-              className={`inline-block animate-word ${italic ? italicClassName : ''}`}
+              className={`inline-block animate-word ${emphasis ? emphasisClassName : ''}`}
               style={{ animationDelay: `${delay + i * stagger}ms` }}
             >
               {clean}

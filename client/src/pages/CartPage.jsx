@@ -45,13 +45,13 @@ export default function CartPage() {
       <h1 className="heading-display mt-3 text-5xl sm:text-6xl">Your cart</h1>
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_340px]">
-        <ul className="divide-y divide-sand border-y border-sand">
+        <ul className="divide-y divide-smoke border-y border-smoke">
           {cart.items.map((item) => (
             <CartLine key={item._id} item={item} />
           ))}
         </ul>
 
-        <aside className="h-fit animate-rise rounded-[28px] bg-bone p-7 lg:sticky lg:top-32" style={{ animationDelay: '150ms' }}>
+        <aside className="h-fit animate-rise rounded-[28px] bg-onyx p-7 lg:sticky lg:top-32" style={{ animationDelay: '150ms' }}>
           <h2 className="heading-display text-3xl">Order summary</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
@@ -73,7 +73,7 @@ export default function CartPage() {
             </p>
           )}
           {cart.hasStockIssues ? (
-            <span className="mt-7 block w-full cursor-not-allowed rounded-full bg-gray-300 py-3.5 text-center text-sm font-semibold text-ivory">
+            <span className="mt-7 block w-full cursor-not-allowed rounded-full bg-gray-300 py-3.5 text-center text-sm font-semibold text-noir">
               Checkout
             </span>
           ) : (
@@ -84,7 +84,7 @@ export default function CartPage() {
               Checkout
             </Link>
           )}
-          <Link to="/shop" className="mt-4 block text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase hover:text-brass">
+          <Link to="/shop" className="mt-4 block text-center text-[11px] font-semibold tracking-[0.16em] text-alabaster uppercase hover:text-ember">
             Continue shopping
           </Link>
         </aside>
@@ -115,7 +115,7 @@ function CartLine({ item }) {
     <li className={`flex animate-rise gap-5 py-7 transition-opacity ${busy ? 'opacity-60' : ''}`}>
       <Link
         to={`/products/${item.product.slug}`}
-        className="relative block aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-xl bg-bone sm:w-28"
+        className="relative block aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-xl bg-onyx sm:w-28"
       >
         <ProductImage src={item.product.image} alt={item.product.name} name={item.product.name} className="absolute inset-0 h-full w-full" />
       </Link>
@@ -123,7 +123,7 @@ function CartLine({ item }) {
       <div className="flex flex-1 flex-col">
         <div className="flex justify-between gap-4">
           <div>
-            <Link to={`/products/${item.product.slug}`} className="font-display text-2xl leading-tight text-ink transition-colors hover:text-brass">
+            <Link to={`/products/${item.product.slug}`} className="heading-display text-2xl leading-tight text-alabaster transition-colors hover:text-ember">
               {item.product.name}
             </Link>
             <p className="mt-1 text-sm text-gray-500">
@@ -147,7 +147,7 @@ function CartLine({ item }) {
               value={item.qty}
               disabled={busy}
               onChange={(e) => run(() => updateQty(item._id, Number(e.target.value)))}
-              className="rounded-full border border-sand bg-white px-3 py-1 text-sm text-ink focus:border-ink focus:outline-none"
+              className="rounded-full border border-smoke bg-coal px-3 py-1 text-sm text-alabaster focus:border-alabaster focus:outline-none"
             >
               {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>
@@ -175,7 +175,7 @@ function CartLine({ item }) {
                             (err) => toast.error(err.userMessage),
                           );
                         }}
-                        className="font-semibold text-brass-light underline"
+                        className="font-semibold text-ember-light underline"
                       >
                         Undo
                       </button>

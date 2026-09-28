@@ -1,3 +1,4 @@
+import { LogoMark } from '../layout/Header.jsx';
 import GarmentArt from '../products/GarmentArt.jsx';
 
 // The home page's motion graphic: a shirt drawn like a tailor's technical sheet. Measurement
@@ -26,7 +27,7 @@ export default function HeroGraphic() {
       {/* The rotating seal */}
       <Seal className="absolute -top-10 -right-6 z-20 h-28 w-28 sm:-right-10" />
 
-      <div className="relative aspect-[3/4] overflow-hidden rounded-[32px] bg-bone shadow-[0_40px_80px_-40px_rgb(28_26_23/0.45)]">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[32px] bg-onyx shadow-[0_40px_90px_-30px_rgb(0_0_0/0.9)] ring-1 ring-white/10">
         <GarmentArt name="Classic Oxford Shirt" type="shirt" hex="#2F3B52" title="An illustrated navy Oxford shirt" className="absolute inset-0 h-full w-full" />
 
         {/* Measurements, drawn on top in the same coordinate space */}
@@ -36,7 +37,7 @@ export default function HeroGraphic() {
               <path
                 d={line.d}
                 fill="none"
-                stroke="#c8ad7f"
+                stroke="#dd0200"
                 strokeWidth="1.1"
                 strokeDasharray={line.length}
                 className="animate-draw"
@@ -48,7 +49,7 @@ export default function HeroGraphic() {
                   className="animate-pop"
                   style={{ animationDelay: `${line.delay + 350}ms`, transformOrigin: `${line.x}px ${line.y}px`, transformBox: 'view-box' }}
                 >
-                  <rect x={line.x - 30} y={line.y - 7.5} width="60" height="15" rx="7.5" fill="#faf8f4" fillOpacity="0.94" />
+                  <rect x={line.x - 30} y={line.y - 7.5} width="60" height="15" rx="7.5" fill="#0b0a09" fillOpacity="0.88" />
                   <text
                     x={line.x}
                     y={line.y + 3}
@@ -56,7 +57,7 @@ export default function HeroGraphic() {
                     fontSize="7.2"
                     fontWeight="700"
                     letterSpacing="0.9"
-                    fill="#1c1a17"
+                    fill="#f1ece6"
                     style={{ fontFamily: 'var(--font-sans)', textTransform: 'uppercase' }}
                   >
                     {line.label}
@@ -67,20 +68,20 @@ export default function HeroGraphic() {
           ))}
         </svg>
 
-        {/* Scan line: a soft brass glow sweeping down, again and again */}
+        {/* Scan line: a red glow sweeping down, again and again */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
-            className="absolute inset-0 animate-scan bg-linear-to-b from-transparent via-transparent to-brass-light/25"
+            className="absolute inset-0 animate-scan bg-linear-to-b from-transparent via-transparent to-racing/20"
             style={{ animationDelay: '2.6s' }}
           >
-            <div className="absolute inset-x-0 bottom-0 h-px bg-brass-light shadow-[0_0_14px_2px_rgb(200_173_127/0.7)]" />
+            <div className="absolute inset-x-0 bottom-0 h-px bg-ember shadow-[0_0_14px_2px_rgb(221_2_0/0.8)]" />
           </div>
         </div>
 
         {/* Viewfinder corners */}
         {['top-5 left-5 border-t border-l', 'top-5 right-5 border-t border-r', 'bottom-5 left-5 border-b border-l', 'bottom-5 right-5 border-b border-r'].map(
           (corner) => (
-            <span key={corner} className={`absolute h-6 w-6 animate-breathe border-brass ${corner}`} />
+            <span key={corner} className={`absolute h-6 w-6 animate-breathe border-ember ${corner}`} />
           ),
         )}
       </div>
@@ -90,9 +91,9 @@ export default function HeroGraphic() {
         className="absolute top-24 -left-4 z-10 animate-pop sm:-left-14"
         style={{ animationDelay: '2.4s' }}
       >
-        <div className="animate-float rounded-2xl border border-sand bg-white/95 px-5 py-4 shadow-[0_24px_50px_-24px_rgb(28_26_23/0.4)] backdrop-blur">
+        <div className="animate-float rounded-2xl border border-smoke bg-coal/95 px-5 py-4 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)] backdrop-blur">
           <p className="text-[10px] font-semibold tracking-[0.2em] text-gray-500 uppercase">Your size</p>
-          <p className="mt-1 font-display text-5xl leading-none text-ink">M</p>
+          <p className="mt-1 text-5xl leading-none font-semibold tracking-[-0.04em] text-alabaster">M</p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Best fit · Regular
           </p>
@@ -102,7 +103,7 @@ export default function HeroGraphic() {
       {/* Floating card: colours that suit you */}
       <div className="absolute -right-3 bottom-16 z-10 animate-pop sm:-right-12" style={{ animationDelay: '2.9s' }}>
         <div
-          className="animate-float rounded-2xl border border-sand bg-white/95 px-5 py-4 shadow-[0_24px_50px_-24px_rgb(28_26_23/0.4)] backdrop-blur"
+          className="animate-float rounded-2xl border border-smoke bg-coal/95 px-5 py-4 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)] backdrop-blur"
           style={{ animationDelay: '-3.5s' }}
         >
           <p className="text-[10px] font-semibold tracking-[0.2em] text-gray-500 uppercase">Suits your skin tone</p>
@@ -111,7 +112,7 @@ export default function HeroGraphic() {
               <span
                 key={name}
                 title={name}
-                className="h-7 w-7 animate-pop rounded-full ring-2 ring-white shadow-sm"
+                className="h-7 w-7 animate-pop rounded-full ring-2 ring-coal shadow-sm"
                 style={{ backgroundColor: hex, animationDelay: `${3100 + i * 110}ms` }}
               />
             ))}
@@ -130,16 +131,16 @@ function Seal({ className = '' }) {
         <defs>
           <path id="seal-circle" d="M 60 60 m -44 0 a 44 44 0 1 1 88 0 a 44 44 0 1 1 -88 0" />
         </defs>
-        <circle cx="60" cy="60" r="58" fill="#1c1a17" />
+        <circle cx="60" cy="60" r="58" fill="#0b0a09" stroke="#ffffff" strokeOpacity="0.12" />
         {/* textLength = the circle's circumference (2π × 44 ≈ 276), so the text closes the loop */}
-        <text fontSize="8" fill="#faf8f4" style={{ fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
+        <text fontSize="8" fill="#f1ece6" style={{ fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
           <textPath href="#seal-circle" textLength="274" lengthAdjust="spacing">
             MEASURED FROM ONE PHOTO · NEVER STORED ·
           </textPath>
         </text>
       </svg>
-      <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-3xl text-brass-light italic">
-        tM
+      <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <LogoMark className="h-8 w-8" />
       </span>
     </div>
   );

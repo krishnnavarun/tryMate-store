@@ -68,7 +68,7 @@ export default function AdminOrdersPage() {
       <p className="eyebrow">Admin</p>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
         <h1 className="heading-display text-5xl">Orders</h1>
-        <Link to="/admin/products" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
+        <Link to="/admin/products" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-alabaster uppercase">
           Products
         </Link>
       </div>
@@ -81,7 +81,7 @@ export default function AdminOrdersPage() {
             aria-pressed={status === value}
             onClick={() => setSearchParams(value ? { status: value } : {})}
             className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-300 ${
-              status === value ? 'border-ink bg-ink text-ivory' : 'border-sand bg-white text-gray-700 hover:border-ink'
+              status === value ? 'border-alabaster bg-alabaster text-noir' : 'border-smoke bg-coal text-gray-700 hover:border-alabaster'
             }`}
           >
             {label}
@@ -105,9 +105,9 @@ export default function AdminOrdersPage() {
         ) : orders.length === 0 ? (
           <StatusMessage title="No orders here" message={status ? `There are no ${status} orders.` : 'No one has ordered yet.'} />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-sand bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-smoke bg-coal">
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="bg-bone text-[11px] tracking-[0.14em] text-gray-600 uppercase">
+              <thead className="bg-onyx text-[11px] tracking-[0.14em] text-gray-600 uppercase">
                 <tr>
                   <th className="px-4 py-3 font-semibold">Order</th>
                   <th className="px-4 py-3 font-semibold">Customer</th>
@@ -117,21 +117,21 @@ export default function AdminOrdersPage() {
                   <th className="px-4 py-3 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-sand/70">
+              <tbody className="divide-y divide-smoke/70">
                 {orders.map((order) => (
                   <tr key={order._id} className={busyId === order._id ? 'opacity-60' : ''}>
                     <td className="px-4 py-3">
-                      <Link to={`/orders/${order._id}`} className="font-semibold text-ink hover:text-brass">
+                      <Link to={`/orders/${order._id}`} className="font-semibold text-alabaster hover:text-ember">
                         #{shortId(order._id)}
                       </Link>
                       <p className="text-xs text-gray-500">{formatDate(order.createdAt)}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-ink">{order.user?.name ?? 'Deleted account'}</p>
+                      <p className="text-alabaster">{order.user?.name ?? 'Deleted account'}</p>
                       <p className="text-xs text-gray-500">{order.user?.email}</p>
                     </td>
                     <td className="px-4 py-3 text-gray-600">{order.items.reduce((n, i) => n + i.qty, 0)}</td>
-                    <td className="px-4 py-3 font-semibold text-ink tabular-nums">{formatPrice(order.total)}</td>
+                    <td className="px-4 py-3 font-semibold text-alabaster tabular-nums">{formatPrice(order.total)}</td>
                     <td className="px-4 py-3">
                       <OrderStatusBadge status={order.status} />
                     </td>
@@ -143,7 +143,7 @@ export default function AdminOrdersPage() {
                             type="button"
                             disabled={busyId === order._id}
                             onClick={() => change(order, 'cancelled')}
-                            className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-ivory hover:bg-red-700 disabled:opacity-60"
+                            className="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400 disabled:opacity-60"
                           >
                             Yes, cancel
                           </button>

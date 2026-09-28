@@ -19,18 +19,18 @@ export default function SizeGuide({ sizeChart }) {
   const fields = FIELDS.filter((f) => sizes.some(([, ranges]) => ranges[f.key]));
 
   return (
-    <details className="group border-y border-sand">
-      <summary className="flex cursor-pointer list-none items-center justify-between py-5 text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
+    <details className="group border-y border-smoke">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-5 text-[11px] font-semibold tracking-[0.16em] text-alabaster uppercase">
         Size guide (cm)
         <span className="relative h-3 w-3" aria-hidden="true">
-          <span className="absolute top-1/2 left-0 h-px w-3 bg-ink" />
-          <span className="absolute top-0 left-1/2 h-3 w-px bg-ink transition-transform duration-300 group-open:rotate-90" />
+          <span className="absolute top-1/2 left-0 h-px w-3 bg-alabaster" />
+          <span className="absolute top-0 left-1/2 h-3 w-px bg-alabaster transition-transform duration-300 group-open:rotate-90" />
         </span>
       </summary>
       <div className="animate-fade overflow-x-auto pb-5">
         <table className="w-full text-left text-sm tabular-nums">
           <thead>
-            <tr className="border-b border-sand text-[11px] tracking-[0.12em] text-gray-500 uppercase">
+            <tr className="border-b border-smoke text-[11px] tracking-[0.12em] text-gray-500 uppercase">
               <th className="py-2.5 pr-4 font-semibold">Size</th>
               {fields.map((f) => (
                 <th key={f.key} className="py-2.5 pr-4 font-semibold">
@@ -41,8 +41,8 @@ export default function SizeGuide({ sizeChart }) {
           </thead>
           <tbody>
             {sizes.map(([size, ranges]) => (
-              <tr key={size} className="border-b border-sand/60 last:border-0">
-                <td className="py-2.5 pr-4 font-semibold text-ink">{size}</td>
+              <tr key={size} className="border-b border-smoke/60 last:border-0">
+                <td className="py-2.5 pr-4 font-semibold text-alabaster">{size}</td>
                 {fields.map((f) => (
                   <td key={f.key} className="py-2.5 pr-4 text-gray-600">
                     {formatRange(ranges[f.key])}

@@ -13,7 +13,7 @@ export default function CheckoutSteps({ current }) {
           <li key={label} className="flex items-center gap-3" aria-current={active ? 'step' : undefined}>
             <span
               className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] tracking-normal ${
-                done || active ? 'bg-ink text-ivory' : 'border border-sand text-gray-500'
+                done || active ? 'bg-alabaster text-noir' : 'border border-smoke text-gray-500'
               }`}
               aria-hidden="true"
             >
@@ -25,11 +25,11 @@ export default function CheckoutSteps({ current }) {
                 n
               )}
             </span>
-            <span className={done || active ? 'text-ink' : 'text-gray-500'}>
+            <span className={done || active ? 'text-alabaster' : 'text-gray-500'}>
               {label}
               {done && <span className="sr-only"> (done)</span>}
             </span>
-            {n < STEPS.length && <span className="h-px w-8 bg-sand sm:w-14" aria-hidden="true" />}
+            {n < STEPS.length && <span className="h-px w-8 bg-smoke sm:w-14" aria-hidden="true" />}
           </li>
         );
       })}

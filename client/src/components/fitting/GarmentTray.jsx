@@ -21,7 +21,7 @@ export default function GarmentTray({ products, wornId, onWear, onDragStart, loa
             aria-pressed={type === t}
             onClick={() => setType(t)}
             className={`rounded-full border px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase transition-colors duration-300 ${
-              type === t ? 'border-ink bg-ink text-ivory' : 'border-sand bg-white text-gray-700 hover:border-ink'
+              type === t ? 'border-alabaster bg-alabaster text-noir' : 'border-smoke bg-coal text-gray-700 hover:border-alabaster'
             }`}
           >
             {t === 'all' ? 'All' : (TYPE_LABELS[t] ?? t)}
@@ -50,10 +50,10 @@ export default function GarmentTray({ products, wornId, onWear, onDragStart, loa
                 aria-pressed={wornId === product._id}
                 title={`Wear ${product.name}`}
                 className={`group block w-full cursor-grab text-left active:cursor-grabbing ${
-                  wornId === product._id ? 'rounded-xl ring-1 ring-ink ring-offset-4 ring-offset-ivory' : ''
+                  wornId === product._id ? 'rounded-xl ring-1 ring-alabaster ring-offset-4 ring-offset-noir' : ''
                 }`}
               >
-                <span className="relative block aspect-[3/4] overflow-hidden rounded-xl bg-bone">
+                <span className="relative block aspect-[3/4] overflow-hidden rounded-xl bg-onyx">
                   <ProductImage
                     src={product.images[0]}
                     alt=""
@@ -63,7 +63,7 @@ export default function GarmentTray({ products, wornId, onWear, onDragStart, loa
                     className="absolute inset-0 h-full w-full transition-transform duration-700 ease-out-expo group-hover:scale-[1.06]"
                   />
                 </span>
-                <span className="mt-2 block truncate text-xs font-semibold text-ink">{product.name}</span>
+                <span className="mt-2 block truncate text-xs font-semibold text-alabaster">{product.name}</span>
                 <span className="block text-xs text-gray-500">{formatPrice(product.discountPrice ?? product.price)}</span>
               </button>
             </li>

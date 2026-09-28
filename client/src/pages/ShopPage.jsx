@@ -72,7 +72,7 @@ export default function ShopPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-6 border-b border-sand pb-8">
+      <div className="flex flex-wrap items-end justify-between gap-6 border-b border-smoke pb-8">
         <div>
           <p className="eyebrow">The collection</p>
           <h1 className="heading-display mt-3 text-5xl sm:text-6xl">{title}</h1>
@@ -97,7 +97,7 @@ export default function ShopPage() {
           )}
           <button
             type="button"
-            className="rounded-full border border-sand px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase lg:hidden"
+            className="rounded-full border border-smoke px-4 py-2 text-[11px] font-semibold tracking-[0.12em] uppercase lg:hidden"
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen((open) => !open)}
           >
@@ -108,7 +108,7 @@ export default function ShopPage() {
             <select
               value={params.sort ?? 'newest'}
               onChange={(e) => updateParams({ sort: e.target.value === 'newest' ? null : e.target.value })}
-              className="rounded-full border border-sand bg-white px-3 py-2 text-sm font-medium tracking-normal text-ink normal-case focus:border-ink focus:outline-none"
+              className="rounded-full border border-smoke bg-coal px-3 py-2 text-sm font-medium tracking-normal text-alabaster normal-case focus:border-alabaster focus:outline-none"
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -210,7 +210,7 @@ function ActiveFilters({ params, suitsMeOn, onChange }) {
           type="button"
           onClick={() => onChange(chip.clear)}
           aria-label={`Remove filter: ${chip.label}`}
-          className="inline-flex animate-pop items-center gap-2 rounded-full bg-ink py-1.5 pr-2.5 pl-3.5 text-[13px] text-ivory transition-colors hover:bg-ink-soft"
+          className="inline-flex animate-pop items-center gap-2 rounded-full bg-alabaster py-1.5 pr-2.5 pl-3.5 text-[13px] text-noir transition-colors hover:bg-white"
         >
           {chip.label}
           <svg className="h-3.5 w-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -222,7 +222,7 @@ function ActiveFilters({ params, suitsMeOn, onChange }) {
         <button
           type="button"
           onClick={() => onChange(ALL_FILTERS)}
-          className="link-underline ml-1 text-[11px] font-semibold tracking-[0.14em] text-gray-600 uppercase hover:text-ink"
+          className="link-underline ml-1 text-[11px] font-semibold tracking-[0.14em] text-gray-600 uppercase hover:text-alabaster"
         >
           Clear all
         </button>

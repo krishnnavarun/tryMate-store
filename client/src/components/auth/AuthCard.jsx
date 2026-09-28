@@ -17,16 +17,16 @@ export default function AuthCard({ title, children, footer }) {
         {footer && <p className="mt-8 text-sm text-gray-600">{footer}</p>}
       </div>
 
-      <div className="relative hidden min-h-[560px] overflow-hidden rounded-[32px] bg-bone lg:block" aria-hidden="true">
+      <div className="relative hidden min-h-[560px] overflow-hidden rounded-[32px] bg-onyx lg:block" aria-hidden="true">
         {COLLAGE.map((piece) => (
           <div key={piece.name} className={`absolute aspect-[3/4] ${piece.className}`}>
-            <div className="h-full w-full animate-float overflow-hidden rounded-2xl shadow-[0_30px_60px_-30px_rgb(28_26_23/0.45)]" style={{ animationDelay: piece.delay }}>
+            <div className="h-full w-full animate-float overflow-hidden rounded-2xl shadow-[0_30px_70px_-25px_rgb(0_0_0/0.9)]" style={{ animationDelay: piece.delay }}>
               <GarmentArt name={piece.name} type={piece.type} hex={piece.hex} className="h-full w-full" />
             </div>
           </div>
         ))}
-        <p className="absolute right-8 bottom-8 left-8 font-display text-3xl leading-tight text-ink">
-          Your measurements, <em className="text-brass">not a guess</em>.
+        <p className="absolute right-8 bottom-8 left-8 heading-display text-3xl leading-tight text-alabaster">
+          Your measurements, <span className="text-sheen">not a guess.</span>
         </p>
       </div>
     </div>

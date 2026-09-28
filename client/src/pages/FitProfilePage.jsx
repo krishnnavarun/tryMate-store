@@ -75,7 +75,7 @@ export default function FitProfilePage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <FitResults fitProfile={fitProfile} warnings={warnings} />
 
-          <aside className="h-fit animate-rise space-y-6 rounded-[28px] bg-bone p-7 lg:sticky lg:top-32" style={{ animationDelay: '200ms' }}>
+          <aside className="h-fit animate-rise space-y-6 rounded-[28px] bg-onyx p-7 lg:sticky lg:top-32" style={{ animationDelay: '200ms' }}>
             <div>
               <h2 className="heading-display text-2xl leading-tight">How do you like your clothes to fit?</h2>
               <p className="mt-1 text-sm text-gray-600">Size recommendations follow this.</p>
@@ -98,7 +98,7 @@ export default function FitProfilePage() {
               Re-scan
             </button>
 
-            <div className="border-t border-sand pt-5">
+            <div className="border-t border-smoke pt-5">
               {confirmDelete ? (
                 <div className="space-y-2 text-sm">
                   <p className="text-gray-700">Delete your measurements and colours? You can scan again any time.</p>
@@ -107,7 +107,7 @@ export default function FitProfilePage() {
                       type="button"
                       onClick={handleDelete}
                       disabled={busy}
-                      className="rounded-full bg-red-600 px-4 py-1.5 font-semibold text-ivory transition-colors hover:bg-red-700 disabled:opacity-60"
+                      className="rounded-full bg-red-500 px-4 py-1.5 font-semibold text-white transition-colors hover:bg-red-400 disabled:opacity-60"
                     >
                       Yes, delete
                     </button>

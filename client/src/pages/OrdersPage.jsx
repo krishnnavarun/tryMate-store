@@ -46,11 +46,11 @@ export default function OrdersPage() {
               <li key={order._id} className="animate-rise" style={{ animationDelay: `${i * 60}ms` }}>
                 <Link
                   to={`/orders/${order._id}`}
-                  className="block rounded-2xl border border-sand bg-white p-6 transition duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-ink/40 hover:shadow-[0_20px_40px_-24px_rgb(28_26_23/0.3)]"
+                  className="block rounded-2xl border border-smoke bg-coal p-6 transition duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-alabaster/40 hover:shadow-[0_20px_40px_-24px_rgb(28_26_23/0.3)]"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="font-display text-2xl text-ink">Order #{shortId(order._id)}</p>
+                      <p className="heading-display text-2xl text-alabaster">Order #{shortId(order._id)}</p>
                       <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
                     </div>
                     <OrderStatusBadge status={order.status} />
@@ -58,7 +58,7 @@ export default function OrdersPage() {
                   <div className="mt-4 flex items-center justify-between gap-4">
                     <div className="flex -space-x-3">
                       {order.items.slice(0, 4).map((item, i) => (
-                        <span key={i} className="relative block h-16 w-12 overflow-hidden rounded-lg border-2 border-white bg-bone">
+                        <span key={i} className="relative block h-16 w-12 overflow-hidden rounded-lg border-2 border-noir bg-onyx">
                           <ProductImage src={item.image} alt={item.name} name={item.name} className="absolute inset-0 h-full w-full" />
                         </span>
                       ))}

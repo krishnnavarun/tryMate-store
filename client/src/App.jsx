@@ -68,15 +68,16 @@ export default function App() {
         toastOptions={{
           duration: 3500,
           style: {
-            background: '#1c1a17',
-            color: '#faf8f4',
+            background: '#1c1816',
+            color: '#f1ece6',
+            border: '1px solid rgb(255 255 255 / 0.1)',
             borderRadius: '999px',
             padding: '10px 18px',
             fontSize: '14px',
-            boxShadow: '0 18px 40px -18px rgb(28 26 23 / 0.6)',
+            boxShadow: '0 20px 50px -18px rgb(0 0 0 / 0.9)',
           },
-          success: { iconTheme: { primary: '#c8ad7f', secondary: '#1c1a17' } },
-          error: { iconTheme: { primary: '#cf9186', secondary: '#1c1a17' } },
+          success: { iconTheme: { primary: '#9cbb8e', secondary: '#0b0a09' } },
+          error: { iconTheme: { primary: '#ff5a4d', secondary: '#0b0a09' } },
         }}
       />
     </>

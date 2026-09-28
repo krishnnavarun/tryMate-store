@@ -218,12 +218,12 @@ export default function FittingRoomPage() {
             />
           ) : (
             <div className="rounded-[28px] border border-dashed border-gray-300 p-6 text-sm leading-relaxed text-gray-600">
-              <span className="block font-display text-2xl text-ink">Nothing on yet.</span>
+              <span className="block heading-display text-2xl text-alabaster">Nothing on yet.</span>
               Drag a garment from below onto the mirror.
               {!hasProfile && (
                 <>
                   {' '}
-                  <Link to="/fit-profile" className="font-semibold text-brand underline">
+                  <Link to="/fit-profile" className="font-semibold text-alabaster underline">
                     Scan your body
                   </Link>{' '}
                   first to see real size differences.
@@ -248,7 +248,7 @@ export default function FittingRoomPage() {
           className="pointer-events-none fixed z-50 w-24 -translate-x-1/2 -translate-y-1/2 rotate-3 drop-shadow-2xl"
           style={{ left: drag.x, top: drag.y }}
         >
-          <span className="relative block aspect-[3/4] overflow-hidden rounded-xl bg-bone">
+          <span className="relative block aspect-[3/4] overflow-hidden rounded-xl bg-onyx">
             <ProductImage
               src={drag.product.images[0]}
               alt=""
@@ -259,7 +259,7 @@ export default function FittingRoomPage() {
             />
           </span>
           {drag.over && (
-            <span className="absolute inset-x-0 -bottom-7 text-center text-[10px] font-semibold tracking-[0.16em] text-ink uppercase">
+            <span className="absolute inset-x-0 -bottom-7 text-center text-[10px] font-semibold tracking-[0.16em] text-alabaster uppercase">
               Release to wear
             </span>
           )}

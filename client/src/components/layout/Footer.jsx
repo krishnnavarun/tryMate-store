@@ -24,27 +24,30 @@ const COLUMNS = [
 
 export default function Footer() {
   return (
-    <footer className="mt-24 bg-ink text-ivory">
-      <div className="mx-auto max-w-7xl px-4 pt-20 pb-10 sm:px-6">
+    <footer className="relative mt-32 overflow-hidden border-t border-white/[0.06]">
+      {/* The cream light again, rising from the bottom-right corner (where there's no text) */}
+      <div aria-hidden="true" className="glow-cream pointer-events-none absolute inset-0 opacity-40" />
+
+      <div className="relative mx-auto max-w-7xl px-4 pt-20 pb-10 sm:px-6">
         <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="max-w-md font-display text-4xl leading-[1.1] sm:text-5xl">
-              Dressed to <em className="text-brass-light">your</em> measure.
+            <p className="max-w-md text-4xl leading-[1.05] font-semibold tracking-[-0.04em] sm:text-5xl">
+              Dressed to <span className="text-sheen">your measure.</span>
             </p>
             <Link
               to="/fit-profile"
-              className="link-underline mt-8 inline-flex items-center gap-2 pb-1 text-[11.5px] font-semibold tracking-[0.2em] text-ivory/90 uppercase"
+              className="link-underline mt-8 inline-flex items-center gap-2 pb-1 text-[11.5px] font-semibold tracking-[0.2em] text-alabaster uppercase"
             >
               Create your fit profile <span aria-hidden="true">→</span>
             </Link>
           </div>
           {COLUMNS.map((column) => (
             <div key={column.title}>
-              <h3 className="text-[11px] font-semibold tracking-[0.22em] text-brass-light uppercase">{column.title}</h3>
+              <h3 className="eyebrow">{column.title}</h3>
               <ul className="mt-5 space-y-3">
                 {column.links.map(([to, label]) => (
                   <li key={to}>
-                    <Link to={to} className="link-underline text-sm text-ivory/75 transition-colors hover:text-ivory">
+                    <Link to={to} className="link-underline text-sm text-gray-600 transition-colors hover:text-alabaster">
                       {label}
                     </Link>
                   </li>
@@ -54,12 +57,12 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-20 flex flex-col gap-4 border-t border-ivory/15 pt-8 sm:flex-row sm:items-end sm:justify-between">
-          <Logo light />
-          <p className="max-w-md text-xs leading-relaxed text-ivory/55 sm:text-right">
+        <div className="mt-20 flex flex-col-reverse gap-6 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-end sm:justify-between">
+          <p className="max-w-md text-xs leading-relaxed text-gray-500">
             Your photos are never stored: only your measurements are saved to your profile.
             <br />© {new Date().getFullYear()} tryMate
           </p>
+          <Logo />
         </div>
       </div>
     </footer>

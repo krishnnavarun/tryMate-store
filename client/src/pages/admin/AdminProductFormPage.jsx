@@ -34,7 +34,7 @@ export default function AdminProductFormPage() {
 
 function Section({ title, children }) {
   return (
-    <section className="animate-rise rounded-[28px] border border-sand bg-white p-6 sm:p-8">
+    <section className="animate-rise rounded-[28px] border border-smoke bg-coal p-6 sm:p-8">
       <h2 className="heading-display mb-5 text-2xl">{title}</h2>
       {children}
     </section>
@@ -48,7 +48,7 @@ function Select({ label, value, onChange, options }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-colors hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
+        className="block w-full rounded-xl border border-smoke bg-coal px-4 py-3 text-sm text-alabaster transition-colors hover:border-gray-300 focus:border-alabaster focus:ring-4 focus:ring-alabaster/5 focus:outline-none"
       >
         {options.map(([v, text]) => (
           <option key={v} value={v}>
@@ -86,7 +86,7 @@ function ProductForm({ product }) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <Link to="/admin/products" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase hover:text-ink">
+      <Link to="/admin/products" className="link-underline text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase hover:text-alabaster">
         ← All products
       </Link>
       <h1 className="heading-display mt-2 text-5xl">
@@ -132,7 +132,7 @@ function ProductForm({ product }) {
                 maxLength={4000}
                 value={form.description}
                 onChange={(e) => set({ description: e.target.value })}
-                className="block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-colors hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none"
+                className="block w-full rounded-xl border border-smoke bg-coal px-4 py-3 text-sm text-alabaster transition-colors hover:border-gray-300 focus:border-alabaster focus:ring-4 focus:ring-alabaster/5 focus:outline-none"
               />
             </label>
           </div>
@@ -154,7 +154,7 @@ function ProductForm({ product }) {
                   aria-label={`Color ${i + 1}`}
                   value={c.hex}
                   onChange={(e) => set({ colors: form.colors.map((x, j) => (j === i ? { ...x, hex: e.target.value } : x)) })}
-                  className="h-11 w-12 cursor-pointer rounded-xl border border-sand bg-white p-1"
+                  className="h-11 w-12 cursor-pointer rounded-xl border border-smoke bg-coal p-1"
                 />
                 <input
                   aria-label={`Color ${i + 1} name`}
@@ -163,7 +163,7 @@ function ProductForm({ product }) {
                   maxLength={40}
                   value={c.name}
                   onChange={(e) => set({ colors: form.colors.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })}
-                  className="w-48 rounded-xl border border-sand bg-white px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
+                  className="w-48 rounded-xl border border-smoke bg-coal px-3 py-2.5 text-sm focus:border-alabaster focus:outline-none"
                 />
                 <code className="text-xs text-gray-500">{c.hex.toUpperCase()}</code>
                 <button
@@ -194,9 +194,9 @@ function ProductForm({ product }) {
             {form.images.map((url, i) => (
               <div key={i} className="flex items-center gap-2">
                 {url ? (
-                  <img src={url} alt="" className="h-12 w-9 shrink-0 rounded-md bg-bone object-cover" />
+                  <img src={url} alt="" className="h-12 w-9 shrink-0 rounded-md bg-onyx object-cover" />
                 ) : (
-                  <span className="h-12 w-9 shrink-0 rounded-md bg-bone" />
+                  <span className="h-12 w-9 shrink-0 rounded-md bg-onyx" />
                 )}
                 <input
                   aria-label={`Image ${i + 1} URL`}
@@ -205,7 +205,7 @@ function ProductForm({ product }) {
                   placeholder="https://…"
                   value={url}
                   onChange={(e) => set({ images: form.images.map((x, j) => (j === i ? e.target.value : x)) })}
-                  className="flex-1 rounded-xl border border-sand bg-white px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
+                  className="flex-1 rounded-xl border border-smoke bg-coal px-3 py-2.5 text-sm focus:border-alabaster focus:outline-none"
                 />
                 <button
                   type="button"
@@ -228,7 +228,7 @@ function ProductForm({ product }) {
 
           <div className="mt-6 flex items-start gap-3">
             {form.garmentImageUrl && (
-              <img src={form.garmentImageUrl} alt="" className="h-20 w-16 shrink-0 rounded-md bg-bone object-cover" />
+              <img src={form.garmentImageUrl} alt="" className="h-20 w-16 shrink-0 rounded-md bg-onyx object-cover" />
             )}
             <FormField
               label="Garment image URL (for try-on)"

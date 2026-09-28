@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const LABEL = 'mb-2 block text-[11px] font-semibold tracking-[0.16em] text-gray-600 uppercase';
 const INPUT =
-  'block w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink transition-[border-color,box-shadow] duration-300 placeholder:text-gray-500 hover:border-gray-300 focus:border-ink focus:ring-4 focus:ring-ink/5 focus:outline-none';
+  'block w-full rounded-xl border border-smoke bg-coal px-4 py-3 text-sm text-alabaster transition-[border-color,box-shadow] duration-300 placeholder:text-gray-500 hover:border-gray-300 focus:border-alabaster focus:ring-4 focus:ring-alabaster/5 focus:outline-none';
 
 // Label + input with consistent styling. Extra props go straight to the <input>.
 //   <FormField label="Email" name="email" type="email" required autoComplete="email" />
@@ -53,7 +53,7 @@ export function PasswordField({ label = 'Password', requirement, className = '',
           onClick={() => setVisible((v) => !v)}
           aria-pressed={visible}
           aria-controls={id}
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-gray-600 uppercase transition-colors hover:bg-bone hover:text-ink"
+          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-gray-600 uppercase transition-colors hover:bg-onyx hover:text-alabaster"
         >
           {visible ? 'Hide' : 'Show'}
           <span className="sr-only"> password</span>
@@ -74,7 +74,7 @@ export function PasswordField({ label = 'Password', requirement, className = '',
 export function SubmitButton({ loading, children, loadingText = 'Please wait…', className = '' }) {
   return (
     <button type="submit" disabled={loading} className={`btn-primary w-full py-3.5 disabled:cursor-wait ${className}`}>
-      {loading && <span className="h-3.5 w-3.5 animate-spin rounded-full border border-ivory/40 border-t-ivory" aria-hidden="true" />}
+      {loading && <span className="h-3.5 w-3.5 animate-spin rounded-full border border-noir/40 border-t-noir" aria-hidden="true" />}
       {loading ? loadingText : children}
     </button>
   );

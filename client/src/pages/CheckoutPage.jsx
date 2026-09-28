@@ -69,7 +69,7 @@ export default function CheckoutPage() {
               <button
                 type="button"
                 onClick={() => setUseSaved(false)}
-                className="link-underline text-[11px] font-semibold tracking-[0.14em] text-ink uppercase"
+                className="link-underline text-[11px] font-semibold tracking-[0.14em] text-alabaster uppercase"
               >
                 Start with an empty form
               </button>
@@ -143,7 +143,7 @@ export default function CheckoutPage() {
           </p>
         </section>
 
-        <aside className="h-fit rounded-[28px] bg-bone p-7 lg:sticky lg:top-32">
+        <aside className="h-fit rounded-[28px] bg-onyx p-7 lg:sticky lg:top-32">
           <h2 className="heading-display text-3xl">Your order</h2>
           <ul className="mt-4 space-y-3">
             {cart.items.map((item) => (
@@ -158,14 +158,14 @@ export default function CheckoutPage() {
               </li>
             ))}
           </ul>
-          <div className="mt-5 flex justify-between border-t border-sand pt-5 font-display text-2xl">
+          <div className="mt-5 flex justify-between border-t border-smoke pt-5 heading-display text-2xl">
             <span>Total</span>
             <span>{formatPrice(cart.subtotal)}</span>
           </div>
           <SubmitButton loading={placing} loadingText="Placing order…" className="mt-6">
             Place order
           </SubmitButton>
-          <Link to="/cart" className="mt-4 block text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase hover:text-brass">
+          <Link to="/cart" className="mt-4 block text-center text-[11px] font-semibold tracking-[0.16em] text-alabaster uppercase hover:text-ember">
             Back to cart
           </Link>
         </aside>

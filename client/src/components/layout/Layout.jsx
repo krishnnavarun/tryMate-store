@@ -63,7 +63,16 @@ export default function Layout() {
   }, [pathname]);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative isolate flex min-h-screen flex-col">
+      {/* The signature light: Racing Red from the top-left, behind the header (it scrolls
+          away with the page), a faint cream haze from the bottom-right of the window, and
+          a film grain over both. All behind the content, all decoration. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[1100px] overflow-hidden">
+        <div className="glow-red absolute -inset-[6%] origin-top-left animate-drift" />
+      </div>
+      <div aria-hidden="true" className="grain pointer-events-none fixed inset-0 -z-10">
+        <div className="glow-cream absolute inset-0 opacity-[0.13]" />
+      </div>
       {/* The first thing Tab reaches: jump past the navigation */}
       <a
         href="#main"

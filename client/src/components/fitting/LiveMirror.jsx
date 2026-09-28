@@ -178,8 +178,8 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
     <div className="space-y-3">
       <div
         ref={zoneRef}
-        className={`relative aspect-[3/4] overflow-hidden rounded-[28px] bg-[radial-gradient(ellipse_at_50%_40%,#3b3731,#1c1a17_75%)] transition duration-500 sm:aspect-[4/3] ${
-          highlight ? 'ring-2 ring-brass-light ring-offset-4 ring-offset-ivory' : ''
+        className={`relative aspect-[3/4] overflow-hidden rounded-[28px] bg-[radial-gradient(ellipse_at_50%_40%,#2c2622,#0b0a09_75%)] transition duration-500 sm:aspect-[4/3] ${
+          highlight ? 'ring-2 ring-ember-light ring-offset-4 ring-offset-noir' : ''
         }`}
       >
         {/* Video and drawing share one box, so the garment lines up with the body */}
@@ -193,7 +193,7 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
           (corner) => (
             <span
               key={corner}
-              className={`pointer-events-none absolute h-8 w-8 border-brass-light/70 ${camera === 'on' ? '' : 'animate-breathe'} ${corner}`}
+              className={`pointer-events-none absolute h-8 w-8 border-ember-light/70 ${camera === 'on' ? '' : 'animate-breathe'} ${corner}`}
             />
           ),
         )}
@@ -202,14 +202,14 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center text-white">
             {camera === 'starting' ? (
               <>
-                <span className="h-10 w-10 animate-spin rounded-full border border-ivory/25 border-t-brass-light" />
+                <span className="h-10 w-10 animate-spin rounded-full border border-noir/25 border-t-ember-light" />
                 <p className="text-sm">Starting the camera and body tracking…</p>
               </>
             ) : (
               <>
-                <p className="eyebrow text-brass-light">Live</p>
-                <p className="max-w-sm font-display text-4xl">Your live fitting room</p>
-                <p className="max-w-sm text-sm leading-relaxed text-ivory/70">
+                <p className="eyebrow text-ember-light">Live</p>
+                <p className="max-w-sm heading-display text-4xl">Your live fitting room</p>
+                <p className="max-w-sm text-sm leading-relaxed text-noir/70">
                   Stand 1.5–2 m from the camera, then drag a garment onto yourself. Everything runs on your
                   device; the video is never uploaded.
                 </p>
@@ -228,15 +228,15 @@ const LiveMirror = forwardRef(function LiveMirror({ garment, scales, highlight =
 
         {camera === 'on' && (hint || !garment) && (
           <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
-            <span key={hint ?? 'drag'} className="animate-rise rounded-full bg-ink/75 px-4 py-2 text-xs font-medium tracking-wide text-ivory backdrop-blur" aria-live="polite">
+            <span key={hint ?? 'drag'} className="animate-rise rounded-full bg-alabaster/75 px-4 py-2 text-xs font-medium tracking-wide text-noir backdrop-blur" aria-live="polite">
               {hint ? HINTS[hint] : 'Drag a garment here, or tap one to wear it'}
             </span>
           </div>
         )}
 
         {highlight && (
-          <div className="pointer-events-none absolute inset-0 flex animate-fade items-center justify-center bg-brass-light/15">
-            <span className="animate-pop rounded-full bg-ivory px-5 py-2.5 text-[11px] font-semibold tracking-[0.18em] text-ink uppercase shadow-lg">
+          <div className="pointer-events-none absolute inset-0 flex animate-fade items-center justify-center bg-ember-light/15">
+            <span className="animate-pop rounded-full bg-noir px-5 py-2.5 text-[11px] font-semibold tracking-[0.18em] text-alabaster uppercase shadow-lg">
               Drop to try it on
             </span>
           </div>

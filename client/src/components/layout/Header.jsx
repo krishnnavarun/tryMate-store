@@ -14,11 +14,23 @@ const NAV_LINKS = [
   { to: '/fit-profile', label: 'My fit' },
 ];
 
-export function Logo({ light = false }) {
+export function Logo() {
   return (
-    <Link to="/" className={`font-display text-[30px] leading-none tracking-tight ${light ? 'text-ivory' : 'text-ink'}`}>
-      try<em className={light ? 'text-brass-light' : 'text-brass'}>Mate</em>
+    <Link to="/" className="group inline-flex items-center gap-2.5 text-[19px] leading-none font-semibold tracking-[-0.03em] text-alabaster">
+      <LogoMark tone="light" className="h-[18px] w-[18px] transition-[color,transform] duration-700 ease-out-expo group-hover:rotate-45 group-hover:text-racing" />
+      tryMate
     </Link>
+  );
+}
+
+// An eight-armed asterisk. tone="red": Racing Red with a soft glow; tone="light": alabaster
+// (the logo, which sits on the red light at the top of every page)
+export function LogoMark({ tone = 'red', className = '' }) {
+  const colour = tone === 'light' ? 'text-alabaster' : 'text-racing drop-shadow-[0_0_6px_rgb(221_2_0/0.6)]';
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={`${colour} ${className}`}>
+      <path d="M12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+    </svg>
   );
 }
 
@@ -92,19 +104,25 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30">
       {/* A quiet line of reassurance above the navigation */}
-      <div className="bg-ink text-ivory/80">
-        <p className="mx-auto max-w-7xl truncate px-4 py-2 text-center text-[10.5px] font-medium tracking-[0.22em] uppercase sm:px-6">
+      <div className="border-b border-white/[0.06] text-alabaster/85">
+        <p className="mx-auto max-w-7xl truncate px-4 py-2 text-center text-[10.5px] font-medium tracking-[0.24em] uppercase sm:px-6">
           Your size on every piece
           <span className="hidden sm:inline">
-            <span className="mx-2 text-brass-light">·</span> Complimentary shipping
-            <span className="mx-2 text-brass-light">·</span> Photos never stored
+            <span aria-hidden="true" className="mx-3 text-racing">
+              ✳
+            </span>
+            Complimentary shipping
+            <span aria-hidden="true" className="mx-3 text-racing">
+              ✳
+            </span>
+            Photos never stored
           </span>
         </p>
       </div>
 
       <div
-        className={`border-b bg-ivory/85 backdrop-blur-md transition-[border-color,box-shadow] duration-500 ${
-          scrolled ? 'border-sand shadow-[0_8px_30px_-12px_rgb(28_26_23/0.18)]' : 'border-transparent'
+        className={`border-b transition-[background-color,border-color,box-shadow] duration-500 ${
+          scrolled ? 'border-white/[0.07] bg-noir/75 shadow-[0_10px_40px_-20px_rgb(0_0_0/0.9)] backdrop-blur-xl' : 'border-transparent'
         }`}
       >
         <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
@@ -116,7 +134,7 @@ export default function Header() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="link-underline pb-0.5 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase transition-colors hover:text-ink"
+                className="link-underline pb-0.5 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase transition-colors hover:text-alabaster"
               >
                 {link.label}
               </Link>
@@ -131,7 +149,7 @@ export default function Header() {
               ) : (
                 <Link
                   to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`}
-                  className="link-underline hidden pb-0.5 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase hover:text-ink sm:block"
+                  className="link-underline hidden pb-0.5 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase hover:text-alabaster sm:block"
                 >
                   Log in
                 </Link>
@@ -142,7 +160,7 @@ export default function Header() {
               onClick={() => setSearchOpen((open) => !open)}
               aria-expanded={searchOpen}
               aria-label={searchOpen ? 'Close search' : 'Search'}
-              className="rounded-full p-2 text-ink transition-colors hover:text-brass"
+              className="rounded-full p-2 text-alabaster transition-colors hover:text-ember-light"
             >
               <svg className="h-[22px] w-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4} aria-hidden="true">
                 <circle cx="11" cy="11" r="6.5" />
@@ -155,7 +173,7 @@ export default function Header() {
             <button
               ref={menuButtonRef}
               type="button"
-              className="rounded-full p-2 text-ink lg:hidden"
+              className="rounded-full p-2 text-alabaster lg:hidden"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
@@ -172,7 +190,7 @@ export default function Header() {
         </div>
 
         {searchOpen && (
-          <div className="animate-fade border-t border-sand bg-ivory">
+          <div className="animate-fade border-t border-white/[0.07] bg-noir/95 backdrop-blur-xl">
             <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6">
               <SearchBox autoFocus onSearch={search} />
               <p className="mt-3 text-center text-xs text-gray-500">Try &ldquo;navy polo&rdquo;, &ldquo;linen&rdquo; or &ldquo;tees&rdquo;</p>
@@ -181,19 +199,19 @@ export default function Header() {
         )}
 
         {menuOpen && (
-          <nav className="animate-fade border-t border-sand bg-ivory px-4 pt-4 pb-4 lg:hidden">
+          <nav className="animate-fade border-t border-white/[0.07] bg-noir/95 px-4 pt-4 pb-4 backdrop-blur-xl lg:hidden">
             <SearchBox onSearch={search} className="mb-2" />
             {NAV_LINKS.map((link, i) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className="block animate-rise py-3 font-display text-2xl text-ink"
+                className="block animate-rise py-3 text-2xl font-semibold tracking-[-0.03em] text-alabaster"
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="mt-2 border-t border-sand pt-2">
+            <div className="mt-2 border-t border-smoke pt-2">
               {user ? (
                 <>
                   <Link to="/orders" className="block py-2.5 text-sm font-medium text-gray-700">
@@ -231,7 +249,7 @@ function CartButton() {
   const count = cart.itemCount;
 
   return (
-    <Link to="/cart" className="relative rounded-full p-2 text-ink transition-colors hover:text-brass" aria-label={`Cart, ${count} items`}>
+    <Link to="/cart" className="relative rounded-full p-2 text-alabaster transition-colors hover:text-ember-light" aria-label={`Cart, ${count} items`}>
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12l-1 13H7L6 7zm3 0a3 3 0 016 0" />
       </svg>
@@ -239,7 +257,7 @@ function CartButton() {
         // key: a new count re-mounts the badge, so it "bumps" each time something is added
         <span
           key={count}
-          className="absolute top-0 right-0 flex h-[18px] min-w-[18px] animate-bump items-center justify-center rounded-full bg-brass px-1 text-[10px] font-bold text-ivory"
+          className="absolute top-0 right-0 flex h-[18px] min-w-[18px] animate-bump items-center justify-center rounded-full bg-racing px-1 text-[10px] font-bold text-white shadow-[0_0_12px_rgb(221_2_0/0.7)]"
         >
           {count > 99 ? '99+' : count}
         </span>
@@ -272,7 +290,7 @@ function AccountMenu({ name, isAdmin, onLogout }) {
     };
   }, [open]);
 
-  const item = 'block w-full px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-bone hover:text-ink';
+  const item = 'block w-full px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-onyx hover:text-alabaster';
 
   return (
     <div ref={ref} className="relative hidden sm:block">
@@ -282,9 +300,9 @@ function AccountMenu({ name, isAdmin, onLogout }) {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="true"
-        className="flex items-center gap-2 rounded-full px-3 py-2 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase transition-colors hover:text-ink"
+        className="flex items-center gap-2 rounded-full px-3 py-2 text-[11.5px] font-semibold tracking-[0.16em] text-gray-700 uppercase transition-colors hover:text-alabaster"
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-bone font-display text-base tracking-normal text-ink normal-case">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-onyx text-[13px] font-semibold tracking-normal text-alabaster normal-case ring-1 ring-white/10">
           {name.trim()[0]?.toUpperCase()}
         </span>
         {name.split(' ')[0]}
@@ -293,7 +311,7 @@ function AccountMenu({ name, isAdmin, onLogout }) {
         </svg>
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-52 origin-top-right animate-pop overflow-hidden rounded-2xl border border-sand bg-white py-1.5 shadow-[0_20px_50px_-20px_rgb(28_26_23/0.35)]">
+        <div className="absolute right-0 mt-2 w-52 origin-top-right animate-pop overflow-hidden rounded-2xl border border-smoke bg-coal py-1.5 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)]">
           <Link to="/fit-profile" onClick={() => setOpen(false)} className={item}>
             My fit profile
           </Link>
@@ -310,7 +328,7 @@ function AccountMenu({ name, isAdmin, onLogout }) {
               </Link>
             </>
           )}
-          <div className="my-1 border-t border-sand" />
+          <div className="my-1 border-t border-smoke" />
           <button
             type="button"
             onClick={() => {

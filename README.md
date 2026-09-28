@@ -291,17 +291,19 @@ A live camera "mirror" at `/fitting-room`: drag a garment onto yourself (mouse),
 
 ## Design and motion
 
-A warm, quiet look in the spirit of a tailor's shop.
+"Noir": near-black between two lights, a Racing Red glow from the top-left and a warm cream
+glow rising from the bottom-right, under a fine film grain (palettes 1 and 3 in `../designs.md`).
 
 | Part | How |
 |---|---|
-| **Palette** | ivory `#FAF8F4` page, bone `#F1ECE4` surfaces, ink `#1C1A17` text and buttons, brass `#7F6338` accent; sage (success, "suits you"), oxblood (errors, sale) and ochre (notes). All tokens live in `client/src/index.css` (`@theme`). The default `gray` / `emerald` / `red` / `amber` scales are replaced by warm versions, so every existing class follows the palette. Text colours pass WCAG AA (4.5:1) on both ivory and bone. |
-| **Type** | Instrument Serif for display text (its italic for emphasis), Manrope for the interface. Self-hosted with `@fontsource` (bundled; no Google Fonts request). |
+| **Palette** | noir `#0B0A09` page, coal `#141211` cards and inputs, onyx `#1C1816` panels, smoke `#2E2825` borders, alabaster `#F1ECE6` text and primary buttons, ember `#FF5A4D` accent text; the gradients use Racing Red `#DD0200`, Black Cherry `#55100D`, Coffee Bean `#1A0706`, Warm Greige `#DDD5CD` and Beige `#C29B72`. Sage marks success and "suits you", red marks errors and sale, and warm gold marks notes. All tokens live in `client/src/index.css` (`@theme`). The `gray` / `emerald` / `red` / `amber` scales are replaced and ordered by role, not lightness (50–200 backgrounds, 500–900 text), so every existing class works on the dark page. Every text colour passes WCAG AA (4.5:1) on noir, coal and onyx. |
+| **Type** | Inter throughout: semibold and set tight for headings (its optical-size axis switches large text to the display cut), with key words in a cream → beige → red gradient (`.text-sheen`). Self-hosted with `@fontsource-variable/inter` (bundled; no Google Fonts request). |
 | **Motion** | CSS keyframes in `index.css` (`animate-rise`, `-word`, `-draw`, `-scan`, `-float`, `-marquee`…) with one easing curve. `components/ui/Motion.jsx`: `Reveal` (rises in when scrolled into view, via `IntersectionObserver`), `RevealText` (headline words slide up one by one), `CountUp`. Each page rises in on navigation; the cart badge bumps; buttons get a light sweep. |
-| **Motion graphics** | Home hero: a shirt drawn like a tailor's technical sheet, with measurement lines that draw themselves, a scan line and floating cards (`components/home/HeroGraphic.jsx`). A scan animation over your photo while it's analysed and during try-on (`ScanOverlay`); a hanger drawn on the 404 page; a check mark drawn when an order is placed. |
+| **The gradient** | `.glow-red`, `.glow-cream`, `.bg-luxe` (both lights in one panel) and `.grain` (film grain from an SVG noise filter) in `index.css`. The red light sits behind the header on every page (`Layout.jsx`); the home hero adds the cream one, and both drift very slowly (`animate-drift`, transform only). |
+| **Motion graphics** | "How it works": a shirt drawn like a tailor's technical sheet, with measurement lines that draw themselves, a scan line and floating cards (`components/home/HeroGraphic.jsx`). A scan animation over your photo while it's analysed and during try-on (`ScanOverlay`); a hanger drawn on the 404 page; a check mark drawn when an order is placed. |
 | **Reduce motion** | With "reduce motion" on in the OS, every animation lands in its final state immediately. |
 | **Accessibility** | Audited with axe-core (WCAG 2.1 A + AA) on 20 screens: logged out, logged in, admin, the try-on dialog and the mobile menu. **0 violations.** Decorative illustrations are hidden from screen readers; the marquee is read once as plain text. Keyboard: a "Skip to content" link, focus moves to the new page after navigation, dialogs keep Tab inside and return focus on close, Escape closes the menus, and every page has its own title (`usePageTitle`). |
-| **Product illustrations** | Until real photos are added, the seed's placehold.co images are drawn as flat-lay garments in the right colour, with the right collar, sleeves and fabric (stripes, checks, denim, linen, knit, piqué, oxford, print): `GarmentArt.jsx`, chosen by `lib/garmentStyle.js` from the product name. `ProductImage` shows real photos as they are and falls back to the illustration if a photo fails to load. |
+| **Product illustrations** | Until real photos are added, the seed's placehold.co images are drawn as flat-lay garments in the right colour, with the right collar, sleeves and fabric (stripes, checks, denim, linen, knit, piqué, oxford, print): `GarmentArt.jsx`, chosen by `lib/garmentStyle.js` from the product name. `ProductImage` shows real photos as they are and falls back to the illustration if a photo fails to load. Each one sits in a cream studio spotlight that fades to near-black at the corners, the cream light of the brand gradient. |
 
 ## How the AI features work (store side)
 
@@ -510,7 +512,10 @@ npm run test:e2e       # terminal 2 → "✅ All 100 checks passed"
 - Fitting room: the real MediaPipe model in headless Chrome on a person in a fake camera
   feed (garment drawn on the body, drag and drop, colour/size switching); `npm test`: 64 unit
   tests. They were also checked the other way round: with the old sleeve maths put back they fail.
-- Design and motion: a headless Chrome tour of the redesign (desktop 1440 px + 390 px mobile).
+- The Noir redesign: the same tour again (desktop + mobile, every page), axe-core on 20 screens
+  (0 violations), and the usability (26), keyboard (22) and orders (33) walk-throughs, all
+  passing with no console errors.
+- Design and motion (the earlier light design): a headless Chrome tour (desktop 1440 px + 390 px mobile).
   It covered home, the shop (including the card hover), product, login, register, the scan
   animation (the scan request held for 3 s to see it), results, recommendation, add to cart,
   cart, the fitting room and 404. There were no console errors. All 31 product/colour

@@ -46,12 +46,12 @@ export default function PhotoPicker({ photo, onChange, disabled = false, scannin
           type="button"
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
-          className="group flex h-56 w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-ivory text-sm text-gray-500 transition-colors hover:border-ink hover:text-ink"
+          className="group flex h-56 w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-noir text-sm text-gray-500 transition-colors hover:border-alabaster hover:text-alabaster"
         >
-          <svg className="h-9 w-9 text-brass transition-transform duration-500 ease-out-expo group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.1} aria-hidden="true">
+          <svg className="h-9 w-9 text-ember transition-transform duration-500 ease-out-expo group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.1} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" />
           </svg>
-          <span className="font-display text-xl text-ink">Add a full-body photo</span>
+          <span className="heading-display text-xl text-alabaster">Add a full-body photo</span>
           <span className="text-xs">JPEG, PNG or WEBP, up to {MAX_MB} MB</span>
         </button>
       )}

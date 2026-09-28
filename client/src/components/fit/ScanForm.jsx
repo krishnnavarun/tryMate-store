@@ -51,10 +51,10 @@ export default function ScanForm({ defaultHeight, defaultWeight, onScanned, onCa
     }
   }
 
-  const section = 'rounded-[28px] border border-sand bg-white p-6 sm:p-8';
+  const section = 'rounded-[28px] border border-smoke bg-coal p-6 sm:p-8';
   const step = (n, title) => (
     <h2 className="mb-6 flex items-baseline gap-3">
-      <span className="font-display text-3xl text-brass">0{n}</span>
+      <span className="heading-display text-3xl text-ember">0{n}</span>
       <span className="heading-display text-3xl">{title}</span>
     </h2>
   );
@@ -110,15 +110,15 @@ export default function ScanForm({ defaultHeight, defaultWeight, onScanned, onCa
         </div>
       </div>
 
-      <aside className="h-fit animate-rise rounded-[28px] bg-bone p-7 lg:sticky lg:top-32" style={{ animationDelay: '200ms' }}>
+      <aside className="h-fit animate-rise rounded-[28px] bg-onyx p-7 lg:sticky lg:top-32" style={{ animationDelay: '200ms' }}>
         <p className="eyebrow">Before you start</p>
         <h2 className="heading-display mt-2 text-3xl">For an accurate scan</h2>
         <ol className="mt-6 space-y-4">
           {TIPS.map(([title, text], i) => (
             <li key={title} className="flex gap-4 text-sm">
-              <span className="w-5 shrink-0 font-display text-lg leading-5 text-brass">{i + 1}</span>
+              <span className="w-5 shrink-0 heading-display text-lg leading-5 text-ember">{i + 1}</span>
               <span>
-                <span className="font-semibold text-ink">{title}.</span> <span className="text-gray-600">{text}</span>
+                <span className="font-semibold text-alabaster">{title}.</span> <span className="text-gray-600">{text}</span>
               </span>
             </li>
           ))}

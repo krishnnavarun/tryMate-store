@@ -41,7 +41,7 @@ export default function RegisterPage() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="link-underline font-semibold text-ink">
+          <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="link-underline font-semibold text-alabaster">
             Log in
           </Link>
         </>

@@ -1,89 +1,98 @@
 @import 'tailwindcss';
 
 /*
- * tryMate design tokens
- * =====================
- * A warm, quiet palette in the spirit of a tailor's shop: ivory paper, ink, warm stone
- * greys and a muted brass accent. Tailwind turns every --color-* into utilities
- * (bg-ink, text-brass, border-sand, ...).
+ * tryMate design tokens: "Noir"
+ * =============================
+ * Near-black with two lights: a Racing Red glow from the top-left and a warm cream glow
+ * rising from the bottom-right, under a fine film grain (palettes 1 and 3 in designs.md).
+ * Tailwind turns every --color-* into utilities (bg-noir, text-alabaster, border-smoke ...).
  *
- * The default gray / emerald / green / red / amber scales are REPLACED with warm
- * equivalents, so every gray-*, emerald-* ... class in the app follows the palette:
- *   gray           warm stone   text, borders, surfaces
- *   emerald, green sage         "suits you", best fit, success
- *   red            oxblood      errors, destructive actions, sold out
- *   amber          ochre        warnings and notes
- * Text colours pass WCAG AA (4.5:1) on both ivory and bone (audited with axe-core):
- * brass 5.29 / 4.77, gray-500 5.35 / 4.82. Keep gray-400 and lighter for decoration only.
+ *   noir       page background          alabaster  text and light fills (primary buttons)
+ *   coal       cards, inputs            ember      accent text (Racing Red, lightened for AA)
+ *   onyx       raised panels            racing     Racing Red for fills and glows
+ *   smoke      hairlines and borders    cherry / coffee / greige / beige: gradient stops
+ *
+ * The gray / emerald / red / amber scales are REPLACED and ordered by ROLE, not lightness
+ * (like Radix scales): 50–200 tinted backgrounds and borders, 400 decoration, 500–900 text
+ * from quiet to strong, 600 also the solid fill. So text-gray-600 is secondary text and
+ * bg-emerald-50 a success panel, in this dark theme as in any other.
+ *   gray     warm stone      text, borders, surfaces
+ *   emerald  sage            "suits you", best fit, success
+ *   red      racing red      errors, destructive actions, sold out
+ *   amber    warm gold       warnings and notes
+ * Every text colour passes WCAG AA (4.5:1) on noir, coal and onyx: gray-500 6.2+, ember 5.7+,
+ * red-600 5.7+, emerald-700 10+. Keep gray-400 and darker for decoration only.
  */
 @theme {
-  --color-ink: #1c1a17;
-  --color-ink-soft: #3b3731;
-  --color-ivory: #faf8f4;
-  --color-bone: #f1ece4;
-  --color-sand: #e3dcd0;
-  --color-brass: #7f6338;
-  --color-brass-light: #c8ad7f;
+  --color-noir: #0b0a09;
+  --color-coal: #141211;
+  --color-onyx: #1c1816;
+  --color-smoke: #2e2825;
+  --color-alabaster: #f1ece6;
+  --color-ember: #ff5a4d;
+  --color-ember-light: #ff8176;
 
-  /* Earlier names, kept so existing classes follow the new palette */
-  --color-brand: var(--color-ink);
-  --color-brand-light: var(--color-ink-soft);
-  --color-brand-accent: var(--color-brass);
-  --color-cream: var(--color-bone);
+  /* The palette itself (designs.md), used by the gradients */
+  --color-racing: #dd0200;
+  --color-cherry: #55100d;
+  --color-coffee: #1a0706;
+  --color-greige: #ddd5cd;
+  --color-beige: #c29b72;
 
-  --color-gray-50: #f7f5f1;
-  --color-gray-100: #efebe5;
-  --color-gray-200: #e3ddd4;
-  --color-gray-300: #cfc7bb;
-  --color-gray-400: #a8a094;
-  --color-gray-500: #6d665b;
-  --color-gray-600: #5f594f;
-  --color-gray-700: #4a453e;
-  --color-gray-800: #312e29;
-  --color-gray-900: #1f1d1a;
-  --color-gray-950: #141311;
+  --color-gray-50: #121110;
+  --color-gray-100: #1b1816;
+  --color-gray-200: #2a2522;
+  --color-gray-300: #3d3632;
+  --color-gray-400: #6f6861;
+  --color-gray-500: #a1988f;
+  --color-gray-600: #b7afa6;
+  --color-gray-700: #cec7bf;
+  --color-gray-800: #e0dad3;
+  --color-gray-900: #f1ece6;
+  --color-gray-950: #faf7f3;
 
-  --color-emerald-50: #f1f4ef;
-  --color-emerald-100: #e1e8dd;
-  --color-emerald-200: #c6d3c0;
-  --color-emerald-300: #a3b79b;
-  --color-emerald-400: #7f9a76;
-  --color-emerald-500: #62805a;
-  --color-emerald-600: #4d6847;
-  --color-emerald-700: #3e5439;
-  --color-emerald-800: #33452f;
-  --color-emerald-900: #2a3827;
+  --color-emerald-50: #121810;
+  --color-emerald-100: #1a2217;
+  --color-emerald-200: #2b3a26;
+  --color-emerald-300: #3f5537;
+  --color-emerald-400: #5f7d54;
+  --color-emerald-500: #7f9e72;
+  --color-emerald-600: #9cbb8e;
+  --color-emerald-700: #afcba1;
+  --color-emerald-800: #c5dbb9;
+  --color-emerald-900: #dcead3;
   --color-green-50: var(--color-emerald-50);
   --color-green-100: var(--color-emerald-100);
   --color-green-500: var(--color-emerald-500);
   --color-green-700: var(--color-emerald-700);
   --color-green-800: var(--color-emerald-800);
 
-  --color-red-50: #f8efed;
-  --color-red-100: #f0dcd8;
-  --color-red-200: #e2bab2;
-  --color-red-300: #cf9186;
-  --color-red-400: #b86a5d;
-  --color-red-500: #a04d40;
-  --color-red-600: #8a3b30;
-  --color-red-700: #722f27;
-  --color-red-800: #5c2721;
-  --color-red-900: #4a211c;
+  --color-red-50: #1e0a08;
+  --color-red-100: #2c0d0a;
+  --color-red-200: #55100d;
+  --color-red-300: #8e1712;
+  --color-red-400: #c0150f;
+  --color-red-500: #dd0200;
+  --color-red-600: #ff5a4d;
+  --color-red-700: #ff8176;
+  --color-red-800: #ffa49b;
+  --color-red-900: #ffc6c0;
 
-  --color-amber-50: #f9f4ea;
-  --color-amber-100: #f2e7d2;
-  --color-amber-200: #e5d0a8;
-  --color-amber-300: #d4b47a;
-  --color-amber-400: #c29a55;
-  --color-amber-500: #a9803d;
-  --color-amber-600: #8c6830;
-  --color-amber-700: #6f5227;
-  --color-amber-800: #5a4322;
-  --color-amber-900: #4a381e;
+  --color-amber-50: #1a140a;
+  --color-amber-100: #261d0c;
+  --color-amber-200: #4a3a17;
+  --color-amber-300: #7a5f24;
+  --color-amber-400: #b88a34;
+  --color-amber-500: #e0a63e;
+  --color-amber-600: #f4b044;
+  --color-amber-700: #f6c26e;
+  --color-amber-800: #f6c877;
+  --color-amber-900: #fbe3b8;
 
-  /* Self-hosted (see main.jsx): an editorial serif for display, a clean sans for the UI */
-  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+  /* Self-hosted Inter (see main.jsx). Its optical-size axis gives big headings the tighter
+     "display" cut automatically. */
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* ---- Motion ----------------------------------------------------------------------- */
   /* One easing for almost everything: fast start, long gentle landing */
@@ -104,6 +113,7 @@
   --animate-bump: bump 0.45s var(--ease-out-expo);
   --animate-spin-slow: spin 28s linear infinite;
   --animate-breathe: breathe 2.4s ease-in-out infinite;
+  --animate-drift: drift 18s ease-in-out infinite alternate;
 
   @keyframes rise {
     from {
@@ -231,6 +241,15 @@
       opacity: 1;
     }
   }
+  /* The glows move very slowly, like light through a window (transform only: cheap) */
+  @keyframes drift {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      transform: translate3d(2.5%, 3%, 0) scale(1.06);
+    }
+  }
 }
 
 /* Used directly by .btn-primary below (keyframes inside @theme are only kept when an
@@ -245,52 +264,77 @@
 }
 
 @layer base {
+  html {
+    /* Native controls (scrollbars, selects, date pickers) in their dark versions */
+    color-scheme: dark;
+    background-color: var(--color-noir);
+  }
   body {
-    @apply bg-ivory text-ink antialiased;
-    font-feature-settings: 'kern', 'liga';
+    @apply bg-noir text-alabaster antialiased;
+    font-feature-settings: 'kern', 'liga', 'calt', 'cv11';
   }
   ::selection {
-    background: var(--color-brass-light);
-    color: var(--color-ink);
+    background: var(--color-racing);
+    color: #fff;
   }
   :focus-visible {
-    outline: 2px solid var(--color-brass);
+    outline: 2px solid var(--color-alabaster);
     outline-offset: 2px;
   }
 }
 
 @layer components {
-  /* Small uppercase label above a heading */
+  /* Small uppercase label above a heading, led by a glowing red dot */
   .eyebrow {
-    @apply text-[11px] font-semibold tracking-[0.24em] text-brass uppercase;
+    @apply inline-flex items-center gap-2.5 text-[11px] font-medium tracking-[0.26em] text-gray-600 uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 9999px;
+    background: var(--color-racing);
+    box-shadow: 0 0 10px 2px rgb(221 2 0 / 0.55);
   }
 
-  /* Page and section headings in the display serif (it has one weight: never bold it) */
+  /* Page and section headings: Inter, semibold, set tight */
   .heading-display {
-    @apply font-display font-normal tracking-[-0.01em] text-ink;
+    @apply font-display font-semibold tracking-[-0.035em] text-alabaster;
   }
 
-  /* Buttons. Primary: ink with a soft light sweep on hover. */
+  /* The palette as a gradient inside type: cream → beige → racing red. For a word or two. */
+  .text-sheen {
+    font-style: normal;
+    background-image: linear-gradient(100deg, var(--color-alabaster) 0%, #dcc5a7 38%, var(--color-beige) 60%, var(--color-racing) 112%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Buttons. Primary: an alabaster pill with a soft light sweep and glow on hover. */
   .btn-primary {
-    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-ink px-6 py-3 text-sm font-semibold tracking-wide text-ivory transition-[background-color,transform] duration-300 hover:bg-ink-soft active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-alabaster px-6 py-3 text-sm font-semibold tracking-wide text-noir transition-[background-color,box-shadow,transform] duration-300 hover:bg-white hover:shadow-[0_10px_40px_-10px_rgb(241_236_230/0.55)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
   }
   .btn-primary::after {
     content: '';
     position: absolute;
     inset: 0 auto 0 0;
     width: 35%;
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.16), transparent);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
     transform: translateX(-160%) skewX(-20deg);
     pointer-events: none;
   }
   .btn-primary:hover::after {
     animation: sheen 1.2s var(--ease-out-expo);
   }
+  /* Secondary: a hairline ghost that fills with alabaster on hover */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/80 px-6 py-3 text-sm font-semibold tracking-wide text-ink transition-[background-color,color,transform] duration-300 hover:bg-ink hover:text-ivory active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-alabaster/35 px-6 py-3 text-sm font-semibold tracking-wide text-alabaster transition-[background-color,border-color,color,transform] duration-300 hover:border-alabaster hover:bg-alabaster hover:text-noir active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
   }
+  /* Light: frosted glass, for use over a photo, the camera or a gradient */
   .btn-light {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ivory px-6 py-3 text-sm font-semibold tracking-wide text-ink transition-[background-color,transform] duration-300 hover:bg-bone active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-semibold tracking-wide text-white ring-1 ring-white/25 backdrop-blur-md transition-[background-color,transform] duration-300 hover:bg-white/20 active:scale-[0.98];
   }
   .btn-sm {
     @apply px-4 py-2 text-[13px];
@@ -311,9 +355,60 @@
 
   /* Loading placeholder with a slow light sweep */
   .skeleton {
-    background: linear-gradient(100deg, var(--color-bone) 30%, #f8f4ee 50%, var(--color-bone) 70%);
+    background: linear-gradient(100deg, var(--color-onyx) 30%, #2a2421 50%, var(--color-onyx) 70%);
     background-size: 200% 100%;
     @apply animate-shimmer;
+  }
+
+  /* ---- The signature gradient ------------------------------------------------------------ */
+
+  /* Red light from the top-left: black cherry, then coffee, then black. Every page has it
+     at the top (Layout), behind the header. */
+  .glow-red {
+    background: radial-gradient(
+      64% 62% at 16% -6%,
+      rgb(221 2 0 / 1) 0%,
+      rgb(200 3 1 / 0.9) 14%,
+      rgb(150 8 4 / 0.7) 30%,
+      rgb(85 16 13 / 0.45) 48%,
+      rgb(26 7 6 / 0.2) 66%,
+      transparent 85%
+    );
+  }
+  /* Cream light rising from the bottom-right: alabaster core, greige, beige, then black */
+  .glow-cream {
+    background: radial-gradient(
+      64% 72% at 76% 102%,
+      #f6f3ee 0%,
+      #eee8df 10%,
+      rgb(221 213 205 / 0.92) 20%,
+      rgb(194 155 114 / 0.66) 36%,
+      rgb(120 86 56 / 0.38) 54%,
+      rgb(46 26 16 / 0.16) 72%,
+      transparent 88%
+    );
+  }
+  /* Both lights in one box: the full look, for a card or panel */
+  .bg-luxe {
+    background-color: var(--color-noir);
+    background-image:
+      radial-gradient(55% 60% at 12% -10%, rgb(221 2 0 / 0.9) 0%, rgb(150 8 4 / 0.55) 24%, rgb(85 16 13 / 0.3) 46%, transparent 72%),
+      radial-gradient(70% 70% at 88% 112%, #f4f0ea 0%, rgb(221 213 205 / 0.85) 20%, rgb(194 155 114 / 0.55) 40%, rgb(90 62 40 / 0.25) 62%, transparent 82%);
+  }
+
+  /* Film grain, like the reference image. Put on a positioned element; sits over its
+     background, under its content. */
+  .grain {
+    isolation: isolate;
+  }
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 

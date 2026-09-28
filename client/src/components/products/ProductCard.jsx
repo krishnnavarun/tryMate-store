@@ -13,7 +13,7 @@ export default function ProductCard({ product }) {
 
   return (
     <Link to={`/products/${product.slug}`} className="group block">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-bone">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-onyx">
         <ProductImage
           src={product.images[first]}
           alt={`${product.name} in ${product.colors[first]?.name ?? ''}`}
@@ -36,20 +36,20 @@ export default function ProductCard({ product }) {
         {product.suitsYou && (
           <span
             title={`${product.suitsYou.color} suits your skin tone`}
-            className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-ivory/90 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-emerald-700 shadow-sm backdrop-blur"
+            className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-noir/90 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-emerald-700 shadow-sm backdrop-blur"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Suits you
           </span>
         )}
 
-        <span className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-3 rounded-full bg-ivory/90 py-2.5 text-center text-[11px] font-semibold tracking-[0.2em] text-ink uppercase opacity-0 backdrop-blur transition duration-500 ease-out-expo group-hover:translate-y-0 group-hover:opacity-100">
+        <span className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-3 rounded-full bg-noir/90 py-2.5 text-center text-[11px] font-semibold tracking-[0.2em] text-alabaster uppercase opacity-0 backdrop-blur transition duration-500 ease-out-expo group-hover:translate-y-0 group-hover:opacity-100">
           View details
         </span>
       </div>
 
       <div className="mt-4 space-y-1.5">
         <p className="text-[11px] font-semibold tracking-[0.18em] text-gray-500 uppercase">{product.brand}</p>
-        <h3 className="text-[15px] font-medium text-ink transition-colors group-hover:text-brass">{product.name}</h3>
+        <h3 className="text-[15px] font-medium text-alabaster transition-colors group-hover:text-ember">{product.name}</h3>
         <div className="flex items-center justify-between gap-3">
           <Price price={product.price} discountPrice={product.discountPrice} />
           <ColorDots colors={product.colors} />

@@ -43,16 +43,16 @@ export default function FitBreakdown({ size, fields }) {
           const at = (value) => `${((value - from) / (to - from)) * 100}%`;
           return (
             <li key={f.field} className="grid grid-cols-[92px_1fr] items-center gap-x-4 gap-y-1 sm:grid-cols-[92px_120px_1fr]">
-              <span className="text-sm font-semibold text-ink">{LABELS[f.field] ?? f.label}</span>
+              <span className="text-sm font-semibold text-alabaster">{LABELS[f.field] ?? f.label}</span>
               <span className={`text-sm font-medium ${colours.text}`}>{WORDS[f.verdict] ?? f.verdict}</span>
               <div className="col-span-2 sm:col-span-1">
-                <div className="relative h-1.5 rounded-full bg-white/80" aria-hidden="true">
+                <div className="relative h-1.5 rounded-full bg-coal/80" aria-hidden="true">
                   <span
                     className="absolute inset-y-0 rounded-full bg-emerald-200"
                     style={{ left: at(f.sizeMin), width: `calc(${at(f.sizeMax)} - ${at(f.sizeMin)})` }}
                   />
                   <span
-                    className={`absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 animate-pop rounded-full ring-2 ring-white ${colours.dot}`}
+                    className={`absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 animate-pop rounded-full ring-2 ring-noir ${colours.dot}`}
                     style={{ left: at(f.bodyCm) }}
                   />
                 </div>
